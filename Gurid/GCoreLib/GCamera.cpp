@@ -81,7 +81,7 @@ void GCamera::SetButtonMasks( int nRotateModelButtonMask, int nZoomButtonMask, i
 }
 
 // 박스의 크기에 따라서 화면에 꽉차게 카메라가 조정된다.
-D3DXMATRIX	GCamera::SeGObjectView( D3DXVECTOR3 vMax, D3DXVECTOR3 vMin )
+D3DXMATRIX	GCamera::SetObjectView( D3DXVECTOR3 vMax, D3DXVECTOR3 vMin )
 {
 	D3DXMATRIX	matView;
 	D3DXVECTOR3 vCenter = ( vMax + vMin ) * 0.5f;
@@ -226,7 +226,7 @@ void GCamera::SetWindow( int nWidth, int nHeight, float fArcballRadius )
 	m_ViewArcBall.SetWindow( nWidth, nHeight, fArcballRadius ); 
 }
 
-void GCamera::SeGModelCenter( D3DXVECTOR3 vModelCenter ) 
+void GCamera::SetModelCenter( D3DXVECTOR3 vModelCenter ) 
 { 
 	m_vModelCenter = vModelCenter;
 }
