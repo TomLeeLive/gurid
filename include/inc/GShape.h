@@ -1,6 +1,10 @@
 #pragma once
+
 #include <tchar.h>
+#include <directxMath.h>
 #include "GDxHelperEx.h"
+
+using namespace DirectX;
 
 //--------------------------------------------------------------------------------------
 // Structures
@@ -237,6 +241,7 @@ public:
 	virtual ~GBoxShape(void);
 };
 
+
 class GPlaneShape : public GShape
 {
 public:
@@ -249,4 +254,59 @@ public:
 public:
 	GPlaneShape(void);
 	virtual ~GPlaneShape(void);
+};
+
+
+class GCylinder : public GShape
+{
+public:
+	vector<PNCT_VERTEX>		m_VertexList;
+public:
+	HRESULT			SetInputLayout();
+	HRESULT			CreateVertexBuffer();
+	HRESULT			CreateIndexBuffer();
+	HRESULT			CreateResource();
+
+public:
+
+	struct Vertex
+	{
+		Vertex() {}
+		Vertex(const XMFLOAT3& p, const XMFLOAT3& n, const XMFLOAT3& t, const XMFLOAT2& uv)
+			: Position(p), Normal(n), TangentU(t), TexC(uv) {}
+		Vertex(
+			float px, float py, float pz,
+			float nx, float ny, float nz,
+			float tx, float ty, float tz,
+			float u, float v)
+			: Position(px, py, pz), Normal(nx, ny, nz),
+			TangentU(tx, ty, tz), TexC(u, v) {}
+
+		XMFLOAT3 Position;
+		XMFLOAT3 Normal;
+		XMFLOAT3 TangentU;
+		XMFLOAT2 TexC;
+	};
+
+	struct MeshData
+	{
+		std::vector<Vertex> Vertices;
+		std::vector<UINT> Indices;
+	};
+
+	MeshData meshData;
+
+	float bottomRadius;
+	float topRadius;
+	float height;
+	UINT sliceCount;
+	UINT stackCount;
+
+public:
+	void			CreateCylinder();
+	void			BuildCylinderTopCap();
+	void			BuildCylinderBottomCap();
+public:
+	GCylinder(void);
+	virtual ~GCylinder(void);
 };

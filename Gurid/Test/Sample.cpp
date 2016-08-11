@@ -1,6 +1,11 @@
 #include "Sample.h"
 #include "GTimer.h"
 
+
+D3DXMATRIX g_matWorld_body;
+D3DXMATRIX g_matWorld_head;
+D3DXMATRIX g_matWorld_tire[4];
+
 // 윈도우 메세지 
 int Sample::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -28,56 +33,54 @@ bool Sample::Init()
 		MessageBox(0, _T("m_pBox 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
+	if (FAILED(m_pBox2.Create(GetDevice(), L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	{
+		MessageBox(0, _T("m_pBox2 실패"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+
+
+	for (int i = 0; i < G_MACRO_TIRES; i++){
+		if (FAILED(m_pTire[i].Create(GetDevice(), L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+		{
+			MessageBox(0, _T("m_pTire1 실패"), _T("Fatal error"), MB_OK);
+			return 0;
+		}
+	}
 	
     D3DXMatrixIdentity( &m_World[0] );
 	D3DXMatrixIdentity( &m_matWorld );
-	
+
 	D3DXMATRIX matRotX, matScale;
 	D3DXMatrixRotationX(&matRotX, D3DXToRadian(90));
 	D3DXMatrixScaling(&matScale, 100.0f, 100.0f, 100.0f);
 	D3DXMatrixMultiply(&m_matWorldPlaneBase, &matScale, &matRotX);
 	
-	// 4 종류의 카메라 세팅
+	// 카메라 세팅
 	D3DXVECTOR3 vTargetPosition	= D3DXVECTOR3( 0.0f, -0.1f, 0.0f );
 	D3DXVECTOR3 vUpVector( 0.0f, 1.0f, 0.0f );
 	D3DXVECTOR3 vCameraPosition	= D3DXVECTOR3( 0.0f, 1.0f, -0.1f );
 	
-	SAFE_NEW(m_pCamera[0], GCamera);
-	m_pCamera[0]->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
-	// Front g_matView
-	SAFE_NEW(m_pCamera[1], GCamera);
-	vCameraPosition = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-	m_pCamera[1]->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
-	// Side g_matView
-	SAFE_NEW(m_pCamera[2], GCamera);
-	vCameraPosition = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
-	m_pCamera[2]->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
-	// User g_matView
-	SAFE_NEW(m_pCamera[3], GCamera);
+	SAFE_NEW(m_pCamera, GCamera);
 	vCameraPosition = D3DXVECTOR3(0.0f, 1.0f, -1.0f);
-	m_pCamera[3]->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
+	m_pCamera->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
 
 	// 뷰포트에 들어 맞게 카메라 조정.
-	m_pCamera[0]->SetObjectView(D3DXVECTOR3(2.0f, 2.0f, 2.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
-	m_pCamera[1]->SetObjectView(D3DXVECTOR3(2.0f, 2.0f, 2.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
-	m_pCamera[2]->SetObjectView(D3DXVECTOR3(2.0f, 2.0f, 2.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
-	m_pCamera[3]->SetObjectView(D3DXVECTOR3(2.0f, 2.0f, 2.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
+	m_pCamera->SetObjectView(D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
 
 	// 투영행렬 세팅
-	for (int iCamera = 0; iCamera < 4; iCamera++)
-	{
-		m_pCamera[iCamera]->SetProjMatrix(D3DX_PI * 0.25f,
-			(float)m_ViewPort[iCamera].m_vp.Width / (float)m_ViewPort[iCamera].m_vp.Height,
+		m_pCamera->SetProjMatrix(D3DX_PI * 0.25f,
+			(float)m_ViewPort.m_vp.Width / (float)m_ViewPort.m_vp.Height,
 			1.0f,
 			100.0f);
-	}
+	
 
 	// 메인 카메라 뷰 행렬 세팅
 	SAFE_NEW(m_pMainCamera, GBackViewCamera);
 	//m_pMainCamera->SetModelCenter( D3DXVECTOR3( 1.0f, -1.0f, -1.0f ) );
 	m_pMainCamera->SetModelCenter(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	m_pMainCamera->SetViewMatrix(*m_pCamera[m_iCameraType]->GetEyePt(), *m_pCamera[3]->GetLookAtPt(), D3DXVECTOR3(0.0f, 1.0f, 0.0f));
-	m_pMainCamera->m_vCameraDestination = *m_pCamera[m_iCameraType]->GetEyePt();
+	m_pMainCamera->SetViewMatrix(*m_pCamera->GetEyePt(), *m_pCamera->GetLookAtPt(), D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	m_pMainCamera->m_vCameraDestination = *m_pCamera->GetEyePt();
 
 	// Setup the camera's projection parameters
 	float fAspectRatio = m_iWindowWidth / (FLOAT)m_iWindowHeight;
@@ -87,117 +90,88 @@ bool Sample::Init()
 }
 bool Sample::Frame()
 {
-	//--------------------------------------------------------------------------------------
-	// 카메라 타입 선택
-	//--------------------------------------------------------------------------------------
-	if( I_Input.KeyCheck( DIK_1 ) && I_Input.KeyCheck( DIK_LCONTROL ) )
-	{
-		m_iCameraType++;
-		if (m_iCameraType > 3)m_iCameraType = 0;
-		m_fCameraYaw = m_pCamera[m_iCameraType]->GetYawAngle();
-		m_fCameraPitch = m_pCamera[m_iCameraType]->GetPitchAngle();
-		m_fRadius = m_pMainCamera->GetRadius();
-		m_pMainCamera->SetViewMatrix( *m_pCamera[m_iCameraType]->GetEyePt(), *m_pCamera[m_iCameraType]->GetLookAtPt() );
-		m_pMainCamera->SetRadius( m_fRadius );
-		m_pMainCamera->m_vCameraDestination = *m_pCamera[m_iCameraType]->GetEyePt();
-	}
+
 	
 	//--------------------------------------------------------------------------------------
 	// 엔진에 있는 뷰 및 투영 행렬 갱신
 	//--------------------------------------------------------------------------------------
 	m_pMainCamera->Update(m_Timer.GetSPF());
+
+	D3DXMATRIX temp_s, temp_r, temp_t, temp_r_y, temp_r_z;
+	D3DXMatrixIdentity(&temp_s);
+	D3DXMatrixIdentity(&temp_r);
+	D3DXMatrixIdentity(&temp_t);
+
 	m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));	
+
+
+	m_matWorld._42 -= 0.5f;
+	g_matWorld_body = m_matWorld;
+	g_matWorld_body._11 *= 3.0f;
+	g_matWorld_body._33 *= 5.0f;
+
+
+	g_matWorld_head = m_matWorld;
+	g_matWorld_head._11 *= 3.0f;
+	g_matWorld_head._33 *= 3.0f;
+
+
+	static float rot = 0.0f;
+	rot += 100.0f*m_Timer.GetSPF();
+
+	D3DXMatrixScaling(&temp_s, 3.0f, 0.5f, 3.0f);
+	//D3DXMatrixRotationZ(&temp_r, D3DXToRadian(90.0f));
+
+	D3DXMatrixRotationY(&temp_r_y, D3DXToRadian(-rot));
+	D3DXMatrixRotationZ(&temp_r_z, D3DXToRadian(90.0f));
+
+	D3DXMatrixTranslation(&temp_t, -2.0f, -2.0f, 3.0f);
+
+	g_matWorld_tire[0] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
+	D3DXMatrixTranslation(&temp_t, 2.0f, -2.0f, 3.0f);
+	g_matWorld_tire[1] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
+	D3DXMatrixTranslation(&temp_t, -2.0f, -2.0f, -3.0f);
+	g_matWorld_tire[2] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
+	D3DXMatrixTranslation(&temp_t, 2.0f, -2.0f, -3.0f);
+	g_matWorld_tire[3] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
+
 	return true;
 }
 bool Sample::Render()
 {
 	HRESULT hr;	
-	//-----------------------------------------------------------------------
-	// 메인 뷰포트
-	//-----------------------------------------------------------------------	
-	m_pBox.SetMatrix(&m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+
+	m_pBox.SetMatrix(&g_matWorld_body, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_pBox.Render(m_pImmediateContext);
+
+	//matWorld2._41 = ;
+	g_matWorld_head._42 += 2.0f ;
+	//matWorld2._43 += 30.0f;
+
+	m_pBox2.SetMatrix(&g_matWorld_head, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	m_pBox2.Render(m_pImmediateContext);
+
+
+	for (int i = 0; i < G_MACRO_TIRES; i++){
+		m_pTire[i].SetMatrix(&g_matWorld_tire[i], &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		m_pTire[i].Render(m_pImmediateContext);
+	}
+
 	m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_pPlane.Render(m_pImmediateContext);	
 	//-----------------------------------------------------------------------
 	// 현재 세팅된 뷰포트 정보 저장
 	//-----------------------------------------------------------------------
-	D3D11_VIEWPORT vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX];
-    UINT nViewPorts = 1;
-    m_pImmediateContext->RSGetViewports( &nViewPorts, vpOld );	
-	//-----------------------------------------------------------------------
-	// 상단 뷰포트
-	//-----------------------------------------------------------------------	
-	for( int iVp = 0; iVp < 4 ; iVp++ )
-	{
-		m_ViewPort[iVp].Apply(m_pImmediateContext, GetRenderTargetView(), GetDepthStencilView());
+	//D3D11_VIEWPORT vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX];
+ //   UINT nViewPorts = 1;
+ //   m_pImmediateContext->RSGetViewports( &nViewPorts, vpOld );	
 
-		m_pBox.SetMatrix(&m_matWorld, &m_pCamera[iVp]->m_matView, &m_pCamera[iVp]->m_matProj);
-		m_pBox.Render(m_pImmediateContext);
-
-		m_pPlane.SetMatrix(&m_matWorld, &m_pCamera[iVp]->m_matView, &m_pCamera[iVp]->m_matProj);
-		m_pPlane.Render(m_pImmediateContext);
-	}
-	
 	//-----------------------------------------------------------------------
 	// 기본 뷰포트 정보로 복원
 	//-----------------------------------------------------------------------
-	m_pImmediateContext->RSSetViewports(nViewPorts, vpOld);
+	//m_pImmediateContext->RSSetViewports(nViewPorts, vpOld);
 	
-	//-----------------------------------------------------------------------
-	// 뷰포트 번호 출력
-	//-----------------------------------------------------------------------
-	RECT rc;
-	for( int iVp = 0; iVp < 4 ; iVp++ )
-	{		
-		rc.left		= m_ViewPort[iVp].m_vp.TopLeftX + m_ViewPort[iVp].m_vp.Width*0.5f;		
-		rc.top		= m_ViewPort[iVp].m_vp.TopLeftY;
-		rc.right	= m_ViewPort[iVp].m_vp.Width+rc.left;				    
-		rc.bottom	= m_ViewPort[iVp].m_vp.Height+rc.top;		
-		T_STR str = CameraViewStyle[iVp];
-		TCHAR strNumber[32];
-		str += _itow( iVp, strNumber, 10 );// _wtoi
-		DrawDebugRect( &rc, const_cast<TCHAR*>(str.c_str()));
-	}	
-	//-----------------------------------------------------------------------
-	// 적용되어 있는 카메라 타입 표시
-	//-----------------------------------------------------------------------	
-	rc.left		= m_DefaultRT.m_vp.TopLeftX + m_DefaultRT.m_vp.Width*0.5f;
-	rc.top		= m_DefaultRT.m_vp.TopLeftY;
-	rc.right	= m_DefaultRT.m_vp.Width;
-	rc.bottom	= m_DefaultRT.m_vp.Height;
-	T_STR str = CameraViewStyle[m_iCameraType];
-	TCHAR strNumber[32];
-	str += _itow( m_iCameraType, strNumber, 10 );// _wtoi
-	DrawDebugRect( &rc, const_cast<TCHAR*>(str.c_str()));
-	//-----------------------------------------------------------------------
-	// 적용되어 있는 카메라의 방향벡터 표시
-	//-----------------------------------------------------------------------
-	str.clear();
-	TCHAR pBuffer[256];
-	memset( pBuffer, 0, sizeof( TCHAR ) * 256 );
-	_stprintf_s( pBuffer, _T("Look:%10.4f,%10.4f,%10.4f \n"),	m_pMainCamera->m_vLookVector.x, 
-																m_pMainCamera->m_vLookVector.y, 
-																m_pMainCamera->m_vLookVector.z);	
-	str += pBuffer;
-
-	memset( pBuffer, 0, sizeof( TCHAR ) * 256 );
-	_stprintf_s( pBuffer, _T("Up:%10.4f,%10.4f,%10.4f \n"), m_pMainCamera->m_vUpVector.x, 
-															m_pMainCamera->m_vUpVector.y,
-															m_pMainCamera->m_vUpVector.z);	
-	str += pBuffer;
-
-	memset( pBuffer, 0, sizeof( TCHAR ) * 256 );
-	_stprintf_s( pBuffer, _T("Right:%10.4f,%10.4f,%10.4f "),	m_pMainCamera->m_vRightVector.x, 
-																m_pMainCamera->m_vRightVector.y,
-																m_pMainCamera->m_vRightVector.z);	
-	str += pBuffer;
-
-	rc.left		= m_DefaultRT.m_vp.TopLeftX + m_DefaultRT.m_vp.Width*0.5f;
-	rc.top		= m_DefaultRT.m_vp.Height-75;
-	rc.right	= m_DefaultRT.m_vp.Width;
-	rc.bottom	= m_DefaultRT.m_vp.Height;
-	DrawDebugRect( &rc, const_cast<TCHAR*>(str.c_str()));
+	
 	return true;
 }
 
@@ -234,65 +208,18 @@ HRESULT Sample::DeleteResource()
 }
 bool Sample::Release()
 {
-	SAFE_DEL(m_pCamera[1]);
-	SAFE_DEL(m_pCamera[2]);
-	SAFE_DEL(m_pCamera[3]);
+	SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
 	return true;
 }
 bool Sample::DrawDebug()
 {
-	D3D11_VIEWPORT vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX];
-	UINT nViewPorts = 1;
-	m_pImmediateContext->RSGetViewports(&nViewPorts, vpOld);
-
-	m_ViewPort[0].Apply(m_pImmediateContext, GetRenderTargetView(), GetDepthStencilView());
-	m_pDirectionLine.SetMatrix(NULL, &m_pCamera[0]->m_matView, &m_pCamera[0]->m_matProj);
-	m_pDirectionLine.Render(m_pImmediateContext);
-
-	m_ViewPort[1].Apply(m_pImmediateContext, GetRenderTargetView(), GetDepthStencilView());
-	m_pDirectionLine.SetMatrix(NULL, &m_pCamera[1]->m_matView, &m_pCamera[1]->m_matProj);
-	m_pDirectionLine.Render(m_pImmediateContext);
-
-	m_ViewPort[2].Apply(m_pImmediateContext, GetRenderTargetView(), GetDepthStencilView());
-	m_pDirectionLine.SetMatrix(NULL, &m_pCamera[2]->m_matView, &m_pCamera[2]->m_matProj);
-	m_pDirectionLine.Render(m_pImmediateContext);
-
-	m_ViewPort[3].Apply(m_pImmediateContext, GetRenderTargetView(), GetDepthStencilView());
-	m_pDirectionLine.SetMatrix(NULL, &m_pCamera[3]->m_matView, &m_pCamera[3]->m_matProj);
-	m_pDirectionLine.Render(m_pImmediateContext);
-
-	//-----------------------------------------------------------------------
-	// 기본 뷰포트 정보로 복원
-	//-----------------------------------------------------------------------
-	m_pImmediateContext->RSSetViewports(nViewPorts, vpOld);
-	//-----------------------------------------------------------------------
-	// 기본 뷰포트 정보로 복원
-	//-----------------------------------------------------------------------
-	m_pImmediateContext->RSSetViewports(nViewPorts, vpOld);
-
-	m_matWorld._41 = m_pMainCamera->GetLookAtPt()->x;
-	m_matWorld._42 = m_pMainCamera->GetLookAtPt()->y;
-	m_matWorld._43 = m_pMainCamera->GetLookAtPt()->z;
 	
-	m_pDirectionLine.SetMatrix(&m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_pDirectionLine.Render(m_pImmediateContext);
-
-	m_pDirectionLine.SetMatrix( &m_World[0], &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_pDirectionLine.Render(m_pImmediateContext);
 	return GBASISLib_0::DrawDebug();
 }
 HRESULT Sample::ScreenViewPort(UINT iWidth, UINT iHeight)
 {	
 	HRESULT hr = S_OK;
-	
-	UINT iRectWidth = iWidth / 5;
-	UINT iRectHeight = iHeight / 4;
-
-	m_ViewPort[0].Set(GetDevice(), 0, 0, iRectWidth, iRectHeight, 0.0f, 1.0f);
-	m_ViewPort[1].Set(GetDevice(), 0, iRectHeight, iRectWidth, iRectHeight, 0.0f, 1.0f);
-	m_ViewPort[2].Set(GetDevice(), 0, iRectHeight * 2, iRectWidth, iRectHeight, 0.0f, 1.0f);
-	m_ViewPort[3].Set(GetDevice(), 0, iRectHeight * 3, iRectWidth, iRectHeight, 0.0f, 1.0f);
 	
 	return hr;
 }
@@ -300,15 +227,12 @@ HRESULT Sample::ScreenViewPort(UINT iWidth, UINT iHeight)
 Sample::Sample(void)
 {	
 	// 추가
-	m_iCameraType			= 3; // User Camera	
 	m_fCameraYaw			= 0.0f;
 	m_fCameraPitch			= 0.0f;
 	m_fCameraRoll			= 0.0f;
 	m_fRadius				= 0.0f;
-	SAFE_ZERO(m_pCamera[0]);
-	SAFE_ZERO(m_pCamera[1]);
-	SAFE_ZERO(m_pCamera[2]);
-	SAFE_ZERO(m_pCamera[3]);
+
+	SAFE_ZERO(m_pCamera);
 	SAFE_ZERO(m_pMainCamera);
 }
 
