@@ -2,9 +2,7 @@
 #include "GTimer.h"
 
 
-D3DXMATRIX g_matWorld_body;
-D3DXMATRIX g_matWorld_head;
-D3DXMATRIX g_matWorld_tire[4];
+
 
 // 윈도우 메세지 
 int Sample::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -23,30 +21,12 @@ bool Sample::Init()
 		return 0;
 	}
 
-	if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/Sand.jpg")))
+	if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/grids.jpg")))
 	{
 		MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
-	if (FAILED(m_pBox.Create(GetDevice(), L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
-	{
-		MessageBox(0, _T("m_pBox 실패"), _T("Fatal error"), MB_OK);
-		return 0;
-	}
-	if (FAILED(m_pBox2.Create(GetDevice(), L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
-	{
-		MessageBox(0, _T("m_pBox2 실패"), _T("Fatal error"), MB_OK);
-		return 0;
-	}
-
-
-	for (int i = 0; i < G_MACRO_TIRES; i++){
-		if (FAILED(m_pTire[i].Create(GetDevice(), L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
-		{
-			MessageBox(0, _T("m_pTire1 실패"), _T("Fatal error"), MB_OK);
-			return 0;
-		}
-	}
+	
 	
     D3DXMatrixIdentity( &m_World[0] );
 	D3DXMatrixIdentity( &m_matWorld );
@@ -86,6 +66,9 @@ bool Sample::Init()
 	float fAspectRatio = m_iWindowWidth / (FLOAT)m_iWindowHeight;
 	m_pMainCamera->SetProjMatrix(D3DX_PI / 4, fAspectRatio, 0.1f, 500.0f);
 	m_pMainCamera->SetWindow(m_iWindowWidth, m_iWindowHeight);
+
+	m_pCar[SEDAN]->init(GetDevice());
+
 	return true;
 }
 bool Sample::Frame()
@@ -97,43 +80,12 @@ bool Sample::Frame()
 	//--------------------------------------------------------------------------------------
 	m_pMainCamera->Update(m_Timer.GetSPF());
 
-	D3DXMATRIX temp_s, temp_r, temp_t, temp_r_y, temp_r_z;
-	D3DXMatrixIdentity(&temp_s);
-	D3DXMatrixIdentity(&temp_r);
-	D3DXMatrixIdentity(&temp_t);
+
 
 	m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));	
 
 
-	m_matWorld._42 -= 0.5f;
-	g_matWorld_body = m_matWorld;
-	g_matWorld_body._11 *= 3.0f;
-	g_matWorld_body._33 *= 5.0f;
-
-
-	g_matWorld_head = m_matWorld;
-	g_matWorld_head._11 *= 3.0f;
-	g_matWorld_head._33 *= 3.0f;
-
-
-	static float rot = 0.0f;
-	rot += 100.0f*m_Timer.GetSPF();
-
-	D3DXMatrixScaling(&temp_s, 3.0f, 0.5f, 3.0f);
-	//D3DXMatrixRotationZ(&temp_r, D3DXToRadian(90.0f));
-
-	D3DXMatrixRotationY(&temp_r_y, D3DXToRadian(-rot));
-	D3DXMatrixRotationZ(&temp_r_z, D3DXToRadian(90.0f));
-
-	D3DXMatrixTranslation(&temp_t, -2.0f, -2.0f, 3.0f);
-
-	g_matWorld_tire[0] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
-	D3DXMatrixTranslation(&temp_t, 2.0f, -2.0f, 3.0f);
-	g_matWorld_tire[1] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
-	D3DXMatrixTranslation(&temp_t, -2.0f, -2.0f, -3.0f);
-	g_matWorld_tire[2] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
-	D3DXMatrixTranslation(&temp_t, 2.0f, -2.0f, -3.0f);
-	g_matWorld_tire[3] = temp_s*temp_r_y*temp_r_z*temp_t*m_matWorld;
+	m_pCar[SEDAN]->frame(m_matWorld, m_Timer.GetSPF());
 
 	return true;
 }
@@ -141,36 +93,11 @@ bool Sample::Render()
 {
 	HRESULT hr;	
 
-	m_pBox.SetMatrix(&g_matWorld_body, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_pBox.Render(m_pImmediateContext);
-
-	//matWorld2._41 = ;
-	g_matWorld_head._42 += 2.0f ;
-	//matWorld2._43 += 30.0f;
-
-	m_pBox2.SetMatrix(&g_matWorld_head, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_pBox2.Render(m_pImmediateContext);
-
-
-	for (int i = 0; i < G_MACRO_TIRES; i++){
-		m_pTire[i].SetMatrix(&g_matWorld_tire[i], &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		m_pTire[i].Render(m_pImmediateContext);
-	}
+	m_pCar[SEDAN]->render(m_pImmediateContext, m_pMainCamera);
 
 	m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_pPlane.Render(m_pImmediateContext);	
-	//-----------------------------------------------------------------------
-	// 현재 세팅된 뷰포트 정보 저장
-	//-----------------------------------------------------------------------
-	//D3D11_VIEWPORT vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX];
- //   UINT nViewPorts = 1;
- //   m_pImmediateContext->RSGetViewports( &nViewPorts, vpOld );	
 
-	//-----------------------------------------------------------------------
-	// 기본 뷰포트 정보로 복원
-	//-----------------------------------------------------------------------
-	//m_pImmediateContext->RSSetViewports(nViewPorts, vpOld);
-	
 	
 	return true;
 }
@@ -208,6 +135,8 @@ HRESULT Sample::DeleteResource()
 }
 bool Sample::Release()
 {
+	SAFE_DEL(m_pCar[0]);
+
 	SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
 	return true;
@@ -226,6 +155,8 @@ HRESULT Sample::ScreenViewPort(UINT iWidth, UINT iHeight)
 
 Sample::Sample(void)
 {	
+	m_pCar[SEDAN] = new GCar(SEDAN);
+
 	// 추가
 	m_fCameraYaw			= 0.0f;
 	m_fCameraPitch			= 0.0f;
