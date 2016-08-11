@@ -1,181 +1,174 @@
 #include "Sample.h"
+#include "GTimer.h"
 
-int Sample::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+
+
+
+// 윈도우 메세지 
+int Sample::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    switch( message )
-    {     
-		case WM_KEYDOWN:
-        {
-            switch( wParam )
-            {
-				// 와이어 프레임
-                case VK_F3:
-					{
-						m_bWireFrameRender = !m_bWireFrameRender;
-						(m_bWireFrameRender ) ? SetRasterizerState(D3D11_FILL_WIREFRAME) :
-												SetRasterizerState(D3D11_FILL_SOLID);
-					}break;
-				// Primitive Types
-                case VK_F4:
-					{						
-						++m_iPrimitiveType;	
-						m_iPrimitiveType = min( m_iPrimitiveType, 5 );
-						m_pImmediateContext->IASetPrimitiveTopology( (D3D11_PRIMITIVE_TOPOLOGY)m_iPrimitiveType  );  
-					}break;
-				case VK_F5:
-					{						
-						--m_iPrimitiveType;				
-						m_iPrimitiveType = max( m_iPrimitiveType, 1 ); 
-						m_pImmediateContext->IASetPrimitiveTopology( (D3D11_PRIMITIVE_TOPOLOGY)m_iPrimitiveType    );  
-					}break;				
-			}
-			break;
-		}
+	if (m_pMainCamera != nullptr)
+	{
+		m_pMainCamera->WndProc(hWnd, msg, wParam, lParam);
 	}
 	return -1;
 }
-
-HRESULT Sample::LoadShaderAndInputLayout()
-{
-	HRESULT hr = S_OK;
-	 // Create the effect
-    DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
-	//WCHAR str[MAX_PATH];   
-    ID3DBlob* pVSBuf = NULL;
-
-#if defined( _DEBUG ) || defined( _DEBUG )
-      dwShaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-    V_RETURN( D3DX11CompileFromFile( L"HLSLwithoutFX.vsh", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSBuf, NULL, NULL ) );
-    V_RETURN( GetDevice()->CreateVertexShader( ( DWORD* )pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), NULL,  &m_pVS ) );
-
-    ID3DBlob* pPSBuf = NULL;
-    V_RETURN( D3DX11CompileFromFile( L"HLSLwithoutFX.psh", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSBuf, NULL,NULL ) );
-    V_RETURN( GetDevice()->CreatePixelShader( ( DWORD* )pPSBuf->GetBufferPointer(),pPSBuf->GetBufferSize(), NULL, &m_pPS ) );
-
-	// Create our vertex input layout
-    const D3D11_INPUT_ELEMENT_DESC layout[] =
-    {
-        { "POSITION",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
-    V_RETURN( GetDevice()->CreateInputLayout( layout, 1, pVSBuf->GetBufferPointer(),pVSBuf->GetBufferSize(), &m_pVertexLayout ) );
-	
-    SAFE_RELEASE( pVSBuf );
-    SAFE_RELEASE( pPSBuf );
-
-	SetRasterizerState();
-	return hr;
-}
-
-HRESULT Sample::SetRasterizerState(D3D11_FILL_MODE d3d11FillMode )
-{
-	HRESULT hr =S_OK;
-	SAFE_RELEASE( m_pRasterizerStateNoCull );
-	D3D11_RASTERIZER_DESC RSDesc;
-	memset(&RSDesc, 0, sizeof(D3D11_RASTERIZER_DESC) );
-	RSDesc.DepthClipEnable = TRUE;
-    RSDesc.FillMode = d3d11FillMode;
-    RSDesc.CullMode = D3D11_CULL_NONE;
-    V_RETURN( GetDevice()->CreateRasterizerState( &RSDesc, &m_pRasterizerStateNoCull ) );
-	return hr;
-}
-HRESULT Sample::CreateVertexBuffer()
-{
-	HRESULT hr = S_OK;
-	
-    // Create vertex buffer
-    P3VERTEX vertices[] =
-    {
-		-0.75f, -0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f,        
-		-0.25f, -0.5f, 0.5f,
-
-		 0.0f, 0.5f, 0.5f,
-		 0.25f, -0.5f, 0.5f,
-		 0.5f, 0.5f, 0.5f,
-    };
-
-	UINT numVertices = sizeof( vertices ) / sizeof( vertices[0] );
-
-    D3D11_BUFFER_DESC bd;
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( P3VERTEX ) * numVertices;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = 0;
-    bd.MiscFlags = 0;
-
-	CD3D11_BUFFER_DESC cbc( sizeof( P3VERTEX ) * numVertices, D3D11_BIND_VERTEX_BUFFER );	
-		
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = vertices;
-    V_RETURN( GetDevice()->CreateBuffer( &cbc, &InitData, &m_pVertexBuffer ) ); 
-
-	return hr;
-}
-//--------------------------------------------------------------------------------------
-// 
-//--------------------------------------------------------------------------------------
-HRESULT Sample::CreateTrangle( D3D11_PRIMITIVE_TOPOLOGY iTopology )
-{
-    HRESULT hr = S_OK;
-	//  정점 쉐이더 및 픽셀 쉐이더를 로딩 및 생성한다.
-	V_RETURN( CreateVertexBuffer() );  
-	V_RETURN( LoadShaderAndInputLayout() );   	 
-	return hr;
-}
-
 bool Sample::Init()
 {
-	if( FAILED( CreateTrangle() ) )
+	if (FAILED(m_pDirectionLine.Create(GetDevice(), L"../../data/shader/Line.hlsl")))
 	{
-		MessageBox( 0, _T("CreateTrangle  실패"), _T("Fatal error"), MB_OK );
-		return false;
+		MessageBox(0, _T("m_pDirectionLIne 실패"), _T("Fatal error"), MB_OK);
+		return 0;
 	}
+
+	if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/grids.jpg")))
+	{
+		MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+
+
+	D3DXMatrixIdentity(&m_World[0]);
+	D3DXMatrixIdentity(&m_matWorld);
+
+	D3DXMATRIX matRotX, matScale;
+	D3DXMatrixRotationX(&matRotX, D3DXToRadian(90));
+	D3DXMatrixScaling(&matScale, 100.0f, 100.0f, 100.0f);
+	D3DXMatrixMultiply(&m_matWorldPlaneBase, &matScale, &matRotX);
+
+	// 카메라 세팅
+	D3DXVECTOR3 vTargetPosition = D3DXVECTOR3(0.0f, -0.1f, 0.0f);
+	D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
+	D3DXVECTOR3 vCameraPosition = D3DXVECTOR3(0.0f, 1.0f, -0.1f);
+
+	SAFE_NEW(m_pCamera, GCamera);
+	vCameraPosition = D3DXVECTOR3(0.0f, 1.0f, -1.0f);
+	m_pCamera->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
+
+	// 뷰포트에 들어 맞게 카메라 조정.
+	m_pCamera->SetObjectView(D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
+
+	// 투영행렬 세팅
+	m_pCamera->SetProjMatrix(D3DX_PI * 0.25f,
+		(float)m_ViewPort.m_vp.Width / (float)m_ViewPort.m_vp.Height,
+		1.0f,
+		100.0f);
+
+
+	// 메인 카메라 뷰 행렬 세팅
+	SAFE_NEW(m_pMainCamera, GBackViewCamera);
+	//m_pMainCamera->SetModelCenter( D3DXVECTOR3( 1.0f, -1.0f, -1.0f ) );
+	m_pMainCamera->SetModelCenter(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pMainCamera->SetViewMatrix(*m_pCamera->GetEyePt(), *m_pCamera->GetLookAtPt(), D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	m_pMainCamera->m_vCameraDestination = *m_pCamera->GetEyePt();
+
+	// Setup the camera's projection parameters
+	float fAspectRatio = m_iWindowWidth / (FLOAT)m_iWindowHeight;
+	m_pMainCamera->SetProjMatrix(D3DX_PI / 4, fAspectRatio, 0.1f, 500.0f);
+	m_pMainCamera->SetWindow(m_iWindowWidth, m_iWindowHeight);
+
+	m_pCar[SEDAN]->init(GetDevice());
+
+	return true;
+}
+bool Sample::Frame()
+{
+
+
+	//--------------------------------------------------------------------------------------
+	// 엔진에 있는 뷰 및 투영 행렬 갱신
+	//--------------------------------------------------------------------------------------
+	m_pMainCamera->Update(m_Timer.GetSPF());
+
+
+
+	m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));	
+
+
+	m_pCar[SEDAN]->frame(m_matWorld, m_Timer.GetSPF());
+
 	return true;
 }
 bool Sample::Render()
 {
-	// Set the input layout
-    m_pImmediateContext->VSSetShader( m_pVS, NULL, 0 );
-    m_pImmediateContext->HSSetShader( NULL, NULL, 0 );
-    m_pImmediateContext->DSSetShader( NULL, NULL, 0 );
-    m_pImmediateContext->GSSetShader( NULL, NULL, 0 );
-    m_pImmediateContext->PSSetShader( m_pPS, NULL, 0 );
-	m_pImmediateContext->IASetInputLayout( m_pVertexLayout );
+	HRESULT hr;
 
-	UINT stride = sizeof( P3VERTEX );
-    UINT offset = 0;
-	m_pImmediateContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
-	m_pImmediateContext->RSSetState( m_pRasterizerStateNoCull );
-	m_pImmediateContext->IASetPrimitiveTopology( (D3D11_PRIMITIVE_TOPOLOGY)m_iPrimitiveType ); 
+	m_pCar[SEDAN]->render(m_pImmediateContext, m_pMainCamera);
 
-   m_pImmediateContext->Draw( 6, 0 );
+	m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	m_pPlane.Render(m_pImmediateContext);
+
+
 	return true;
+}
+
+//--------------------------------------------------------------------------------------
+// 
+//--------------------------------------------------------------------------------------
+HRESULT Sample::CreateResource()
+{
+	HRESULT hr;
+	if (FAILED(hr = ScreenViewPort(m_SwapChainDesc.BufferDesc.Width, m_SwapChainDesc.BufferDesc.Height)))
+	{
+		return hr;
+	}
+	if (m_pMainCamera)
+	{
+		// Setup the camera's projection parameters
+		float fAspectRatio = m_SwapChainDesc.BufferDesc.Width / (FLOAT)m_SwapChainDesc.BufferDesc.Height;
+		m_pMainCamera->SetWindow(m_SwapChainDesc.BufferDesc.Width, m_SwapChainDesc.BufferDesc.Height);
+	}
+	return S_OK;
+}
+//--------------------------------------------------------------------------------------
+// 
+//--------------------------------------------------------------------------------------
+HRESULT Sample::DeleteResource()
+{
+	HRESULT hr = S_OK;
+
+	// 아래의 경고는 GetDevice()->ClearState();를 호출하지 않을 때 발생한다.
+	//D3D10: INFO: ID3D11Device::RSSetState: The currently bound RasterizerState is being deleted; 
+	//so naturally, will no longer be bound. [ STATE_SETTING INFO #46: RSSETSTATE_UNBINDDELETINGOBJECT ]
+	if (m_pImmediateContext) m_pImmediateContext->ClearState();
+	return S_OK;
 }
 bool Sample::Release()
 {
-	SAFE_RELEASE( m_pRasterizerStateNoCull );
-	SAFE_RELEASE( m_pVertexLayout ); // 정정레이아웃 소멸
-	SAFE_RELEASE( m_pVertexBuffer ); // 정점버퍼 소멸	
-	SAFE_RELEASE( m_pVS );         // 정점쉐이더 소멸
-	SAFE_RELEASE( m_pPS );         // 픽쉘쉐이더 소멸 
+	SAFE_DEL(m_pCar[0]);
+
+	SAFE_DEL(m_pCamera);
+	SAFE_DEL(m_pMainCamera);
 	return true;
 }
+bool Sample::DrawDebug()
+{
+
+	return GBASISLib_0::DrawDebug();
+}
+HRESULT Sample::ScreenViewPort(UINT iWidth, UINT iHeight)
+{
+	HRESULT hr = S_OK;
+
+	return hr;
+}
+
 Sample::Sample(void)
 {
-	m_pVertexLayout		= NULL;
-	m_pVertexBuffer		= NULL;
-	m_pVS				= NULL;
-	m_pPS				= NULL;	
-	m_pRasterizerStateNoCull = NULL;
-	m_bWireFrameRender	= false;
-	m_iPrimitiveType	= 4;//D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;	
+	m_pCar[SEDAN] = new GCar(SEDAN);
+
+	// 추가
+	m_fCameraYaw = 0.0f;
+	m_fCameraPitch = 0.0f;
+	m_fCameraRoll = 0.0f;
+	m_fRadius = 0.0f;
+
+	SAFE_ZERO(m_pCamera);
+	SAFE_ZERO(m_pMainCamera);
 }
 
 Sample::~Sample(void)
 {
-}
 
-GBASIS_RUN(L"Gurid");
+}
+GBASIS_RUN(L"Gurid Test Sample");

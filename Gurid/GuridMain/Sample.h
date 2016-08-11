@@ -1,70 +1,202 @@
 #pragma once
 #include "GBasisLib_0.h"
+#include "GShape.h"
+#include "GBackViewCamera.h"
+
+
 
 //--------------------------------------------------------------------------------------
-// Structures
+// CameraViewStyle
 //--------------------------------------------------------------------------------------
-struct P3VERTEX
+T_STR CameraViewStyle[] =
 {
-    float x;
-	float y;
-	float z;
+	_T("Top g_matView"),
+	_T("Front g_matView"),
+	_T("Side g_matView"),
+	_T("User g_matView"),
 };
+
+#define G_MACRO_TIRES 4
+
+enum cartypes {
+	SEDAN = 0,	//세단
+	TRUCK = 1,	//트럭
+	JEEP = 2	//지프
+};
+
+class GCar {
+public:
+	enum tirepos {
+		FL = 0, //앞 왼쪽
+		FR = 1, //앞 오른쪽
+		RL = 2, //뒤 왼쪽
+		RR = 3  //뒤 오른쪽
+	};
+
+	float m_fHeight;			// 차 전체 높이 조정
+	float m_fBodyXScale;		// 차 몸체 X Scale.
+	float m_fBodyZScale;		// 차 몸체 Z Scale
+	float m_fHeadXScale;		// 차 머리 X Scale
+	float m_fHeadZScale;		// 차 머리 Z Scale
+	D3DXVECTOR3 m_vTirePos[G_MACRO_TIRES];	// 타이어 위치
+
+	D3DXMATRIX	m_matWorld_body;
+	D3DXMATRIX	m_matWorld_head;
+	D3DXMATRIX  m_matWorld_tire[G_MACRO_TIRES];
+
+	GBoxShape					m_pBody;			//차 바디
+	GBoxShape					m_pHead;			//차 헤드
+	GCylinder					m_pTire[4];
+
+	virtual bool init(ID3D11Device* pDevice);
+	virtual bool frame(D3DXMATRIX matWorld, float fTime);
+	virtual bool render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera);
+	virtual bool release();
+	GCar(cartypes type) {
+
+		if (type == SEDAN) {
+			m_fHeight = 0.5f;			// 차 전체 높이 조정
+			m_fBodyXScale = 3.0f;		// 차 몸체 X Scale.
+			m_fBodyZScale = 5.0f;		// 차 몸체 Z Scale
+			m_fHeadXScale = 3.0f;		// 차 머리 X Scale
+			m_fHeadZScale = 3.0f;		// 차 머리 Z Scale
+
+			m_vTirePos[FL] = D3DXVECTOR3(-2.0f, -2.0f, 3.0f);
+			m_vTirePos[FR] = D3DXVECTOR3(2.0f, -2.0f, 3.0f);
+			m_vTirePos[RL] = D3DXVECTOR3(-2.0f, -2.0f, -3.0f);
+			m_vTirePos[RR] = D3DXVECTOR3(2.0f, -2.0f, -3.0f);
+		}
+	};
+	GCar() {};
+	~GCar() {};
+};
+
+bool GCar::init(ID3D11Device* pDevice) {
+
+	if (FAILED(m_pBody.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	{
+		MessageBox(0, _T("m_pBox 실패"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+	if (FAILED(m_pHead.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	{
+		MessageBox(0, _T("m_pBox2 실패"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+
+
+	for (int i = 0; i < G_MACRO_TIRES; i++) {
+		if (FAILED(m_pTire[i].Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/tire21.jpg")))
+		{
+			MessageBox(0, _T("m_pTire1 실패"), _T("Fatal error"), MB_OK);
+			return 0;
+		}
+	}
+
+	return true;
+}
+bool GCar::frame(D3DXMATRIX matWorld, float fTime) {
+
+	D3DXMATRIX temp_s, temp_r, temp_t, temp_r_y, temp_r_z;
+	D3DXMatrixIdentity(&temp_s);
+	D3DXMatrixIdentity(&temp_r);
+	D3DXMatrixIdentity(&temp_t);
+
+	matWorld._42 -= m_fHeight;//-0.5f;				// 차 전체 높이 조정
+	m_matWorld_body = matWorld;
+	m_matWorld_body._11 *= m_fBodyXScale;//3.0f;		// 차 몸체 X Scale.
+	m_matWorld_body._33 *= m_fBodyZScale;// 5.0f;		// 차 몸체 Z Scale
+
+
+	m_matWorld_head = matWorld;
+	m_matWorld_head._11 *= m_fHeadXScale;// 3.0f;		// 차 머리 X Scale
+	m_matWorld_head._33 *= m_fHeadZScale;// 3.0f;		// 차 머리 Z Scale
+
+
+	static float rot = 0.0f;
+	rot += 100.0f*fTime;// m_Timer.GetSPF();
+
+	D3DXMatrixScaling(&temp_s, 3.0f, 0.5f, 3.0f);
+	//D3DXMatrixRotationZ(&temp_r, D3DXToRadian(90.0f));
+
+	D3DXMatrixRotationY(&temp_r_y, D3DXToRadian(-rot));
+	D3DXMatrixRotationZ(&temp_r_z, D3DXToRadian(90.0f));
+
+	for (int i = 0; i < G_MACRO_TIRES; i++) {
+		D3DXMatrixTranslation(&temp_t, m_vTirePos[i].x, m_vTirePos[i].y, m_vTirePos[i].z);
+		m_matWorld_tire[i] = temp_s*temp_r_y*temp_r_z*temp_t*matWorld;
+	}
+
+	return true;
+}
+bool GCar::render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera) {
+
+	m_pBody.SetMatrix(&m_matWorld_body, &pMainCamera->m_matView, &pMainCamera->m_matProj);
+	m_pBody.Render(pImmediateContext);
+
+	//matWorld2._41 = ;
+	m_matWorld_head._42 += 2.0f;
+	//matWorld2._43 += 30.0f;
+
+	m_pHead.SetMatrix(&m_matWorld_head, &pMainCamera->m_matView, &pMainCamera->m_matProj);
+	m_pHead.Render(pImmediateContext);
+
+
+	for (int i = 0; i < G_MACRO_TIRES; i++) {
+		m_pTire[i].SetMatrix(&m_matWorld_tire[i], &pMainCamera->m_matView, &pMainCamera->m_matProj);
+		m_pTire[i].Render(pImmediateContext);
+	}
+
+	return true;
+}
+bool GCar::release() {
+	return true;
+}
+
 
 class Sample : public GBASISLib_0
 {
 public:
-	//--------------------------------------------------------------------------------------
-	// 버텍스 버퍼 및 레이아웃
-	//--------------------------------------------------------------------------------------
-	ID3D11InputLayout*		m_pVertexLayout;
-	ID3D11Buffer*           m_pVertexBuffer;
-	//--------------------------------------------------------------------------------------
-	// 버텍스 및 픽셀 쉐이더
-	//--------------------------------------------------------------------------------------
-	ID3D11VertexShader*     m_pVS;
-	ID3D11PixelShader*      m_pPS;
+	GCar*						m_pCar[3];// 0: 승용차, 1 : 트럭, 2 : 지프차
 
+	GPlaneShape					m_pPlane;
+	GDirectionLineShape			m_pDirectionLine;
+	GCamera*					m_pCamera;
+	GBackViewCamera*			m_pMainCamera;
 	//--------------------------------------------------------------------------------------
-	// 디버그용으로 사용하는 상태 변수
+	// Matrix
 	//--------------------------------------------------------------------------------------
-	bool					m_bWireFrameRender;
-	int						m_iPrimitiveType;
-	
+	D3DXMATRIX					m_matWorld;
+	D3DXMATRIX					m_World[2];
+	D3DXMATRIX					m_matWorldPlaneBase;
 	//--------------------------------------------------------------------------------------
-	// 버텍스 및 픽셀 쉐이더
+	// 뷰포트 설정
+	//--------------------------------------------------------------------------------------	
+	GDxRT						m_ViewPort;
+	HRESULT						ScreenViewPort(UINT iWidth, UINT iHeight);
 	//--------------------------------------------------------------------------------------
-	ID3D11RasterizerState*      m_pRasterizerStateNoCull;
-
+	// 카메라 
+	//--------------------------------------------------------------------------------------	
+	//UINT						m_iCameraType;
+	//--------------------------------------------------------------------------------------
+	// 카메라 회전 정보
+	//--------------------------------------------------------------------------------------
+	float						m_fCameraYaw;
+	float						m_fCameraPitch;
+	float						m_fCameraRoll;
+	float						m_fRadius;
 public:
-	//--------------------------------------------------------------------------------------
-	// 삼각형 생성 및 초기화
-	//--------------------------------------------------------------------------------------
-	HRESULT		CreateTrangle( D3D_PRIMITIVE_TOPOLOGY iTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
 	bool		Init();
+	bool		Frame();
 	bool		Render();
 	bool		Release();
-
+	bool		DrawDebug();
+	int			WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	//--------------------------------------------------------------------------------------
-	// 정점 및 픽쉐 쉐이덩 로딩 및 생성
+	// 변경된 클라이언트 영역를 재설정을 위한 소멸 및 생성
 	//--------------------------------------------------------------------------------------
-	HRESULT		LoadShaderAndInputLayout();
-
-	//--------------------------------------------------------------------------------------
-	// 정점 버퍼 생성
-	//--------------------------------------------------------------------------------------
-	HRESULT		CreateVertexBuffer();
-
-	//--------------------------------------------------------------------------------------
-	// 레스터라이저 상태값 지정
-	//--------------------------------------------------------------------------------------
-	HRESULT		SetRasterizerState( D3D11_FILL_MODE d3dFillMode = D3D11_FILL_SOLID );
-
-	//--------------------------------------------------------------------------------------
-	// WndProc : Sample 클래스 멤버함수
-	//--------------------------------------------------------------------------------------
-	int             WndProc( HWND, UINT, WPARAM, LPARAM );
+	HRESULT		CreateResource();
+	HRESULT		DeleteResource();
 public:
 	Sample(void);
 	~Sample(void);
