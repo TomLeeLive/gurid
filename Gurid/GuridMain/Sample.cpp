@@ -67,25 +67,22 @@ bool Sample::Init()
 	m_pMainCamera->SetProjMatrix(D3DX_PI / 4, fAspectRatio, 0.1f, 500.0f);
 	m_pMainCamera->SetWindow(m_iWindowWidth, m_iWindowHeight);
 
-	m_pCar[SEDAN]->init(GetDevice());
+	for (int i = 0; i < CARTYPE_LAST; i++){
+		m_pCar[i]->init(GetDevice());
+	}
 
 	return true;
 }
 bool Sample::Frame()
 {
-
-
 	//--------------------------------------------------------------------------------------
 	// 엔진에 있는 뷰 및 투영 행렬 갱신
 	//--------------------------------------------------------------------------------------
 	m_pMainCamera->Update(m_Timer.GetSPF());
 
-
-
-	m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));	
-
-
-	m_pCar[SEDAN]->frame(m_matWorld, m_Timer.GetSPF());
+	m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
+	
+	m_pCar[TANK]->frame(m_matWorld , m_Timer.GetSPF(), m_pMainCamera);
 
 	return true;
 }
@@ -93,7 +90,7 @@ bool Sample::Render()
 {
 	HRESULT hr;
 
-	m_pCar[SEDAN]->render(m_pImmediateContext, m_pMainCamera);
+	m_pCar[TANK]->render(m_pImmediateContext, m_pMainCamera);
 
 	m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_pPlane.Render(m_pImmediateContext);
@@ -135,7 +132,9 @@ HRESULT Sample::DeleteResource()
 }
 bool Sample::Release()
 {
-	SAFE_DEL(m_pCar[0]);
+	for (int i = 0; i < CARTYPE_LAST; i++) {
+		SAFE_DEL(m_pCar[i]);
+	}
 
 	SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
@@ -155,7 +154,12 @@ HRESULT Sample::ScreenViewPort(UINT iWidth, UINT iHeight)
 
 Sample::Sample(void)
 {
+
 	m_pCar[SEDAN] = new GCar(SEDAN);
+	m_pCar[TANK] = new GCar(TANK);
+	m_pCar[TRUCK] = new GCar(TRUCK);
+	m_pCar[JEEP] = new GCar(JEEP);
+
 
 	// 추가
 	m_fCameraYaw = 0.0f;

@@ -5,14 +5,14 @@
 
 int GCamera::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-    if( ( (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK ) && m_nRotateModelButtonMask & MOUSE_LEFT_BUTTON) ||
-        ( (uMsg == WM_MBUTTONDOWN || uMsg == WM_MBUTTONDBLCLK ) && m_nRotateModelButtonMask & MOUSE_MIDDLE_BUTTON) ||
-        ( (uMsg == WM_RBUTTONDOWN || uMsg == WM_RBUTTONDBLCLK ) && m_nRotateModelButtonMask & MOUSE_RIGHT_BUTTON) )
-    {
-        int iMouseX = (short)LOWORD(lParam);
-        int iMouseY = (short)HIWORD(lParam);
-        m_WorldArcBall.OnBegin( iMouseX, iMouseY );
-    }
+    //if( ( (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK ) && m_nRotateModelButtonMask & MOUSE_LEFT_BUTTON) ||
+    //    ( (uMsg == WM_MBUTTONDOWN || uMsg == WM_MBUTTONDBLCLK ) && m_nRotateModelButtonMask & MOUSE_MIDDLE_BUTTON) ||
+    //    ( (uMsg == WM_RBUTTONDOWN || uMsg == WM_RBUTTONDBLCLK ) && m_nRotateModelButtonMask & MOUSE_RIGHT_BUTTON) )
+    //{
+    //    int iMouseX = (short)LOWORD(lParam);
+    //    int iMouseY = (short)HIWORD(lParam);
+    //    m_WorldArcBall.OnBegin( iMouseX, iMouseY );
+    //}
 
     if( ( (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK ) && m_nRotateCameraButtonMask & MOUSE_LEFT_BUTTON) ||
         ( (uMsg == WM_MBUTTONDOWN || uMsg == WM_MBUTTONDBLCLK ) && m_nRotateCameraButtonMask & MOUSE_MIDDLE_BUTTON) ||
@@ -31,12 +31,12 @@ int GCamera::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
         m_ViewArcBall.OnMove( iMouseX, iMouseY );
     }
 
-    if( (uMsg == WM_LBUTTONUP && m_nRotateModelButtonMask & MOUSE_LEFT_BUTTON) ||
-        (uMsg == WM_MBUTTONUP && m_nRotateModelButtonMask & MOUSE_MIDDLE_BUTTON) ||
-        (uMsg == WM_RBUTTONUP && m_nRotateModelButtonMask & MOUSE_RIGHT_BUTTON) )
-    {
-        m_WorldArcBall.OnEnd();
-    }
+    //if( (uMsg == WM_LBUTTONUP && m_nRotateModelButtonMask & MOUSE_LEFT_BUTTON) ||
+    //    (uMsg == WM_MBUTTONUP && m_nRotateModelButtonMask & MOUSE_MIDDLE_BUTTON) ||
+    //    (uMsg == WM_RBUTTONUP && m_nRotateModelButtonMask & MOUSE_RIGHT_BUTTON) )
+    //{
+    //    m_WorldArcBall.OnEnd();
+    //}
 
     if( (uMsg == WM_LBUTTONUP && m_nRotateCameraButtonMask & MOUSE_LEFT_BUTTON) ||
         (uMsg == WM_MBUTTONUP && m_nRotateCameraButtonMask & MOUSE_MIDDLE_BUTTON) ||
@@ -256,9 +256,9 @@ GCamera::GCamera()
     D3DXMatrixIdentity( &m_mModelLastRot );    
     D3DXMatrixIdentity( &m_mCameraRotLast );    
 
-	m_nRotateModelButtonMask  = MOUSE_LEFT_BUTTON;
+	m_nRotateModelButtonMask  = MOUSE_RIGHT_BUTTON;
     m_nZoomButtonMask         = MOUSE_WHEEL;
-    m_nRotateCameraButtonMask = MOUSE_RIGHT_BUTTON;
+    m_nRotateCameraButtonMask = MOUSE_LEFT_BUTTON;
 
 
 	D3DXMatrixIdentity( &m_matWorld );

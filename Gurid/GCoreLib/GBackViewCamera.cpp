@@ -173,9 +173,9 @@ GBackViewCamera::GBackViewCamera()
 	SetOffsetDistance(0.0f, 5.0f, 15.0f);
 
 	m_vModelCenter			= D3DXVECTOR3(0,0,0);
-	m_nRotateModelButtonMask  = MOUSE_LEFT_BUTTON;
+	m_nRotateModelButtonMask  = MOUSE_RIGHT_BUTTON;
     m_nZoomButtonMask         = MOUSE_WHEEL;
-    m_nRotateCameraButtonMask = MOUSE_RIGHT_BUTTON;
+    m_nRotateCameraButtonMask = MOUSE_LEFT_BUTTON;
 }
 GBackViewCamera::~GBackViewCamera()
 {	
