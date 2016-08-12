@@ -28,4 +28,7 @@
     <None Include="HLSLwithoutFX.psh" />
     <None Include="HLSLwithoutFX.vsh" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="SkyBox.hlsl" />
+  </ItemGroup>
 </Project>

@@ -67,6 +67,16 @@ bool Sample::Init()
 	m_pMainCamera->SetProjMatrix(D3DX_PI / 4, fAspectRatio, 0.1f, 500.0f);
 	m_pMainCamera->SetWindow(m_iWindowWidth, m_iWindowHeight);
 
+
+	m_pSkyBoxObj = make_shared<GSkyBox>();
+	if (m_pSkyBoxObj->Create(GetDevice(), L"SkyBox.hlsl") == false)
+	{
+		MessageBox(0, _T("m_pDirectionLIne ½ÇÆÐ"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+
+	m_pSkyBoxObj->CreateTextureArray(GetDevice(), GetContext());
+
 	for (int i = 0; i < CARTYPE_LAST; i++){
 		m_pCar[i]->init(GetDevice());
 	}
@@ -89,6 +99,9 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 	HRESULT hr;
+
+	m_pSkyBoxObj->SetMatrix(0, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
+	m_pSkyBoxObj->Render(m_pImmediateContext, m_pMainCamera);
 
 	m_pCar[TANK]->render(m_pImmediateContext, m_pMainCamera);
 
