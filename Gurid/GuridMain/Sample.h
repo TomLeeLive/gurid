@@ -19,8 +19,8 @@ T_STR CameraViewStyle[] =
 	_T("User g_matView"),
 };
 
-#define G_MACRO_TIRES 4
-#define G_MACRO_TANK_TIRES 8
+#define G_MACRO_TIRES 6
+#define G_MACRO_TANK_TIRES 6
 
 enum cartypes {
 	SEDAN = 0,	//세단
@@ -33,10 +33,13 @@ enum cartypes {
 class GCar {
 public:
 	enum tirepos {
-		FL = 0, //앞 왼쪽
-		FR = 1, //앞 오른쪽
-		RL = 2, //뒤 왼쪽
-		RR = 3  //뒤 오른쪽
+		L1 = 0, //앞 왼쪽
+		L2 = 1, //앞 오른쪽
+		L3 = 2, //뒤 왼쪽
+		R1 = 3, //앞 왼쪽
+		R2 = 4, //앞 오른쪽
+		R3 = 5, //뒤 왼쪽
+
 	};
 
 	D3DXMATRIX m_matRotation;	// 차의 방향(회전)
@@ -59,7 +62,7 @@ public:
 
 	GBoxShape					m_pBody;			//차 바디
 	GBoxShape					m_pHead;			//차 헤드
-	GCylinder					m_pTire[4];
+	GCylinder					m_pTire[G_MACRO_TIRES];
 	GCylinder					m_pCannon;			//탱크 주포
 
 	virtual bool init(ID3D11Device* pDevice);
@@ -101,10 +104,12 @@ public:
 			m_fHeadXScale = 2.5f;		// 차 머리 X Scale
 			m_fHeadZScale = 2.5f;		// 차 머리 Z Scale
 
-			m_vTirePos[FL] = D3DXVECTOR3(-2.0f, -2.0f, 3.0f);
-			m_vTirePos[FR] = D3DXVECTOR3(2.0f, -2.0f, 3.0f);
-			m_vTirePos[RL] = D3DXVECTOR3(-2.0f, -2.0f, -3.0f);
-			m_vTirePos[RR] = D3DXVECTOR3(2.0f, -2.0f, -3.0f);
+			m_vTirePos[L1] = D3DXVECTOR3(-2.0f, -2.0f, 3.0f);
+			m_vTirePos[L2] = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
+			m_vTirePos[L3] = D3DXVECTOR3(-2.0f, -2.0f, -3.0f);
+			m_vTirePos[R1] = D3DXVECTOR3(2.0f, -2.0f, 3.0f);
+			m_vTirePos[R2] = D3DXVECTOR3(2.0f, -2.0f, 0.0f);
+			m_vTirePos[R3] = D3DXVECTOR3(2.0f, -2.0f, -3.0f);
 			m_vTireScale = D3DXVECTOR3(3.0f, 0.5f, 3.0f);
 
 			m_vCannonScale = D3DXVECTOR3(1.0f, 3.0f, 1.0f);
@@ -118,10 +123,12 @@ public:
 			m_fHeadXScale = 3.0f;		// 차 머리 X Scale
 			m_fHeadZScale = 3.0f;		// 차 머리 Z Scale
 
-			m_vTirePos[FL] = D3DXVECTOR3(-2.0f, -2.0f, 3.0f);
-			m_vTirePos[FR] = D3DXVECTOR3(2.0f, -2.0f, 3.0f);
-			m_vTirePos[RL] = D3DXVECTOR3(-2.0f, -2.0f, -3.0f);
-			m_vTirePos[RR] = D3DXVECTOR3(2.0f, -2.0f, -3.0f);
+			m_vTirePos[L1] = D3DXVECTOR3(-2.0f, -2.0f, 3.0f);
+			m_vTirePos[L2] = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
+			m_vTirePos[L3] = D3DXVECTOR3(-2.0f, -2.0f, -3.0f);
+			m_vTirePos[R1] = D3DXVECTOR3(2.0f, -2.0f, 3.0f);
+			m_vTirePos[R2] = D3DXVECTOR3(2.0f, -2.0f, 0.0f);
+			m_vTirePos[R3] = D3DXVECTOR3(2.0f, -2.0f, -3.0f);
 			m_vTireScale = D3DXVECTOR3(3.0f, 0.5f, 3.0f);
 		}
 	};
@@ -131,20 +138,19 @@ public:
 
 bool GCar::init(ID3D11Device* pDevice) {
 
-	if (FAILED(m_pBody.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	if (FAILED(m_pBody.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/bodybyHand.png")))
 	{
-		MessageBox(0, _T("m_pBox 실패"), _T("Fatal error"), MB_OK);
+		MessageBox(0, _T("m_pBody 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
-	if (FAILED(m_pHead.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	if (FAILED(m_pHead.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/bodybyHand.png")))
 	{
-		MessageBox(0, _T("m_pBox2 실패"), _T("Fatal error"), MB_OK);
+		MessageBox(0, _T("m_pHead 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
-
 
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
-		if (FAILED(m_pTire[i].Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+		if (FAILED(m_pTire[i].Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/tirebyHand.png")))
 		{
 			MessageBox(0, _T("m_pTire1 실패"), _T("Fatal error"), MB_OK);
 			return 0;
