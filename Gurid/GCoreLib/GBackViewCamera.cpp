@@ -30,8 +30,8 @@ D3DXMATRIX GBackViewCamera::Update( float fElapseTime )
 	if( g_InputData.bSKey )		MoveLook(-fElapseTime * 2.0f);
 	if( g_InputData.bDKey )		MoveSide( fElapseTime * 2.0f);
 	if( g_InputData.bAKey )		MoveSide(-fElapseTime * 2.0f);
-	if( g_InputData.bQKey )		MoveUp(   fElapseTime * 2.0f);
-	if( g_InputData.bEKey )		MoveUp(  -fElapseTime * 2.0f);
+	//if( g_InputData.bQKey )		MoveUp(   fElapseTime * 2.0f);
+	//if( g_InputData.bEKey )		MoveUp(  -fElapseTime * 2.0f);
 
    // Change the radius from the camera to the model based on wheel scrolling
     if( m_nMouseWheelDelta && m_nZoomButtonMask == MOUSE_WHEEL )
