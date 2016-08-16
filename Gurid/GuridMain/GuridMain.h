@@ -1,11 +1,14 @@
 #pragma once
 #include "GMap.h"
 
+#define BOX_CNT 3
 
-
-
-
-
+struct G_RAY
+{
+	float			fExtent;
+	D3DXVECTOR3		vOrigin;
+	D3DXVECTOR3		vDirection;
+};
 
 class GuridMain : public GBASISLib_0
 {
@@ -41,7 +44,21 @@ public:
 	float						m_fCameraPitch;
 	float						m_fCameraRoll;
 	float						m_fRadius;
+	//OBB
 public:
+	G_RAY		m_Ray;
+	G_BOX		m_Box[3];
+	GBoxShape	m_Geom[3];
+	GShape*		m_pLine;
+//	D3DXMATRIX	m_matWorld;
+	D3DXVECTOR3 m_vIntersection;
+	D3DXVECTOR3 m_vDxR;
+
+public:
+	//OBB
+	bool ChkOBBToRay(G_RAY* pRay, G_BOX* pBox);
+	bool IntersectBox(G_RAY* pRay, G_BOX* pBox);
+	//Default
 	bool		Init();
 	bool		Frame();
 	bool		Render();
