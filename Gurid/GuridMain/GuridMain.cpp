@@ -210,14 +210,31 @@ bool GuridMain::Frame()
 
 	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD)
 	{
-		m_vecShell.push_back(new GShell(m_pCar[TANK]->m_vHeadLook));
+		m_vecShell.push_back(new GShell(m_pCar[TANK]->m_vHeadLook, m_pCar[TANK]->m_matWorld_cannon));
 	}
+
+	
 
 	vector<GShell*>::iterator _F = m_vecShell.begin();
 	vector<GShell*>::iterator _L = m_vecShell.end();
 	for (; _F != _L; ++_F)
 	{
-		(*_F)->SetMatrix(&m_pMainCamera->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//(*_F)->m_matWorld = m_pMainCamera->m_matWorld;
+		D3DXVECTOR3 temp = (*_F)->m_vPos;//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
+		temp = temp + (*_F)->m_fSpeed*m_Timer.GetSPF()*((*_F)->m_vLook);
+		(*_F)->m_vPos = temp;
+
+		D3DXMATRIX temp_mat;
+		
+		D3DXMatrixIdentity(&temp_mat);
+
+		temp_mat *= (*_F)->m_mat_s;
+		temp_mat *= (*_F)->m_mat_r_x;
+		temp_mat *= m_pCar[TANK]->m_matHeadRotation;
+		temp_mat._41 = (*_F)->m_vPos.x; temp_mat._42 = (*_F)->m_vPos.y; temp_mat._43 = (*_F)->m_vPos.z;
+
+
+		(*_F)->SetMatrix(&temp_mat, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
 	}
 	

@@ -2,7 +2,12 @@
 class GShell : public GCylinder
 {
 public:
-	D3DVECTOR m_vLook;
+	float m_fSpeed;//Æ÷Åº ½ºÇÇµå
+	D3DXVECTOR3 m_vLook; //Look
+	D3DXVECTOR3 m_vPos;  //Position
+
+	D3DXMATRIX m_mat_s, m_mat_r_x;
+	D3DXVECTOR3 m_vCannonScale;
 
 	bool Create() {
 
@@ -14,7 +19,21 @@ public:
 	}
 
 	GShell();
-	GShell(D3DVECTOR vLook) {
+	//GShell(D3DXVECTOR3 vLook) {
+	//	D3DXMatrixScaling(&m_mat_s, 1.0f, 3.0f, 1.0f);
+	//	D3DXMatrixRotationX(&m_mat_r_x, D3DXToRadian(90.0f));
+	//	m_fSpeed = 50.0f;
+	//	m_vLook = vLook;
+	//	Create();
+	//}
+	GShell(D3DVECTOR vLook, D3DXMATRIX matWorld) {
+		//m_matWorld = matWorld;
+		m_vPos.x = matWorld._41; m_vPos.y = matWorld._42; m_vPos.z = matWorld._43;
+		D3DXMatrixIdentity(&m_mat_s);
+		D3DXMatrixIdentity(&m_mat_r_x);
+		D3DXMatrixScaling(&m_mat_s, 1.0f, 1.0f, 1.0f);
+		D3DXMatrixRotationX(&m_mat_r_x, D3DXToRadian(90.0f));
+		m_fSpeed = 50.0f;
 		m_vLook = vLook;
 		Create();
 	}
