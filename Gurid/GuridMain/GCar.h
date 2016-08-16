@@ -23,9 +23,20 @@ public:
 
 	};
 
-	D3DXMATRIX m_matRotation;	// 차의 방향(회전)
+	D3DXMATRIX	m_matRotation;	// 차의 방향(회전)
+	//D3DXVECTOR3 m_vRight;		// 차의 방향(Right)
+	//D3DXVECTOR3 m_vUp;			// 차의 방향(Up)
+	D3DXVECTOR3 m_vLook;		// 차의 방향(look)
+
+	D3DXMATRIX	m_matHeadRotation;	// 머리의 방향(회전)
+	//D3DXVECTOR3 m_vHeadRight;		// 차의 방향(Right)
+	//D3DXVECTOR3 m_vHeadUp;			// 차의 방향(Up)
+	D3DXVECTOR3 m_vHeadLook;		// 차의 방향(look)
+
+
 	UINT  m_cartype;			//차 타입
 	float m_fHeight;			// 차 전체 높이 조정
+	float m_fHeadHeight;			// 차 머리 높이 조정
 	float m_fBodyXScale;		// 차 몸체 X Scale.
 	float m_fBodyZScale;		// 차 몸체 Z Scale
 	float m_fHeadXScale;		// 차 머리 X Scale
@@ -47,7 +58,7 @@ public:
 	GCylinder					m_pCannon;			//탱크 주포
 
 	virtual bool init(ID3D11Device* pDevice);
-	virtual bool frame(D3DXMATRIX matWorld, float fTime, GBackViewCamera* mainCamera);
+	virtual bool frame( float fTime, GGuridCamera* mainCamera);
 	virtual bool render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera);
 	virtual bool release();
 
@@ -76,10 +87,26 @@ public:
 
 	GCar(cartypes type) {
 
-		D3DXMatrixIdentity(&m_matRotation);
+		
 		if (type == TANK) {
+
+			D3DXMatrixIdentity(&m_matRotation);
+			m_vLook = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+			m_matRotation._13 = m_vLook.x; m_matRotation._23 = m_vLook.y; m_matRotation._33 = m_vLook.z;
+			//m_vRight = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+			//m_vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			//m_matRotation._11 = m_vRight.x; m_matRotation._12 = m_vUp.x;
+			//m_matRotation._21 = m_vRight.y; m_matRotation._22 = m_vUp.y;
+			//m_matRotation._31 = m_vRight.z; m_matRotation._32 = m_vUp.z;
+			
+			D3DXMatrixIdentity(&m_matHeadRotation);
+			m_vHeadLook = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+
+
+
 			m_cartype = TANK;
-			m_fHeight = 0.5f;			// 차 전체 높이 조정
+			m_fHeight = 3.5f;			// 차 전체 높이 조정
+			m_fHeadHeight = 5.5f;
 			m_fBodyXScale = 3.0f;		// 차 몸체 X Scale.
 			m_fBodyZScale = 5.0f;		// 차 몸체 Z Scale
 			m_fHeadXScale = 2.5f;		// 차 머리 X Scale

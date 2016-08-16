@@ -91,11 +91,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GGuridCamera.cpp" />
     <ClCompile Include="GCar.cpp" />
     <ClCompile Include="GSkyBox.cpp" />
     <ClCompile Include="GuridMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GGuridCamera.h" />
     <ClInclude Include="GCar.h" />
     <ClInclude Include="GSkyBox.h" />
     <ClInclude Include="GuridMain.h" />

@@ -49,26 +49,27 @@ bool GuridMain::Init()
 	D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
 	D3DXVECTOR3 vCameraPosition = D3DXVECTOR3(0.0f, 1.0f, -0.1f);
 
-	SAFE_NEW(m_pCamera, GCamera);
+	//SAFE_NEW(m_pCamera, GCamera);
+	// 메인 카메라 뷰 행렬 세팅
+	SAFE_NEW(m_pMainCamera, GGuridCamera);
 	vCameraPosition = D3DXVECTOR3(0.0f, 1.0f, -1.0f);
-	m_pCamera->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
+	m_pMainCamera->SetViewMatrix(vCameraPosition, vTargetPosition, vUpVector);
 
 	// 뷰포트에 들어 맞게 카메라 조정.
-	m_pCamera->SetObjectView(D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
+	m_pMainCamera->SetObjectView(D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(-2.0f, -2.0f, -2.0f));
 
 	// 투영행렬 세팅
-	m_pCamera->SetProjMatrix(D3DX_PI * 0.25f,
+	m_pMainCamera->SetProjMatrix(D3DX_PI * 0.25f,
 		(float)m_ViewPort.m_vp.Width / (float)m_ViewPort.m_vp.Height,
 		1.0f,
 		100.0f);
 
 
-	// 메인 카메라 뷰 행렬 세팅
-	SAFE_NEW(m_pMainCamera, GBackViewCamera);
+
 	//m_pMainCamera->SetModelCenter( D3DXVECTOR3( 1.0f, -1.0f, -1.0f ) );
 	m_pMainCamera->SetModelCenter(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	m_pMainCamera->SetViewMatrix(*m_pCamera->GetEyePt(), *m_pCamera->GetLookAtPt(), D3DXVECTOR3(0.0f, 1.0f, 0.0f));
-	m_pMainCamera->m_vCameraDestination = *m_pCamera->GetEyePt();
+	m_pMainCamera->SetViewMatrix(*m_pMainCamera->GetEyePt(), *m_pMainCamera->GetLookAtPt(), D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	m_pMainCamera->m_vCameraDestination = *m_pMainCamera->GetEyePt();
 
 	// Setup the camera's projection parameters
 	float fAspectRatio = m_iWindowWidth / (FLOAT)m_iWindowHeight;
@@ -103,11 +104,11 @@ bool GuridMain::Frame()
 	//--------------------------------------------------------------------------------------
 	// 엔진에 있는 뷰 및 투영 행렬 갱신
 	//--------------------------------------------------------------------------------------
-	m_pMainCamera->Update(m_Timer.GetSPF());
 
-	m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
+	//m_pMainCamera->Update(m_Timer.GetSPF());
+	//m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
 	
-	m_pCar[TANK]->frame(m_matWorld , m_Timer.GetSPF(), m_pMainCamera);
+	m_pCar[TANK]->frame( m_Timer.GetSPF(), m_pMainCamera);
 
 	m_CustomMap.Frame();
 	return true;
@@ -167,7 +168,7 @@ bool GuridMain::Release()
 		SAFE_DEL(m_pCar[i]);
 	}
 	m_CustomMap.Release();
-	SAFE_DEL(m_pCamera);
+	//SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
 	return true;
 }
@@ -198,7 +199,7 @@ GuridMain::GuridMain(void)
 	m_fCameraRoll = 0.0f;
 	m_fRadius = 0.0f;
 
-	SAFE_ZERO(m_pCamera);
+	//SAFE_ZERO(m_pCamera);
 	SAFE_ZERO(m_pMainCamera);
 }
 
