@@ -88,7 +88,7 @@ float4 GetTextureColor(uint index, float2 uv)
 float4 PS_TextureIndex(PS_INPUT vIn) : SV_Target
 {
 	uint index = vIn.PrimitiveID / 2;
-	float4 fColor = float4(1, 1, 1, 1);
+	float4 fColor = float4(1, 1, 1, 1); 
 	fColor = GetTextureColor(index, vIn.t);
 	return fColor;
 }
@@ -97,13 +97,15 @@ float4 PS_TextureArray(PS_INPUT vIn) : SV_Target
 {
 	uint index = vIn.PrimitiveID / 2;
 	float4 fColor = float4(1, 1, 1, 1);
-	fColor = g_tx2dArray.Sample(g_samPointClamp, float3(vIn.t, index));
+	float4 fColor2 = float4(0.2, 1, 1, 0.1);
+	fColor = fColor2 * g_tx2dArray.Sample(g_samPointClamp, float3(vIn.t, index));
 	return fColor;
 }
 
 float4 PS_CubeTexture(PS_INPUT vIn) : SV_Target
 {
 	float4 fColor = float4(1, 1, 1, 1);
+	
 	fColor = g_txCubeMap.Sample(g_samPointClamp, vIn.r);
 	return fColor;
 }

@@ -170,6 +170,12 @@ public:
 	D3DXMATRIX					m_matView;
 	D3DXMATRIX					m_matProj;
 	vector<DWORD>				m_IndexList;
+	//--------------------------------------------------------------------------------------
+	// Collision Data
+	//--------------------------------------------------------------------------------------
+	G_BOX                       m_Box;
+	G_SPHERE                    m_Sphere;
+	G_PLANE                     m_Plane;
 public:
 	ID3D11Buffer*				GetVB();
 	ID3D11Buffer*				GetIB();

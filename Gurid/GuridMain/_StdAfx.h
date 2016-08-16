@@ -16,6 +16,7 @@
 #include "GSkyBox.h"
 #include "GCar.h"
 #include "GuridMain.h"
+#include "GShape.h"
 
 #endif
 
