@@ -1,5 +1,6 @@
 #include "GDxState.h"
-//extern ID3D11Device*    g_pd3dDevice;
+extern ID3D11Device*    g_pd3dDevice;
+extern ID3D11DeviceContext*    g_pImmediateContext;
 
 namespace DX
 {

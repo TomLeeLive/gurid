@@ -11,7 +11,8 @@ class GuridMain : public GBASISLib_0
 {
 public:
 	GMap			m_CustomMap;
-	GCar*						m_pCar[4];// 0: 승용차, 1 : 트럭, 2 : 지프차
+	GCar*						m_pCar[4];	// 0: 승용차, 1 : 트럭, 2 : 지프차
+	std::vector<GShell*>			m_vecShell;	// 포탄.
 	shared_ptr<GSkyBox >   		m_pSkyBoxObj;
 
 	GPlaneShape					m_pPlane;

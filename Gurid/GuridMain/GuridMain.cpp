@@ -111,6 +111,22 @@ bool GuridMain::Frame()
 	m_pCar[TANK]->frame( m_Timer.GetSPF(), m_pMainCamera);
 
 	m_CustomMap.Frame();
+	
+
+
+	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD)
+	{
+		m_vecShell.push_back(new GShell(m_pCar[TANK]->m_vHeadLook));
+	}
+
+	vector<GShell*>::iterator _F = m_vecShell.begin();
+	vector<GShell*>::iterator _L = m_vecShell.end();
+	for (; _F != _L; ++_F)
+	{
+		(*_F)->SetMatrix(&m_pMainCamera->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
+	}
+	
 	return true;
 }
 bool GuridMain::Render()
@@ -128,6 +144,16 @@ bool GuridMain::Render()
 	DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
 	m_CustomMap.SetMatrix(m_pMainCamera->GetWorldMatrix(), m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_CustomMap.Render(m_pImmediateContext);
+
+
+	vector<GShell*>::iterator _F = m_vecShell.begin();
+	vector<GShell*>::iterator _L = m_vecShell.end();
+	for (; _F != _L; ++_F)
+	{
+		(*_F)->Render(m_pImmediateContext);
+		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
+	}
+
 	return true;
 }
 
