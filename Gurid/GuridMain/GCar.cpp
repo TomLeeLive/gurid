@@ -30,14 +30,16 @@ bool GCar::init(ID3D11Device* pDevice) {
 
 	return true;
 }
-bool GCar::frame(D3DXMATRIX matWorld, float fTime, GBackViewCamera* mainCamera) {
+bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
+	D3DXMATRIX matWorld;
 
-	D3DXMATRIX temp_s, temp_t, temp_r_y, temp_r_z, temp_r_x, temp_r_head;
-	D3DXMatrixIdentity(&temp_s);
-	D3DXMatrixIdentity(&temp_t);
-	D3DXMatrixIdentity(&temp_r_x);
-	D3DXMatrixIdentity(&temp_r_y);
-	D3DXMatrixIdentity(&temp_r_z);
+	D3DXMATRIX mat_s, mat_t, mat_r_tire_right, mat_r_tire_left, mat_r_z, mat_r_x;
+	D3DXMatrixIdentity(&mat_s);
+	D3DXMatrixIdentity(&mat_t);
+	D3DXMatrixIdentity(&mat_r_x);
+	D3DXMatrixIdentity(&mat_r_tire_right);
+	D3DXMatrixIdentity(&mat_r_tire_left);
+	D3DXMatrixIdentity(&mat_r_z);
 
 	D3DXMatrixIdentity(&m_matWorld_body);
 	D3DXMatrixIdentity(&m_matWorld_head);
@@ -52,11 +54,11 @@ bool GCar::frame(D3DXMATRIX matWorld, float fTime, GBackViewCamera* mainCamera) 
 	//temp_rrr._31 = temp_rr._31; temp_rrr._33 = temp_rr._33;
 
 
-	matWorld._42 -= m_fHeight;//-0.5f;				// 차 전체 높이 조정
+
 
 
 	static float angle = 0.0f;//for 차량 회전 각도
-	static float rot = 0.0f, rot_head = 0.0f;// 바퀴 회전 각도
+	static float rot_right = 0.0f, rot_left = 0.0f, rot_head = 0.0f;// 바퀴 회전 각도
 
 	m_matWorld_body._11 *= m_fBodyXScale;		// 차 몸체 X Scale.
 	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
@@ -64,24 +66,35 @@ bool GCar::frame(D3DXMATRIX matWorld, float fTime, GBackViewCamera* mainCamera) 
 	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
 	{
 		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime));
+		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_D) == KEY_HOLD)
 	{
 		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime));
+		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_W) == KEY_HOLD)
 	{
-		rot += 100.0f*fTime;// m_Timer.GetSPF();
+		//m_matWorld_body._41 += m_vLook.x* 20.0f*fTime;
+		//m_matWorld_body._43 += m_vLook.z* 20.0f*fTime;;
+		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
 	}
 
 	else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
 	{
-		rot -= 100.0f*fTime;// m_Timer.GetSPF();
+		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
 	{
+		//mainCamera->m_vObjectVector[2].x;
+		//mainCamera->m_vObjectVector[2].y;
+		//mainCamera->m_vObjectVector[2].z;
+
 		rot_head += 100.0f*fTime;// m_Timer.GetSPF();
-								 //rot -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
 	{
@@ -89,37 +102,71 @@ bool GCar::frame(D3DXMATRIX matWorld, float fTime, GBackViewCamera* mainCamera) 
 		rot_head -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
 
+	m_vLook.x = m_matRotation._31;
+	m_vLook.y = m_matRotation._32;
+	m_vLook.z = m_matRotation._33;
+
+	mainCamera->m_vObjectVector[2] = m_vLook;
+
+
+	mainCamera->Update(fTime);						//카메라 업데이트
+	matWorld = *mainCamera->GetWorldMatrix();
+	matWorld._42 = m_fHeight;//-0.5f;				// 차 전체 높이 조정
+
+
 	m_matWorld_body *= m_matRotation;
 	m_matWorld_body *= matWorld;
 
+	
 
-	D3DXMatrixRotationY(&temp_r_head, D3DXToRadian(-rot_head));
+
+	D3DXMatrixRotationY(&m_matHeadRotation, D3DXToRadian(-rot_head));
+
+	m_matHeadRotation *= m_matRotation;
+
+	m_vHeadLook.x = m_matHeadRotation._31;
+	m_vHeadLook.y = m_matHeadRotation._32;
+	m_vHeadLook.z = m_matHeadRotation._33;
+
 
 	m_matWorld_head._11 *= m_fHeadXScale;// 3.0f;		// 차 머리 X Scale
 	m_matWorld_head._33 *= m_fHeadZScale;// 3.0f;		// 차 머리 Z Scale
-	m_matWorld_head *= temp_r_head;
+	m_matWorld_head *= m_matHeadRotation;
 	m_matWorld_head *= matWorld;
 
+	//matWorld2._41 = ;
+	m_matWorld_head._42 = m_fHeadHeight;
+	//matWorld2._43 += 30.0f;
 
 
-
-	D3DXMatrixScaling(&temp_s, m_vTireScale.x, m_vTireScale.y, m_vTireScale.z);
+	D3DXMatrixScaling(&mat_s, m_vTireScale.x, m_vTireScale.y, m_vTireScale.z);
 	//D3DXMatrixRotationZ(&temp_r, D3DXToRadian(90.0f));
 
-	D3DXMatrixRotationY(&temp_r_y, D3DXToRadian(-rot));
-	D3DXMatrixRotationZ(&temp_r_z, D3DXToRadian(90.0f));
+	D3DXMatrixRotationY(&mat_r_tire_right, D3DXToRadian(-rot_right));
+	D3DXMatrixRotationY(&mat_r_tire_left, D3DXToRadian(-rot_left));
+	D3DXMatrixRotationZ(&mat_r_z, D3DXToRadian(90.0f));
 
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
-		D3DXMatrixTranslation(&temp_t, m_vTirePos[i].x, m_vTirePos[i].y, m_vTirePos[i].z);
-		m_matWorld_tire[i] = temp_s*temp_r_y*temp_r_z*temp_t*m_matRotation*matWorld;
+		D3DXMatrixTranslation(&mat_t, m_vTirePos[i].x, m_vTirePos[i].y, m_vTirePos[i].z);
+		if(i<3){
+			m_matWorld_tire[i] = mat_s*mat_r_tire_left*mat_r_z*mat_t*m_matRotation*matWorld;
+		}
+		else {
+			m_matWorld_tire[i] = mat_s*mat_r_tire_right*mat_r_z*mat_t*m_matRotation*matWorld;
+		}
 	}
 
 	if (m_cartype == TANK) {
-		D3DXMatrixScaling(&temp_s, 1.0f, 3.0f, 1.0f);
-		D3DXMatrixRotationX(&temp_r_x, D3DXToRadian(90.0f));
-		D3DXMatrixTranslation(&temp_t, m_vCannonPos.x, m_vCannonPos.y, m_vCannonPos.z);
-		m_matWorld_cannon = temp_s*temp_r_x*temp_t*temp_r_head*matWorld;
+		D3DXMatrixScaling(&mat_s, 1.0f, 3.0f, 1.0f);
+		D3DXMatrixRotationX(&mat_r_x, D3DXToRadian(90.0f));
+		D3DXMatrixTranslation(&mat_t, m_vCannonPos.x, m_vCannonPos.y, m_vCannonPos.z);
+		m_matWorld_cannon = mat_s*mat_r_x*mat_t*m_matHeadRotation*matWorld;
 	}
+
+
+	//m_vLook.x = m_matWorld_body._31;
+	//m_vLook.y = m_matWorld_body._32;
+	//m_vLook.z = m_matWorld_body._33;
 
 	return true;
 }
@@ -129,9 +176,7 @@ bool GCar::render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			
 	m_pBody.SetMatrix(&m_matWorld_body, &pMainCamera->m_matView, &pMainCamera->m_matProj);
 	m_pBody.Render(pImmediateContext);
 
-	//matWorld2._41 = ;
-	m_matWorld_head._42 += 2.0f;
-	//matWorld2._43 += 30.0f;
+
 
 	m_pHead.SetMatrix(&m_matWorld_head, &pMainCamera->m_matView, &pMainCamera->m_matProj);
 	m_pHead.Render(pImmediateContext);

@@ -12,7 +12,7 @@
 
 
 
-
+#include "GGuridCamera.h"
 #include "GSkyBox.h"
 #include "GCar.h"
 #include "GuridMain.h"

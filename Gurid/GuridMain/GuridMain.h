@@ -19,8 +19,8 @@ public:
 
 	GPlaneShape					m_pPlane;
 	GDirectionLineShape			m_pDirectionLine;
-	GCamera*					m_pCamera;
-	GBackViewCamera*			m_pMainCamera;
+	//GCamera*					m_pCamera;
+	GGuridCamera*					m_pMainCamera;
 	//--------------------------------------------------------------------------------------
 	// Matrix
 	//--------------------------------------------------------------------------------------
