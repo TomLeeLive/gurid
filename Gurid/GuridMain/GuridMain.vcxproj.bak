@@ -91,14 +91,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="GCar.cpp" />
+    <ClCompile Include="GSkyBox.cpp" />
+    <ClCompile Include="GuridMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sample.h" />
+    <ClInclude Include="GCar.h" />
+    <ClInclude Include="GSkyBox.h" />
+    <ClInclude Include="GuridMain.h" />
+    <ClInclude Include="_StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="HLSLwithoutFX.psh" />
-    <None Include="HLSLwithoutFX.vsh" />
+    <FxCompile Include="SkyBox.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

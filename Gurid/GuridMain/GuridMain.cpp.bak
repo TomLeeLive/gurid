@@ -29,11 +29,11 @@ bool GuridMain::Init()
 		return 0;
 	}
 
-	//if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/grids.jpg")))
-	//{
-	//	MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
-	//	return 0;
-	//}
+	if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/grids.jpg")))
+	{
+		MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
 
 
 	D3DXMatrixIdentity(&m_World[0]);
@@ -89,13 +89,6 @@ bool GuridMain::Init()
 		m_pCar[i]->init(GetDevice());
 	}
 
-	GMapDesc MapDesc = { 5, 5, 10.0f, L"../../data/castle.jpg", L"CustomizeMap.hlsl" };
-	m_CustomMap.Init(GetDevice(), m_pImmediateContext);
-	if (FAILED(m_CustomMap.Load(MapDesc)))
-	{
-		return false;
-	}
-
 	return true;
 }
 bool GuridMain::Frame()
@@ -109,7 +102,6 @@ bool GuridMain::Frame()
 	
 	m_pCar[TANK]->frame(m_matWorld , m_Timer.GetSPF(), m_pMainCamera);
 
-	m_CustomMap.Frame();
 	return true;
 }
 bool GuridMain::Render()
@@ -121,12 +113,10 @@ bool GuridMain::Render()
 
 	m_pCar[TANK]->render(m_pImmediateContext, m_pMainCamera);
 
-	//m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	//m_pPlane.Render(m_pImmediateContext);
-	DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
-	DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
-	m_CustomMap.SetMatrix(m_pMainCamera->GetWorldMatrix(), m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
-	m_CustomMap.Render(m_pImmediateContext);
+	m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	m_pPlane.Render(m_pImmediateContext);
+
+
 	return true;
 }
 
@@ -166,7 +156,7 @@ bool GuridMain::Release()
 	for (int i = 0; i < CARTYPE_LAST; i++) {
 		SAFE_DEL(m_pCar[i]);
 	}
-	m_CustomMap.Release();
+
 	SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
 	return true;

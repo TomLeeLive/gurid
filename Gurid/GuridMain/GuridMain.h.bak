@@ -1,5 +1,5 @@
 #pragma once
-#include "GMap.h"
+
 
 
 
@@ -10,7 +10,6 @@
 class GuridMain : public GBASISLib_0
 {
 public:
-	GMap			m_CustomMap;
 	GCar*						m_pCar[4];// 0: 승용차, 1 : 트럭, 2 : 지프차
 	shared_ptr<GSkyBox >   		m_pSkyBoxObj;
 
