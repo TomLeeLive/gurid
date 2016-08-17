@@ -30,7 +30,7 @@ bool GCar::init(ID3D11Device* pDevice) {
 
 	return true;
 }
-bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
+bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	D3DXMATRIX matWorld;
 
 	D3DXMATRIX mat_s, mat_t, mat_r_tire_right, mat_r_tire_left, mat_r_z, mat_r_x;
@@ -117,7 +117,7 @@ bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
 	m_matWorld_body *= m_matRotation;
 	m_matWorld_body *= matWorld;
 
-	
+
 
 
 	D3DXMatrixRotationY(&m_matHeadRotation, D3DXToRadian(-rot_head));
@@ -148,7 +148,7 @@ bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
 
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
 		D3DXMatrixTranslation(&mat_t, m_vTirePos[i].x, m_vTirePos[i].y, m_vTirePos[i].z);
-		if(i<3){
+		if (i<3) {
 			m_matWorld_tire[i] = mat_s*mat_r_tire_left*mat_r_z*mat_t*m_matRotation*matWorld;
 		}
 		else {
@@ -167,7 +167,135 @@ bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
 	//m_vLook.x = m_matWorld_body._31;
 	//m_vLook.y = m_matWorld_body._32;
 	//m_vLook.z = m_matWorld_body._33;
+	return true;
+}
+bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 
+
+	D3DXMATRIX matWorld;
+
+	D3DXMATRIX mat_s, mat_t, mat_r_tire_right, mat_r_tire_left, mat_r_z, mat_r_x;
+	D3DXMatrixIdentity(&mat_s);
+	D3DXMatrixIdentity(&mat_t);
+	D3DXMatrixIdentity(&mat_r_x);
+	D3DXMatrixIdentity(&mat_r_tire_right);
+	D3DXMatrixIdentity(&mat_r_tire_left);
+	D3DXMatrixIdentity(&mat_r_z);
+
+	D3DXMatrixIdentity(&m_matWorld_body);
+	D3DXMatrixIdentity(&m_matWorld_head);
+
+
+	static float angle = 0.0f;//for 차량 회전 각도
+	static float rot_right = 0.0f, rot_left = 0.0f, rot_head = 0.0f;// 바퀴 회전 각도
+
+	m_matWorld_body._11 *= m_fBodyXScale;		// 차 몸체 X Scale.
+	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
+
+/*
+	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
+	{
+		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime));
+		rot_right -= 100.0f*fTime;
+		rot_left += 100.0f*fTime;
+	}
+	else if (I_Input.KeyCheck(DIK_D) == KEY_HOLD)
+	{
+		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime));
+		rot_right += 100.0f*fTime;
+		rot_left -= 100.0f*fTime;
+	}
+	else if (I_Input.KeyCheck(DIK_W) == KEY_HOLD)
+	{
+		rot_right += 100.0f*fTime;
+		rot_left += 100.0f*fTime;
+	}
+
+	else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
+	{
+		rot_right -= 100.0f*fTime;
+		rot_left -= 100.0f*fTime;
+	}
+	else if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
+	{
+		rot_head += 100.0f*fTime;
+	}
+	else if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
+	{
+		rot_head -= 100.0f*fTime;
+	}
+*/
+	m_vLook.x = m_matRotation._31;
+	m_vLook.y = m_matRotation._32;
+	m_vLook.z = m_matRotation._33;
+
+	//mainCamera->m_vObjectVector[2] = m_vLook;
+	//mainCamera->Update(fTime);				
+
+	matWorld = m_matWorld;//*mainCamera->GetWorldMatrix();
+	matWorld._42 = m_fHeight;//-0.5f;				// 차 전체 높이 조정
+
+
+	m_matWorld_body *= m_matRotation;
+	m_matWorld_body *= matWorld;
+
+
+
+
+	D3DXMatrixRotationY(&m_matHeadRotation, D3DXToRadian(-rot_head));
+
+	m_matHeadRotation *= m_matRotation;
+
+	m_vHeadLook.x = m_matHeadRotation._31;
+	m_vHeadLook.y = m_matHeadRotation._32;
+	m_vHeadLook.z = m_matHeadRotation._33;
+
+
+	m_matWorld_head._11 *= m_fHeadXScale;// 3.0f;		// 차 머리 X Scale
+	m_matWorld_head._33 *= m_fHeadZScale;// 3.0f;		// 차 머리 Z Scale
+	m_matWorld_head *= m_matHeadRotation;
+	m_matWorld_head *= matWorld;
+
+	//matWorld2._41 = ;
+	m_matWorld_head._42 = m_fHeadHeight;
+	//matWorld2._43 += 30.0f;
+
+
+	D3DXMatrixScaling(&mat_s, m_vTireScale.x, m_vTireScale.y, m_vTireScale.z);
+	//D3DXMatrixRotationZ(&temp_r, D3DXToRadian(90.0f));
+
+	D3DXMatrixRotationY(&mat_r_tire_right, D3DXToRadian(-rot_right));
+	D3DXMatrixRotationY(&mat_r_tire_left, D3DXToRadian(-rot_left));
+	D3DXMatrixRotationZ(&mat_r_z, D3DXToRadian(90.0f));
+
+	for (int i = 0; i < G_MACRO_TIRES; i++) {
+		D3DXMatrixTranslation(&mat_t, m_vTirePos[i].x, m_vTirePos[i].y, m_vTirePos[i].z);
+		if (i<3) {
+			m_matWorld_tire[i] = mat_s*mat_r_tire_left*mat_r_z*mat_t*m_matRotation*matWorld;
+		}
+		else {
+			m_matWorld_tire[i] = mat_s*mat_r_tire_right*mat_r_z*mat_t*m_matRotation*matWorld;
+		}
+	}
+
+	if (m_cartype == TANK) {
+		D3DXMatrixScaling(&mat_s, 1.0f, 3.0f, 1.0f);
+		D3DXMatrixRotationX(&mat_r_x, D3DXToRadian(90.0f));
+		D3DXMatrixTranslation(&mat_t, m_vCannonPos.x, m_vCannonPos.y, m_vCannonPos.z);
+		m_matWorld_cannon = mat_s*mat_r_x*mat_t*m_matHeadRotation*matWorld;
+	}
+
+
+	return true;
+}
+bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
+	
+	if (m_bPlayer == true) {
+		frame_player(fTime, mainCamera);
+	}
+	else {
+		frame_enemy(fTime, mainCamera);
+	}
 	return true;
 }
 bool GCar::render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera) {

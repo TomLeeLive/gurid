@@ -33,7 +33,7 @@ public:
 	//D3DXVECTOR3 m_vHeadUp;			// 차의 방향(Up)
 	D3DXVECTOR3 m_vHeadLook;		// 차의 방향(look)
 
-
+	bool  m_bPlayer;			//플레이어 인지?
 	UINT  m_cartype;			//차 타입
 	float m_fHeight;			// 차 전체 높이 조정
 	float m_fHeadHeight;			// 차 머리 높이 조정
@@ -46,6 +46,7 @@ public:
 	D3DXVECTOR3 m_vCannonScale;	//탱크 주포 스케일
 	D3DXVECTOR3 m_vCannonPos;	//탱크 주포 위치
 
+	D3DXMATRIX m_matWorld;		//적탱크 구현를 위한 월드행렬
 
 	D3DXMATRIX	m_matWorld_body;
 	D3DXMATRIX	m_matWorld_head;
@@ -56,6 +57,9 @@ public:
 	GBoxShape					m_pHead;			//차 헤드
 	GCylinder					m_pTire[G_MACRO_TIRES];
 	GCylinder					m_pCannon;			//탱크 주포
+
+	bool frame_player(float fTime, GGuridCamera* mainCamera);
+	bool frame_enemy(float fTime, GGuridCamera* mainCamera);
 
 	virtual bool init(ID3D11Device* pDevice);
 	virtual bool frame( float fTime, GGuridCamera* mainCamera);
@@ -84,10 +88,8 @@ public:
 
 		return out;
 	}
-
-	GCar(cartypes type) {
-
-		
+	void Create(cartypes type) {
+		D3DXMatrixIdentity(&m_matWorld);
 		if (type == TANK) {
 
 			D3DXMatrixIdentity(&m_matRotation);
@@ -98,7 +100,7 @@ public:
 			//m_matRotation._11 = m_vRight.x; m_matRotation._12 = m_vUp.x;
 			//m_matRotation._21 = m_vRight.y; m_matRotation._22 = m_vUp.y;
 			//m_matRotation._31 = m_vRight.z; m_matRotation._32 = m_vUp.z;
-			
+
 			D3DXMatrixIdentity(&m_matHeadRotation);
 			m_vHeadLook = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
 
@@ -139,6 +141,14 @@ public:
 			m_vTirePos[R3] = D3DXVECTOR3(2.0f, -2.0f, -3.0f);
 			m_vTireScale = D3DXVECTOR3(3.0f, 0.5f, 3.0f);
 		}
+	}
+	GCar(cartypes type) {
+		m_bPlayer = false;
+		Create(type);
+	};
+	GCar(cartypes type, bool player) {
+		m_bPlayer = player;
+		Create(type);
 	};
 	GCar() {};
 	~GCar() {};

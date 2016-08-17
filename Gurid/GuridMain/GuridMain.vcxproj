@@ -91,16 +91,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="GGuridCamera.cpp" />
     <ClCompile Include="GCar.cpp" />
     <ClCompile Include="GShell.cpp" />
+    <ClCompile Include="GShellManager.cpp" />
     <ClCompile Include="GSkyBox.cpp" />
     <ClCompile Include="GuridMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionDetection.hpp" />
     <ClInclude Include="GGuridCamera.h" />
     <ClInclude Include="GCar.h" />
     <ClInclude Include="GShell.h" />
+    <ClInclude Include="GShellManager.h" />
     <ClInclude Include="GSkyBox.h" />
     <ClInclude Include="GuridMain.h" />
     <ClInclude Include="_StdAfx.h" />
