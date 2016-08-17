@@ -24,7 +24,7 @@ bool GCar::init(ID3D11Device* pDevice) {
 		}
 	}
 
-	if (FAILED(m_pCannon.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/bodybyHand.png")))
+	if (FAILED(m_pCannon.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/cannon.png")))
 	{
 		MessageBox(0, _T("m_pCannon ½ÇÆÐ"), _T("Fatal error"), MB_OK);
 		return 0;
