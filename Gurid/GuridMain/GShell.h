@@ -20,7 +20,7 @@ public:
 	}
 	bool Create() {
 
-		if (FAILED(GCylinder::Create(g_pd3dDevice, L"../../data/shader/Box.hlsl", L"../../data/bodybyHand.png")))
+		if (FAILED(GCylinder::Create(g_pd3dDevice, L"../../data/shader/Box.hlsl", L"../../data/bullet.png")))
 		{
 			MessageBox(0, _T("GShell ½ÇÆÐ"), _T("Fatal error"), MB_OK);
 			return 0;
