@@ -61,7 +61,7 @@ HRESULT GShape::LoadShaderFile(ID3D11Device* pDevice, const TCHAR* pShaderFile)
 {
 	m_Object.g_pVertexShader.Attach(DX::LoadVertexShaderFile(pDevice, pShaderFile, m_Object.g_pVSBlob.GetAddressOf()));
 	m_Object.g_pPixelShader.Attach(DX::LoadPixelShaderFile(pDevice, pShaderFile));
-	m_Object.g_pGeometryShader.Attach(DX::LoadGeometryShaderFile(pDevice, pShaderFile, m_Object.g_pGSBlob.GetAddressOf()));
+	//m_Object.g_pGeometryShader.Attach(DX::LoadGeometryShaderFile(pDevice, pShaderFile, m_Object.g_pGSBlob.GetAddressOf()));
 	return S_OK;
 }
 bool GShape::Draw(ID3D11DeviceContext* pContext, D3DXVECTOR3 vStart, D3DXVECTOR3 vEnd, D3DXVECTOR4 vColor) { return true; }

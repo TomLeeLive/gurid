@@ -210,13 +210,13 @@ bool GuridMain::Frame()
 
 	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD)
 	{
-		m_vecShell.push_back(new GShell(m_pCar[TANK]->m_vHeadLook, m_pCar[TANK]->m_matWorld_cannon));
+		m_vecShell.push_back(make_shared<GShell>(m_pCar[TANK]));
 	}
 
 	
 
-	vector<GShell*>::iterator _F = m_vecShell.begin();
-	vector<GShell*>::iterator _L = m_vecShell.end();
+	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();
+	vector<shared_ptr<GShell>>::iterator _L = m_vecShell.end();
 	for (; _F != _L; ++_F)
 	{
 		//(*_F)->m_matWorld = m_pMainCamera->m_matWorld;
@@ -230,7 +230,7 @@ bool GuridMain::Frame()
 
 		temp_mat *= (*_F)->m_mat_s;
 		temp_mat *= (*_F)->m_mat_r_x;
-		temp_mat *= m_pCar[TANK]->m_matHeadRotation;
+		temp_mat *= (*_F)->m_matRotation; 
 		temp_mat._41 = (*_F)->m_vPos.x; temp_mat._42 = (*_F)->m_vPos.y; temp_mat._43 = (*_F)->m_vPos.z;
 
 
@@ -258,8 +258,8 @@ bool GuridMain::Render()
 	m_CustomMap.Render(m_pImmediateContext);
 
 
-	vector<GShell*>::iterator _F = m_vecShell.begin();
-	vector<GShell*>::iterator _L = m_vecShell.end();
+	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();
+	vector<shared_ptr<GShell>>::iterator _L = m_vecShell.end();
 	for (; _F != _L; ++_F)
 	{
 		(*_F)->Render(m_pImmediateContext);

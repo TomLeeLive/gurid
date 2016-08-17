@@ -15,7 +15,7 @@ class GuridMain : public GBASISLib_0
 public:
 	GMap			m_CustomMap;
 	GCar*						m_pCar[4];	// 0: ½Â¿ëÂ÷, 1 : Æ®·°, 2 : ÁöÇÁÂ÷
-	std::vector<GShell*>			m_vecShell;	// Æ÷Åº.
+	std::vector<shared_ptr<GShell> >			m_vecShell;	// Æ÷Åº.
 	shared_ptr<GSkyBox >   		m_pSkyBoxObj;
 
 	GPlaneShape					m_pPlane;
