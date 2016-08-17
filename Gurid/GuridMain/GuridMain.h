@@ -2,6 +2,7 @@
 #include "GMap.h"
 
 #define BOX_CNT 3
+#define G_MACRO_MAX_TANK 2
 
 struct G_RAY
 {
@@ -16,8 +17,7 @@ public:
 
 	GShellManager				m_ShellManager;
 	GMap						m_CustomMap;
-	shared_ptr<GCar>			m_pTank;	// 0: 승용차, 1 : 트럭, 2 : 지프차
-	shared_ptr<GCar>			m_pEnemy;
+	shared_ptr<GCar>			m_pTank[G_MACRO_MAX_TANK];	// 0:플레이어, 그 외에 모두 적
 
 	shared_ptr<GSkyBox >   		m_pSkyBoxObj;
 
@@ -63,7 +63,7 @@ public:
 	//bool ChkOBBToRay(G_RAY* pRay, G_BOX* pBox);
 	//bool IntersectBox(G_RAY* pRay, G_BOX* pBox);
 #pragma endregion	
-	
+	void		ColCheck();
 	//Default
 	bool		Init();
 	bool		Frame();

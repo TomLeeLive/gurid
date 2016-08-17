@@ -11,63 +11,8 @@ T_STR CameraViewStyle[] =
 	_T("User g_matView"),
 };
 
-// bounding box 관련 함수들
-D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox);
-void SetBoxTransform(const D3DXMATRIX *pMat, CBox* pBox);
-void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax);
-void moveBox(CBox *pBox, const D3DXMATRIX& mat);
 
-
-D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox)
-{
-	int i, j;
-	real fMat[16];
-	pBox->GetTransform(fMat);
-	for (i = 0; i < 4; ++i)
-		for (j = 0; j < 4; ++j)
-			(*pMat)(i, j) = fMat[i * 4 + j];
-	return pMat;
-}
-
-void SetBoxTransform(const D3DXMATRIX* pMat, CBox* pBox)
-{
-	int i, j;
-	for (i = 0; i < 3; ++i) {
-		for (j = 0; j < 3; ++j)
-			pBox->axis[i][j] = (*pMat)(i, j);
-		pBox->translation[i] = (*pMat)(3, i);
-	}
-}
-
-void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax)
-{
-	pBox->center[0] = (vecMin.x + vecMax.x) / 2.0F;
-	pBox->center[1] = (vecMin.y + vecMax.y) / 2.0F;
-	pBox->center[2] = (vecMin.z + vecMax.z) / 2.0F;
-
-	pBox->extent[0] = vecMax.x - pBox->center[0];
-	pBox->extent[1] = vecMax.y - pBox->center[1];
-	pBox->extent[2] = vecMax.z - pBox->center[2];
-	// identity world coordinate axis
-	pBox->axis[0][0] = 1.0F; pBox->axis[0][1] = 0.0F; pBox->axis[0][2] = 0.0F;
-	pBox->axis[1][0] = 0.0F; pBox->axis[1][1] = 1.0F; pBox->axis[1][2] = 0.0F;
-	pBox->axis[2][0] = 0.0F; pBox->axis[2][1] = 0.0F; pBox->axis[2][2] = 1.0F;
-	pBox->translation[0] = 0.0F; pBox->translation[1] = 0.0F; pBox->translation[2] = 0.0F;
-}
-
-void moveBox(CBox *pBox, const D3DXMATRIX& mat)
-{
-	D3DXMATRIX matBox;
-	// 박스의 transform을 가져온다.
-	GetBoxTransform(&matBox, pBox);
-	// 박스의 transform을 바꾼다.
-	matBox *= mat;
-	SetBoxTransform(&matBox, pBox);
-	// 박스의 center 좌표도 바꾼다.
-	D3DXVECTOR3 vecCenter(pBox->center[0], pBox->center[1], pBox->center[2]);
-	D3DXVec3TransformCoord(&vecCenter, &vecCenter, &mat);
-	pBox->center[0] = vecCenter.x; pBox->center[1] = vecCenter.y; pBox->center[2] = vecCenter.z;
-}
+#pragma region OBBOBB
 //
 ////Axis-aligned bounding box(AABB )
 //bool GuridMain::IntersectBox(G_RAY* pRay, G_BOX* pBox)
@@ -161,7 +106,7 @@ void moveBox(CBox *pBox, const D3DXMATRIX& mat)
 //
 //	return true;
 //}
-
+#pragma endregion
 
 // 윈도우 메세지 
 int GuridMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -240,8 +185,12 @@ bool GuridMain::Init()
 	//for (int i = 0; i < CARTYPE_LAST; i++){
 	//	m_pCar[i]->init(GetDevice());
 	//}
-	m_pTank->init(GetDevice());
-	m_pEnemy->init(GetDevice());
+
+	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
+		//m_pTank[i].reset();
+		m_pTank[i]->init(GetDevice());
+	}
+
 
 	GMapDesc MapDesc = { 100, 100, 10.0f, L"../../data/pull.jpg", L"CustomizeMap.hlsl" };
 	m_CustomMap.Init(GetDevice(), m_pImmediateContext);
@@ -261,15 +210,60 @@ bool GuridMain::Frame()
 	//m_pMainCamera->Update(m_Timer.GetSPF());
 	//m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
 	
-	m_pTank->frame( m_Timer.GetSPF(), m_pMainCamera);
-	m_pEnemy->frame(m_Timer.GetSPF(), m_pMainCamera);
+
+	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
+		//m_pTank[i].reset();
+		m_pTank[i]->frame(m_Timer.GetSPF(), m_pMainCamera);
+	}
+
 
 	m_CustomMap.Frame();
 	
-	m_ShellManager.frame(m_pTank.get(),&m_Timer, m_pMainCamera);
+
+	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
+		m_ShellManager.frame(m_pTank[i].get(), &m_Timer, m_pMainCamera);
+	}
+
+
+
+	ColCheck();
 
 	
 	return true;
+}
+void GuridMain::ColCheck() {
+	vector<shared_ptr<GShell>>::iterator _F = m_ShellManager.m_vecShell.begin();
+	vector<shared_ptr<GShell>>::iterator _L = m_ShellManager.m_vecShell.end();
+
+	
+	for (; _F != _L; ++_F)
+	{
+		// Collision Detection Test!
+		for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
+			int nRet = BoxBoxIntersectionTest(*(m_pTank[i].get()), *(*_F));
+			if (nRet == 1) {
+				// 복잡한 collision handling을 할 수 있겠지만, 지금은 단순히 멈추기
+
+				(*_F).reset();//delete (*_F);
+				*_F = 0;
+				break;
+			}
+		}
+	}
+
+	_F = m_ShellManager.m_vecShell.begin();
+	while (_F != m_ShellManager.m_vecShell.end())
+	{
+		if (*_F == 0) {
+
+			_F = m_ShellManager.m_vecShell.erase(_F);
+		}
+		else {
+			_F++;
+		}
+	}
+
+
 }
 bool GuridMain::Render()
 {
@@ -279,8 +273,11 @@ bool GuridMain::Render()
 	m_pSkyBoxObj->SetMatrix(0, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_pSkyBoxObj->Render(m_pImmediateContext, m_pMainCamera);
 
-	m_pTank->render(m_pImmediateContext, m_pMainCamera);
-	m_pEnemy->render(m_pImmediateContext, m_pMainCamera);
+
+	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
+		//m_pTank[i].reset();
+		m_pTank[i]->render(m_pImmediateContext, m_pMainCamera);
+	}
 
 	//m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//m_pPlane.Render(m_pImmediateContext);
@@ -424,8 +421,11 @@ bool GuridMain::Release()
 	//for (int i = 0; i < CARTYPE_LAST; i++) {
 	//	SAFE_DEL(m_pCar[i]);
 	//}
-	m_pTank.reset();
-	m_pEnemy.reset();
+	
+
+	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
+		m_pTank[i].reset();
+	}
 
 	m_CustomMap.Release();
 	//SAFE_DEL(m_pCamera);
@@ -451,8 +451,12 @@ GuridMain::GuridMain(void)
 	//m_pCar[TANK] = new GCar(TANK);
 	//m_pCar[TRUCK] = new GCar(TRUCK);
 	//m_pCar[JEEP] = new GCar(JEEP);
-	m_pTank = make_shared<GCar>(TANK,true);
-	m_pEnemy = make_shared<GCar>(TANK);
+
+
+	m_pTank[0] = make_shared<GCar>(TANK,true);
+	for (int i = 1; i < G_MACRO_MAX_TANK; i++){
+		m_pTank[i] = make_shared<GCar>(TANK);
+	}
 
 	// 추가
 	m_fCameraYaw = 0.0f;

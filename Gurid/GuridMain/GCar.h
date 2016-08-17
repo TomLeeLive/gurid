@@ -11,7 +11,8 @@ enum cartypes {
 	CARTYPE_LAST//차량 수
 };
 
-class GCar {
+class GCar : public CBox
+{
 public:
 	enum tirepos {
 		L1 = 0, //앞 왼쪽
@@ -22,6 +23,8 @@ public:
 		R3 = 5, //뒤 왼쪽
 
 	};
+	//CBox		m_BoxHead;		// 바운딩 박스
+	//CBox		m_BoxBody;		// 바운딩 박스 몸통
 
 	D3DXMATRIX	m_matRotation;	// 차의 방향(회전)
 	//D3DXVECTOR3 m_vRight;		// 차의 방향(Right)
@@ -90,6 +93,7 @@ public:
 	}
 	void Create(cartypes type) {
 		D3DXMatrixIdentity(&m_matWorld);
+		D3DXMatrixTranslation(&m_matWorld, 50.0f, 0.0f, 50.0f);
 		if (type == TANK) {
 
 			D3DXMatrixIdentity(&m_matRotation);

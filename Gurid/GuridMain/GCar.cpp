@@ -1,5 +1,7 @@
 #include "_StdAfx.h"
 
+#define G_MACRO_CAR_SPEED 3.0f;
+#define G_MACRO_CAR_MAX_SPEED 10.0f;
 
 bool GCar::init(ID3D11Device* pDevice) {
 
@@ -44,19 +46,7 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	D3DXMatrixIdentity(&m_matWorld_body);
 	D3DXMatrixIdentity(&m_matWorld_head);
 
-	//D3DXMATRIX temp_rr;
-	//D3DXMATRIX temp_rrr;
-	//D3DXMatrixIdentity(&temp_rrr);
-	//temp_rr = mainCamera->m_mView;
-	////temp_rr._41 = 0, temp_rr._42 = 0, temp_rr._43 = 0;
-	//D3DXMatrixTranspose(&temp_rr,&temp_rr);
-	//temp_rrr._11 = temp_rr._11;  temp_rrr._13 = temp_rr._13;
-	//temp_rrr._31 = temp_rr._31; temp_rrr._33 = temp_rr._33;
-
-
-
-
-
+	static float fSpeed = G_MACRO_CAR_SPEED;//차량 이동 스피드
 	static float angle = 0.0f;//for 차량 회전 각도
 	static float rot_right = 0.0f, rot_left = 0.0f, rot_head = 0.0f;// 바퀴 회전 각도
 
@@ -65,30 +55,29 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 
 	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
 	{
-		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime));
-		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
+		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime*fSpeed));
+		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_D) == KEY_HOLD)
 	{
-		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime));
-		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
+		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime*fSpeed));
+		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_W) == KEY_HOLD)
 	{
 		//m_matWorld_body._41 += m_vLook.x* 20.0f*fTime;
 		//m_matWorld_body._43 += m_vLook.z* 20.0f*fTime;;
-		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
-	}
-
-	else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
-	{
 		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
 		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
-	else if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
+	else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
+	{
+		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
+		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
+	}
+	if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
 	{
 		//mainCamera->m_vObjectVector[2].x;
 		//mainCamera->m_vObjectVector[2].y;
@@ -96,10 +85,18 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 
 		rot_head += 100.0f*fTime;// m_Timer.GetSPF();
 	}
-	else if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
+	if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
 	{
 		//rot -= 100.0f*fTime;// m_Timer.GetSPF();
 		rot_head -= 100.0f*fTime;// m_Timer.GetSPF();
+	}
+
+	if (I_Input.KeyCheck(DIK_LSHIFT) == KEY_HOLD)
+	{
+		mainCamera->m_fSpeed = fSpeed = G_MACRO_CAR_MAX_SPEED;
+	}
+	else {
+		mainCamera->m_fSpeed = fSpeed = G_MACRO_CAR_SPEED;
 	}
 
 	m_vLook.x = m_matRotation._31;
@@ -142,8 +139,8 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	D3DXMatrixScaling(&mat_s, m_vTireScale.x, m_vTireScale.y, m_vTireScale.z);
 	//D3DXMatrixRotationZ(&temp_r, D3DXToRadian(90.0f));
 
-	D3DXMatrixRotationY(&mat_r_tire_right, D3DXToRadian(-rot_right));
-	D3DXMatrixRotationY(&mat_r_tire_left, D3DXToRadian(-rot_left));
+	D3DXMatrixRotationY(&mat_r_tire_right, D3DXToRadian(rot_right*fSpeed));
+	D3DXMatrixRotationY(&mat_r_tire_left, D3DXToRadian(rot_left*fSpeed));
 	D3DXMatrixRotationZ(&mat_r_z, D3DXToRadian(90.0f));
 
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
@@ -167,6 +164,7 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	//m_vLook.x = m_matWorld_body._31;
 	//m_vLook.y = m_matWorld_body._32;
 	//m_vLook.z = m_matWorld_body._33;
+
 	return true;
 }
 bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
@@ -284,6 +282,8 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 		D3DXMatrixTranslation(&mat_t, m_vCannonPos.x, m_vCannonPos.y, m_vCannonPos.z);
 		m_matWorld_cannon = mat_s*mat_r_x*mat_t*m_matHeadRotation*matWorld;
 	}
+	
+		
 
 
 	return true;
@@ -296,6 +296,10 @@ bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
 	else {
 		frame_enemy(fTime, mainCamera);
 	}
+
+	initBox(this, D3DXVECTOR3(-7, -7, -7), D3DXVECTOR3(7, 7, 7));
+	moveBox(this, m_matWorld_head);
+
 	return true;
 }
 bool GCar::render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera) {

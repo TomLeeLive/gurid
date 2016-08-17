@@ -1,11 +1,21 @@
 #include "_StdAfx.h"
 
 
+//void GGuridCamera::MoveLook(float fValue)
+//{
+//	MovementTarget(fValue, m_vObjectVector[2]);
+//}
+//void GGuridCamera::MovementTarget(float fValue, D3DXVECTOR3 vDirection)
+//{
+//	m_vTargetPos += vDirection * fValue *2.0f;
+//	m_vCameraDestination = m_vTargetPos + (vDirection * GetDecideDirection(fValue*2.0f));
+//	m_vCameraDestination.y += m_vTargetPos.y + m_vOffsetDistance.y;
+//}
 
 D3DXMATRIX GGuridCamera::Update(float fElapseTime)
 {
-	if (g_InputData.bWKey) 	MoveLook(fElapseTime * 2.0f);
-	if (g_InputData.bSKey)		MoveLook(-fElapseTime * 2.0f);
+	if (g_InputData.bWKey) 	MoveLook(fElapseTime * 2.0f * m_fSpeed);
+	if (g_InputData.bSKey)		MoveLook(-fElapseTime * 2.0f * m_fSpeed);
 	if (g_InputData.bDKey) {
 
 		//m_fPrevRadius = m_fRadius;

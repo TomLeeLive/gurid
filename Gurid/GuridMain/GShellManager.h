@@ -6,6 +6,10 @@ public:
 	float m_fFireTime;			//마지막 포탄 발사된 시간
 	std::vector<shared_ptr<GShell> >			m_vecShell;	// 포탄.
 	bool frame(GCar* car, GTimer* timer, GGuridCamera* camera);
+	//bool colcheck(std::vector<shared_ptr<GCar> >& car) {
+
+	//	return true;
+	//}
 	bool render();
 	GShellManager();
 	virtual ~GShellManager();

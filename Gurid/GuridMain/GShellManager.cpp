@@ -46,7 +46,8 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 
 
 		(*_F)->SetMatrix(&temp_mat, &camera->m_matView, &camera->m_matProj);
-		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
+
+		(*_F)->BoundingBoxUpdate(temp_mat);
 	}
 
 

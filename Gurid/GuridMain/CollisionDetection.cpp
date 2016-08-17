@@ -1,10 +1,11 @@
-#include <math.h>
+#include "_StdAfx.h"
+//#include <math.h>
 
 #ifdef _DEBUG
  //#define CD_DEBUG
 #endif//of #ifdef _DEBUG
 
-#include "CollisionDetection.hpp"
+//#include "CollisionDetection.hpp"
 
 int BoxBoxIntersectionTest(const CBox& box0,const CBox& box1)
 {
@@ -143,4 +144,56 @@ int BoxBoxIntersectionTest(const CBox& box0,const CBox& box1)
  if(R>R01)return 0;
  
  return 1;
+}
+
+
+D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox)
+{
+	int i, j;
+	real fMat[16];
+	pBox->GetTransform(fMat);
+	for (i = 0; i < 4; ++i)
+		for (j = 0; j < 4; ++j)
+			(*pMat)(i, j) = fMat[i * 4 + j];
+	return pMat;
+}
+
+void SetBoxTransform(const D3DXMATRIX* pMat, CBox* pBox)
+{
+	int i, j;
+	for (i = 0; i < 3; ++i) {
+		for (j = 0; j < 3; ++j)
+			pBox->axis[i][j] = (*pMat)(i, j);
+		pBox->translation[i] = (*pMat)(3, i);
+	}
+}
+
+void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax)
+{
+	pBox->center[0] = (vecMin.x + vecMax.x) / 2.0F;
+	pBox->center[1] = (vecMin.y + vecMax.y) / 2.0F;
+	pBox->center[2] = (vecMin.z + vecMax.z) / 2.0F;
+
+	pBox->extent[0] = vecMax.x - pBox->center[0];
+	pBox->extent[1] = vecMax.y - pBox->center[1];
+	pBox->extent[2] = vecMax.z - pBox->center[2];
+	// identity world coordinate axis
+	pBox->axis[0][0] = 1.0F; pBox->axis[0][1] = 0.0F; pBox->axis[0][2] = 0.0F;
+	pBox->axis[1][0] = 0.0F; pBox->axis[1][1] = 1.0F; pBox->axis[1][2] = 0.0F;
+	pBox->axis[2][0] = 0.0F; pBox->axis[2][1] = 0.0F; pBox->axis[2][2] = 1.0F;
+	pBox->translation[0] = 0.0F; pBox->translation[1] = 0.0F; pBox->translation[2] = 0.0F;
+}
+
+void moveBox(CBox *pBox, const D3DXMATRIX& mat)
+{
+	D3DXMATRIX matBox;
+	// 박스의 transform을 가져온다.
+	GetBoxTransform(&matBox, pBox);
+	// 박스의 transform을 바꾼다.
+	matBox *= mat;
+	SetBoxTransform(&matBox, pBox);
+	// 박스의 center 좌표도 바꾼다.
+	D3DXVECTOR3 vecCenter(pBox->center[0], pBox->center[1], pBox->center[2]);
+	D3DXVec3TransformCoord(&vecCenter, &vecCenter, &mat);
+	pBox->center[0] = vecCenter.x; pBox->center[1] = vecCenter.y; pBox->center[2] = vecCenter.z;
 }

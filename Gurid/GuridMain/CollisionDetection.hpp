@@ -38,4 +38,12 @@ inline real DotProduct(const real v0[3],const real v1[3])
 }
 #define fc_fabs fabsf
 
+
+// bounding box 관련 함수들
+D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox);
+void SetBoxTransform(const D3DXMATRIX *pMat, CBox* pBox);
+void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax);
+void moveBox(CBox *pBox, const D3DXMATRIX& mat);
+
+
 #endif//of #ifndef __COLLISIONDETECTION_HPP
