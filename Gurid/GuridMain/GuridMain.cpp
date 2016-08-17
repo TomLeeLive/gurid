@@ -184,7 +184,7 @@ bool GuridMain::Init()
 		m_pCar[i]->init(GetDevice());
 	}
 
-	GMapDesc MapDesc = { 5, 5, 10.0f, L"../../data/Map.png", L"CustomizeMap.hlsl" };
+	GMapDesc MapDesc = { 100, 100, 10.0f, L"../../data/pull.jpg", L"CustomizeMap.hlsl" };
 	m_CustomMap.Init(GetDevice(), m_pImmediateContext);
 	if (FAILED(m_CustomMap.Load(MapDesc)))
 	{
@@ -212,7 +212,11 @@ bool GuridMain::Frame()
 	{
 		m_vecShell.push_back(make_shared<GShell>(m_pCar[TANK]));
 	}
-
+	if (I_Input.KeyCheck(DIK_ESCAPE))
+	{
+		exit(1); 
+	}
+	
 	
 
 	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();

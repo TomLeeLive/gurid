@@ -121,8 +121,8 @@ bool GMap::CreateVertexList()
 			m_pvHeightMap[iVertexIndex].p.y = GetHeightOfVertex(iVertexIndex);
 			m_pvHeightMap[iVertexIndex].n = GetNormalOfVertex(iVertexIndex);
 			m_pvHeightMap[iVertexIndex].c = GetColorOfVertex(iVertexIndex);
-			m_pvHeightMap[iVertexIndex].t.x = ftxOffsetU * iCol;
-			m_pvHeightMap[iVertexIndex].t.y = ftxOffsetV * iRow;
+			m_pvHeightMap[iVertexIndex].t.x = ((iCol%2)==0)?0.0f : 1.0f;//ftxOffsetU *iCol;
+			m_pvHeightMap[iVertexIndex].t.y = ((iRow % 2) == 0) ? 0.0f : 1.0f;// ftxOffsetV *iRow;
 		}
 	}
 	return true;

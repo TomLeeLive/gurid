@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GCoreLib", "GCoreLib\GCoreLib.vcxproj", "{C2320D8D-FB07-4F72-ABB9-364EDCF5EE4C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GuridMain", "GuridMain\GuridMain.vcxproj", "{97B50A31-7CE4-48C2-8938-8C8DE529CAD6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C2320D8D-FB07-4F72-ABB9-364EDCF5EE4C} = {C2320D8D-FB07-4F72-ABB9-364EDCF5EE4C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "Test\test.vcxproj", "{A9149525-A7EF-44EF-BCB9-70BE3366D4E4}"
 EndProject
