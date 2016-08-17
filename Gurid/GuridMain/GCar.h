@@ -27,14 +27,15 @@ public:
 	//CBox		m_BoxBody;		// 바운딩 박스 몸통
 
 	D3DXMATRIX	m_matRotation;	// 차의 방향(회전)
+	D3DXVECTOR3 m_vLook;		// 차의 방향(look)
 	//D3DXVECTOR3 m_vRight;		// 차의 방향(Right)
 	//D3DXVECTOR3 m_vUp;			// 차의 방향(Up)
-	D3DXVECTOR3 m_vLook;		// 차의 방향(look)
 
 	D3DXMATRIX	m_matHeadRotation;	// 머리의 방향(회전)
+	D3DXVECTOR3 m_vHeadLook;		// 차의 방향(look)
 	//D3DXVECTOR3 m_vHeadRight;		// 차의 방향(Right)
 	//D3DXVECTOR3 m_vHeadUp;			// 차의 방향(Up)
-	D3DXVECTOR3 m_vHeadLook;		// 차의 방향(look)
+
 
 	bool  m_bPlayer;			//플레이어 인지?
 	UINT  m_cartype;			//차 타입
@@ -92,22 +93,27 @@ public:
 		return out;
 	}
 	void Create(cartypes type) {
+		//D3DXMatrixIdentity(&m_matRotation);
+		//D3DXMatrixIdentity(&m_matHeadRotation);
 		D3DXMatrixIdentity(&m_matWorld);
+		D3DXMatrixIdentity(&m_matWorld_body);
+		D3DXMatrixIdentity(&m_matWorld_head);
+		for (int i = 0; i < G_MACRO_TIRES; i++)
+			D3DXMatrixIdentity(&m_matWorld_tire[G_MACRO_TIRES]);
+
+		D3DXMatrixIdentity(&m_matWorld_cannon);
+
+
 		D3DXMatrixTranslation(&m_matWorld, 50.0f, 0.0f, 50.0f);
 		if (type == TANK) {
 
 			D3DXMatrixIdentity(&m_matRotation);
 			m_vLook = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
-			m_matRotation._13 = m_vLook.x; m_matRotation._23 = m_vLook.y; m_matRotation._33 = m_vLook.z;
-			//m_vRight = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
-			//m_vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			//m_matRotation._11 = m_vRight.x; m_matRotation._12 = m_vUp.x;
-			//m_matRotation._21 = m_vRight.y; m_matRotation._22 = m_vUp.y;
-			//m_matRotation._31 = m_vRight.z; m_matRotation._32 = m_vUp.z;
+			//m_matRotation._31 = m_vLook.x; m_matRotation._32 = m_vLook.y; m_matRotation._33 = m_vLook.z;
 
 			D3DXMatrixIdentity(&m_matHeadRotation);
 			m_vHeadLook = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
-
+			//m_matHeadRotation._31 = m_vHeadLook.x; m_matHeadRotation._32 = m_vHeadLook.y; m_matHeadRotation._33 = m_vHeadLook.z;
 
 
 			m_cartype = TANK;

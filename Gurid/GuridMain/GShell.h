@@ -11,7 +11,7 @@ public:
 	D3DXMATRIX  m_matRotation;	//회전행렬
 
 	D3DXMATRIX m_mat_s, m_mat_r_x;
-	D3DXVECTOR3 m_vCannonScale;
+	//D3DXVECTOR3 m_vCannonScale;
 
 	bool BoundingBoxUpdate(D3DXMATRIX matWorld) {
 		initBox(this, D3DXVECTOR3(-1, -1, -1), D3DXVECTOR3(1, 1, 1));
