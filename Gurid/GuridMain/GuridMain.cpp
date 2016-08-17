@@ -11,99 +11,156 @@ T_STR CameraViewStyle[] =
 	_T("User g_matView"),
 };
 
+// bounding box 관련 함수들
+D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox);
+void SetBoxTransform(const D3DXMATRIX *pMat, CBox* pBox);
+void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax);
+void moveBox(CBox *pBox, const D3DXMATRIX& mat);
 
-//Axis-aligned bounding box(AABB )
-bool GuridMain::IntersectBox(G_RAY* pRay, G_BOX* pBox)
+
+D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox)
 {
-	D3DXVECTOR3 tmin;
-	tmin.x = (pBox->vMin.x - pRay->vOrigin.x) / pRay->vDirection.x + 0.001f;
-	tmin.y = (pBox->vMin.y - pRay->vOrigin.y) / pRay->vDirection.y + 0.001f;
-	tmin.z = (pBox->vMin.z - pRay->vOrigin.z) / pRay->vDirection.z + 0.001f;
-
-	D3DXVECTOR3 tmax;
-	tmax.x = (pBox->vMax.x - pRay->vOrigin.x) / pRay->vDirection.x + 0.001f;
-	tmax.y = (pBox->vMax.y - pRay->vOrigin.y) / pRay->vDirection.y + 0.001f;
-	tmax.z = (pBox->vMax.z - pRay->vOrigin.z) / pRay->vDirection.z + 0.001f;
-
-	D3DXVECTOR3 real_min;
-	real_min.x = min(tmin.x, tmax.x);
-	real_min.y = min(tmin.y, tmax.y);
-	real_min.z = min(tmin.z, tmax.z);
-	D3DXVECTOR3 real_max;
-	real_max.x = max(tmin.x, tmax.x);
-	real_max.y = max(tmin.y, tmax.y);
-	real_max.z = max(tmin.z, tmax.z);
-
-	float minmax = min(min(real_max.x, real_max.y), real_max.z);
-	float maxmin = max(max(real_min.x, real_min.y), real_min.z);
-
-	if (minmax >= maxmin)
-	{
-		m_vIntersection = pRay->vOrigin + pRay->vDirection* maxmin;
-		return true;
-	}
-	return false;
+	int i, j;
+	real fMat[16];
+	pBox->GetTransform(fMat);
+	for (i = 0; i < 4; ++i)
+		for (j = 0; j < 4; ++j)
+			(*pMat)(i, j) = fMat[i * 4 + j];
+	return pMat;
 }
-//Oriented bounding box(OBB : RAY)
-bool GuridMain::ChkOBBToRay(G_RAY* pRay, G_BOX* pBox)
+
+void SetBoxTransform(const D3DXMATRIX* pMat, CBox* pBox)
 {
-	float  f[3], fa[3], s[3], sa[3];
-	D3DXVECTOR3 vDir = pRay->vDirection;// * 1000.0f;
-	D3DXVECTOR3 vR = pRay->vOrigin - pBox->vCenter;
-	f[0] = D3DXVec3Dot(&vDir, &pBox->vAxis[0]);
-	s[0] = D3DXVec3Dot(&vR, &pBox->vAxis[0]);
-	fa[0] = fabs(f[0]);
-	sa[0] = fabs(s[0]);
-
-	if (sa[0] > pBox->fExtent[0] && s[0] * f[0] >= 0.0f)
-		return false;
-
-	f[1] = D3DXVec3Dot(&vDir, &pBox->vAxis[1]);
-	s[1] = D3DXVec3Dot(&vR, &pBox->vAxis[1]);
-	fa[1] = fabs(f[1]);
-	sa[1] = fabs(s[1]);
-	if (sa[1] > pBox->fExtent[1] && f[1] * s[1] >= 0.0f)
-		return false;
-
-	f[2] = D3DXVec3Dot(&vDir, &pBox->vAxis[2]);
-	s[2] = D3DXVec3Dot(&vR, &pBox->vAxis[2]);
-	fa[2] = fabs(f[2]);
-	sa[2] = fabs(s[2]);
-	if (sa[2] > pBox->fExtent[2] && f[2] * s[2] >= 0.0f)
-		return false;
-
-	float  fCross[3], fRhs;
-	D3DXVECTOR3 vDxR;
-	D3DXVec3Cross(&vDxR, &pRay->vDirection, &vR);
-	// D X pBox->vAxis[0]  분리축
-	fCross[0] = fabs(D3DXVec3Dot(&vDxR, &pBox->vAxis[0]));
-	float fAxis2 = pBox->fExtent[1] * fa[2];
-	float fAxis1 = pBox->fExtent[2] * fa[1];
-	fRhs = fAxis2 + fAxis1;
-	if (fCross[0] > fRhs)
-	{
-		m_vDxR = vDxR;
-		return false;
+	int i, j;
+	for (i = 0; i < 3; ++i) {
+		for (j = 0; j < 3; ++j)
+			pBox->axis[i][j] = (*pMat)(i, j);
+		pBox->translation[i] = (*pMat)(3, i);
 	}
-	// D x pBox->vAxis[1]  분리축
-	fCross[1] = fabs(D3DXVec3Dot(&vDxR, &pBox->vAxis[1]));
-	fRhs = pBox->fExtent[0] * fa[2] + pBox->fExtent[2] * fa[0];
-	if (fCross[1] > fRhs)
-	{
-		m_vDxR = vDxR;
-		return false;
-	}
-	// D x pBox->vAxis[2]  분리축
-	fCross[2] = fabs(D3DXVec3Dot(&vDxR, &pBox->vAxis[2]));
-	fRhs = pBox->fExtent[0] * fa[1] + pBox->fExtent[1] * fa[0];
-	if (fCross[2] > fRhs)
-	{
-		m_vDxR = vDxR;
-		return false;
-	}
-
-	return true;
 }
+
+void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax)
+{
+	pBox->center[0] = (vecMin.x + vecMax.x) / 2.0F;
+	pBox->center[1] = (vecMin.y + vecMax.y) / 2.0F;
+	pBox->center[2] = (vecMin.z + vecMax.z) / 2.0F;
+
+	pBox->extent[0] = vecMax.x - pBox->center[0];
+	pBox->extent[1] = vecMax.y - pBox->center[1];
+	pBox->extent[2] = vecMax.z - pBox->center[2];
+	// identity world coordinate axis
+	pBox->axis[0][0] = 1.0F; pBox->axis[0][1] = 0.0F; pBox->axis[0][2] = 0.0F;
+	pBox->axis[1][0] = 0.0F; pBox->axis[1][1] = 1.0F; pBox->axis[1][2] = 0.0F;
+	pBox->axis[2][0] = 0.0F; pBox->axis[2][1] = 0.0F; pBox->axis[2][2] = 1.0F;
+	pBox->translation[0] = 0.0F; pBox->translation[1] = 0.0F; pBox->translation[2] = 0.0F;
+}
+
+void moveBox(CBox *pBox, const D3DXMATRIX& mat)
+{
+	D3DXMATRIX matBox;
+	// 박스의 transform을 가져온다.
+	GetBoxTransform(&matBox, pBox);
+	// 박스의 transform을 바꾼다.
+	matBox *= mat;
+	SetBoxTransform(&matBox, pBox);
+	// 박스의 center 좌표도 바꾼다.
+	D3DXVECTOR3 vecCenter(pBox->center[0], pBox->center[1], pBox->center[2]);
+	D3DXVec3TransformCoord(&vecCenter, &vecCenter, &mat);
+	pBox->center[0] = vecCenter.x; pBox->center[1] = vecCenter.y; pBox->center[2] = vecCenter.z;
+}
+//
+////Axis-aligned bounding box(AABB )
+//bool GuridMain::IntersectBox(G_RAY* pRay, G_BOX* pBox)
+//{
+//	D3DXVECTOR3 tmin;
+//	tmin.x = (pBox->vMin.x - pRay->vOrigin.x) / pRay->vDirection.x + 0.001f;
+//	tmin.y = (pBox->vMin.y - pRay->vOrigin.y) / pRay->vDirection.y + 0.001f;
+//	tmin.z = (pBox->vMin.z - pRay->vOrigin.z) / pRay->vDirection.z + 0.001f;
+//
+//	D3DXVECTOR3 tmax;
+//	tmax.x = (pBox->vMax.x - pRay->vOrigin.x) / pRay->vDirection.x + 0.001f;
+//	tmax.y = (pBox->vMax.y - pRay->vOrigin.y) / pRay->vDirection.y + 0.001f;
+//	tmax.z = (pBox->vMax.z - pRay->vOrigin.z) / pRay->vDirection.z + 0.001f;
+//
+//	D3DXVECTOR3 real_min;
+//	real_min.x = min(tmin.x, tmax.x);
+//	real_min.y = min(tmin.y, tmax.y);
+//	real_min.z = min(tmin.z, tmax.z);
+//	D3DXVECTOR3 real_max;
+//	real_max.x = max(tmin.x, tmax.x);
+//	real_max.y = max(tmin.y, tmax.y);
+//	real_max.z = max(tmin.z, tmax.z);
+//
+//	float minmax = min(min(real_max.x, real_max.y), real_max.z);
+//	float maxmin = max(max(real_min.x, real_min.y), real_min.z);
+//
+//	if (minmax >= maxmin)
+//	{
+//		m_vIntersection = pRay->vOrigin + pRay->vDirection* maxmin;
+//		return true;
+//	}
+//	return false;
+//}
+////Oriented bounding box(OBB : RAY)
+//bool GuridMain::ChkOBBToRay(G_RAY* pRay, G_BOX* pBox)
+//{
+//	float  f[3], fa[3], s[3], sa[3];
+//	D3DXVECTOR3 vDir = pRay->vDirection;// * 1000.0f;
+//	D3DXVECTOR3 vR = pRay->vOrigin - pBox->vCenter;
+//	f[0] = D3DXVec3Dot(&vDir, &pBox->vAxis[0]);
+//	s[0] = D3DXVec3Dot(&vR, &pBox->vAxis[0]);
+//	fa[0] = fabs(f[0]);
+//	sa[0] = fabs(s[0]);
+//
+//	if (sa[0] > pBox->fExtent[0] && s[0] * f[0] >= 0.0f)
+//		return false;
+//
+//	f[1] = D3DXVec3Dot(&vDir, &pBox->vAxis[1]);
+//	s[1] = D3DXVec3Dot(&vR, &pBox->vAxis[1]);
+//	fa[1] = fabs(f[1]);
+//	sa[1] = fabs(s[1]);
+//	if (sa[1] > pBox->fExtent[1] && f[1] * s[1] >= 0.0f)
+//		return false;
+//
+//	f[2] = D3DXVec3Dot(&vDir, &pBox->vAxis[2]);
+//	s[2] = D3DXVec3Dot(&vR, &pBox->vAxis[2]);
+//	fa[2] = fabs(f[2]);
+//	sa[2] = fabs(s[2]);
+//	if (sa[2] > pBox->fExtent[2] && f[2] * s[2] >= 0.0f)
+//		return false;
+//
+//	float  fCross[3], fRhs;
+//	D3DXVECTOR3 vDxR;
+//	D3DXVec3Cross(&vDxR, &pRay->vDirection, &vR);
+//	// D X pBox->vAxis[0]  분리축
+//	fCross[0] = fabs(D3DXVec3Dot(&vDxR, &pBox->vAxis[0]));
+//	float fAxis2 = pBox->fExtent[1] * fa[2];
+//	float fAxis1 = pBox->fExtent[2] * fa[1];
+//	fRhs = fAxis2 + fAxis1;
+//	if (fCross[0] > fRhs)
+//	{
+//		m_vDxR = vDxR;
+//		return false;
+//	}
+//	// D x pBox->vAxis[1]  분리축
+//	fCross[1] = fabs(D3DXVec3Dot(&vDxR, &pBox->vAxis[1]));
+//	fRhs = pBox->fExtent[0] * fa[2] + pBox->fExtent[2] * fa[0];
+//	if (fCross[1] > fRhs)
+//	{
+//		m_vDxR = vDxR;
+//		return false;
+//	}
+//	// D x pBox->vAxis[2]  분리축
+//	fCross[2] = fabs(D3DXVec3Dot(&vDxR, &pBox->vAxis[2]));
+//	fRhs = pBox->fExtent[0] * fa[1] + pBox->fExtent[1] * fa[0];
+//	if (fCross[2] > fRhs)
+//	{
+//		m_vDxR = vDxR;
+//		return false;
+//	}
+//
+//	return true;
+//}
 
 
 // 윈도우 메세지 
@@ -180,9 +237,11 @@ bool GuridMain::Init()
 
 	m_pSkyBoxObj->CreateTextureArray(GetDevice(), GetContext());
 
-	for (int i = 0; i < CARTYPE_LAST; i++){
-		m_pCar[i]->init(GetDevice());
-	}
+	//for (int i = 0; i < CARTYPE_LAST; i++){
+	//	m_pCar[i]->init(GetDevice());
+	//}
+	m_pTank->init(GetDevice());
+	m_pEnemy->init(GetDevice());
 
 	GMapDesc MapDesc = { 5, 5, 10.0f, L"../../data/Map.png", L"CustomizeMap.hlsl" };
 	m_CustomMap.Init(GetDevice(), m_pImmediateContext);
@@ -202,11 +261,12 @@ bool GuridMain::Frame()
 	//m_pMainCamera->Update(m_Timer.GetSPF());
 	//m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
 	
-	m_pCar[TANK]->frame( m_Timer.GetSPF(), m_pMainCamera);
+	m_pTank->frame( m_Timer.GetSPF(), m_pMainCamera);
+	m_pEnemy->frame(m_Timer.GetSPF(), m_pMainCamera);
 
 	m_CustomMap.Frame();
 	
-	m_ShellManager.frame(m_pCar[TANK],&m_Timer, m_pMainCamera);
+	m_ShellManager.frame(m_pTank.get(),&m_Timer, m_pMainCamera);
 
 	
 	return true;
@@ -219,7 +279,8 @@ bool GuridMain::Render()
 	m_pSkyBoxObj->SetMatrix(0, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_pSkyBoxObj->Render(m_pImmediateContext, m_pMainCamera);
 
-	m_pCar[TANK]->render(m_pImmediateContext, m_pMainCamera);
+	m_pTank->render(m_pImmediateContext, m_pMainCamera);
+	m_pEnemy->render(m_pImmediateContext, m_pMainCamera);
 
 	//m_pPlane.SetMatrix(&m_matWorldPlaneBase, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//m_pPlane.Render(m_pImmediateContext);
@@ -231,6 +292,7 @@ bool GuridMain::Render()
 
 	m_ShellManager.render();
 
+#pragma region OBBOBB
 	//D3DXMATRIX matWorld, matRot, matScale;
 	//for (int iObj = 0; iObj < 3; iObj++)
 	//{
@@ -318,7 +380,7 @@ bool GuridMain::Render()
 	//		}
 	//	}
 	//}
-
+#pragma endregion
 
 	//D3DXVECTOR3 vDir = m_vDxR;
 	//m_pLine->Draw(D3DXVECTOR3(0, 0, 0), vDir, D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -359,9 +421,12 @@ HRESULT GuridMain::DeleteResource()
 }
 bool GuridMain::Release()
 {
-	for (int i = 0; i < CARTYPE_LAST; i++) {
-		SAFE_DEL(m_pCar[i]);
-	}
+	//for (int i = 0; i < CARTYPE_LAST; i++) {
+	//	SAFE_DEL(m_pCar[i]);
+	//}
+	m_pTank.reset();
+	m_pEnemy.reset();
+
 	m_CustomMap.Release();
 	//SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
@@ -382,11 +447,12 @@ HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
 GuridMain::GuridMain(void)
 {
 
-	m_pCar[SEDAN] = new GCar(SEDAN);
-	m_pCar[TANK] = new GCar(TANK);
-	m_pCar[TRUCK] = new GCar(TRUCK);
-	m_pCar[JEEP] = new GCar(JEEP);
-
+	//m_pCar[SEDAN] = new GCar(SEDAN);
+	//m_pCar[TANK] = new GCar(TANK);
+	//m_pCar[TRUCK] = new GCar(TRUCK);
+	//m_pCar[JEEP] = new GCar(JEEP);
+	m_pTank = make_shared<GCar>(TANK,true);
+	m_pEnemy = make_shared<GCar>(TANK);
 
 	// 추가
 	m_fCameraYaw = 0.0f;

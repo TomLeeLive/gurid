@@ -16,7 +16,8 @@ public:
 
 	GShellManager				m_ShellManager;
 	GMap						m_CustomMap;
-	GCar*						m_pCar[4];	// 0: 승용차, 1 : 트럭, 2 : 지프차
+	shared_ptr<GCar>			m_pTank;	// 0: 승용차, 1 : 트럭, 2 : 지프차
+	shared_ptr<GCar>			m_pEnemy;
 
 	shared_ptr<GSkyBox >   		m_pSkyBoxObj;
 
@@ -57,9 +58,12 @@ public:
 	D3DXVECTOR3 m_vDxR;
 
 public:
-	//OBB
-	bool ChkOBBToRay(G_RAY* pRay, G_BOX* pBox);
-	bool IntersectBox(G_RAY* pRay, G_BOX* pBox);
+#pragma region OBBOBB
+	////OBB
+	//bool ChkOBBToRay(G_RAY* pRay, G_BOX* pBox);
+	//bool IntersectBox(G_RAY* pRay, G_BOX* pBox);
+#pragma endregion	
+	
 	//Default
 	bool		Init();
 	bool		Frame();

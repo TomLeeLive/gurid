@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="GGuridCamera.cpp" />
     <ClCompile Include="GCar.cpp" />
     <ClCompile Include="GShell.cpp" />
@@ -99,6 +100,7 @@
     <ClCompile Include="GuridMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionDetection.hpp" />
     <ClInclude Include="GGuridCamera.h" />
     <ClInclude Include="GCar.h" />
     <ClInclude Include="GShell.h" />
