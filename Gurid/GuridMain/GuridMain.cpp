@@ -130,8 +130,8 @@ bool GuridMain::Init()
 	//}
 
 
-	D3DXMatrixIdentity(&m_World[0]);
-	D3DXMatrixIdentity(&m_matWorld);
+	//D3DXMatrixIdentity(&m_World[0]);
+	//D3DXMatrixIdentity(&m_matWorld);
 
 	D3DXMATRIX matRotX, matScale;
 	D3DXMatrixRotationX(&matRotX, D3DXToRadian(90));
@@ -206,37 +206,8 @@ bool GuridMain::Frame()
 
 	m_CustomMap.Frame();
 	
+	m_ShellManager.frame(m_pCar[TANK],&m_Timer, m_pMainCamera);
 
-
-	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD)
-	{
-		m_vecShell.push_back(make_shared<GShell>(m_pCar[TANK]));
-	}
-
-	
-
-	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();
-	vector<shared_ptr<GShell>>::iterator _L = m_vecShell.end();
-	for (; _F != _L; ++_F)
-	{
-		//(*_F)->m_matWorld = m_pMainCamera->m_matWorld;
-		D3DXVECTOR3 temp = (*_F)->m_vPos;//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
-		temp = temp + (*_F)->m_fSpeed*m_Timer.GetSPF()*((*_F)->m_vLook);
-		(*_F)->m_vPos = temp;
-
-		D3DXMATRIX temp_mat;
-		
-		D3DXMatrixIdentity(&temp_mat);
-
-		temp_mat *= (*_F)->m_mat_s;
-		temp_mat *= (*_F)->m_mat_r_x;
-		temp_mat *= (*_F)->m_matRotation; 
-		temp_mat._41 = (*_F)->m_vPos.x; temp_mat._42 = (*_F)->m_vPos.y; temp_mat._43 = (*_F)->m_vPos.z;
-
-
-		(*_F)->SetMatrix(&temp_mat, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
-	}
 	
 	return true;
 }
@@ -258,13 +229,8 @@ bool GuridMain::Render()
 	m_CustomMap.Render(m_pImmediateContext);
 
 
-	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();
-	vector<shared_ptr<GShell>>::iterator _L = m_vecShell.end();
-	for (; _F != _L; ++_F)
-	{
-		(*_F)->Render(m_pImmediateContext);
-		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
-	}
+	m_ShellManager.render();
+
 	//D3DXMATRIX matWorld, matRot, matScale;
 	//for (int iObj = 0; iObj < 3; iObj++)
 	//{
@@ -427,6 +393,8 @@ GuridMain::GuridMain(void)
 	m_fCameraPitch = 0.0f;
 	m_fCameraRoll = 0.0f;
 	m_fRadius = 0.0f;
+
+
 
 	//SAFE_ZERO(m_pCamera);
 	SAFE_ZERO(m_pMainCamera);

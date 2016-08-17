@@ -14,9 +14,8 @@
 #include "GGuridCamera.h"
 #include "GCar.h"
 #include "GShell.h"
+#include "GShellManager.h"
 #include "GSkyBox.h"
 #include "GuridMain.h"
-#include "GShape.h"
-
 #endif
 
