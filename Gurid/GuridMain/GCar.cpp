@@ -5,26 +5,26 @@
 
 bool GCar::init(ID3D11Device* pDevice) {
 
-	if (FAILED(m_pBody.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/bodybyHand.png")))
+	if (FAILED(m_pBody.Create(pDevice, L"data/shader/Box.hlsl", L"data/bodybyHand.png")))
 	{
 		MessageBox(0, _T("m_pBody 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
-	if (FAILED(m_pHead.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/bodybyHand.png")))
+	if (FAILED(m_pHead.Create(pDevice, L"data/shader/Box.hlsl", L"data/bodybyHand.png")))
 	{
 		MessageBox(0, _T("m_pHead 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
 
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
-		if (FAILED(m_pTire[i].Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/tirebyHand.png")))
+		if (FAILED(m_pTire[i].Create(pDevice, L"data/shader/Box.hlsl", L"data/tirebyHand.png")))
 		{
 			MessageBox(0, _T("m_pTire1 실패"), _T("Fatal error"), MB_OK);
 			return 0;
 		}
 	}
 
-	if (FAILED(m_pCannon.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/cannon.png")))
+	if (FAILED(m_pCannon.Create(pDevice, L"data/shader/Box.hlsl", L"data/cannon.png")))
 	{
 		MessageBox(0, _T("m_pCannon 실패"), _T("Fatal error"), MB_OK);
 		return 0;

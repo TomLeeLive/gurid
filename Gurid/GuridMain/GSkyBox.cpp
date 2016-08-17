@@ -185,7 +185,7 @@ HRESULT GSkyBox::CreateTextureArray(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	{
 		return hr;
 	}
-	m_pCubeTexSRV.Attach(DX::CreateShaderResourceView(pDevice, L"../../data/cube/grassenvmap1024.dds"));
+	m_pCubeTexSRV.Attach(DX::CreateShaderResourceView(pDevice, L"data/cube/grassenvmap1024.dds"));
 	return hr;
 }
 bool GSkyBox::Render(ID3D11DeviceContext*    pContext, GBackViewCamera*			pMainCamera)

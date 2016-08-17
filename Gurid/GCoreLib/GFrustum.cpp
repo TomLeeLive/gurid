@@ -137,7 +137,7 @@ bool GFrustum::CreateRenderBox(ID3D11Device*  pd3dDevice, ID3D11DeviceContext* p
 	m_pd3dDevice = pd3dDevice;
 	if( m_pBoxShape != NULL ) return true;
 	SAFE_NEW( m_pBoxShape, GBoxShape );
-	if( FAILED( m_pBoxShape->Create(pd3dDevice, L"../../data/shader/box.hlsl") ) )
+	if( FAILED( m_pBoxShape->Create(pd3dDevice, L"data/shader/box.hlsl") ) )
 	{
 		MessageBox( 0, _T("m_LineShape ½ÇÆÐ"), _T("Fatal error"), MB_OK );
 		return false;

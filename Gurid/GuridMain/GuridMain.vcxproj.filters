@@ -63,8 +63,4 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="SkyBox.hlsl" />
-    <FxCompile Include="CustomizeMap.hlsl" />
-  </ItemGroup>
 </Project>

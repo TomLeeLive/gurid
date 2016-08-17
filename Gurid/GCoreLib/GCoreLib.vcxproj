@@ -94,7 +94,7 @@ copy "*.h" "..\\..\\include\\Inc"</Command>
     <PostBuildEvent />
     <PostBuildEvent>
       <Command>copy "./GCoreLib32.lib" "..\\..\\lib"
-copy "*.h" "..\\..\\include\\Inc_0"</Command>
+copy "*.h" "..\\..\\include\\Inc"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

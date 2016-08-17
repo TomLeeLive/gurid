@@ -119,13 +119,13 @@ int GuridMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 bool GuridMain::Init()
 {
-	if (FAILED(m_pDirectionLine.Create(GetDevice(), L"../../data/shader/Line.hlsl")))
+	if (FAILED(m_pDirectionLine.Create(GetDevice(), L"data/shader/Line.hlsl")))
 	{
 		MessageBox(0, _T("m_pDirectionLIne 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
 
-	//if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/grids.jpg")))
+	//if (FAILED(m_pPlane.Create(GetDevice(), L"data/shader/Plane.hlsl", L"data/grids.jpg")))
 	//{
 	//	MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
 	//	return 0;
@@ -174,7 +174,7 @@ bool GuridMain::Init()
 
 
 	m_pSkyBoxObj = make_shared<GSkyBox>();
-	if (m_pSkyBoxObj->Create(GetDevice(), L"SkyBox.hlsl") == false)
+	if (m_pSkyBoxObj->Create(GetDevice(), L"data/shader/SkyBox.hlsl") == false)
 	{
 		MessageBox(0, _T("m_pDirectionLIne 실패"), _T("Fatal error"), MB_OK);
 		return 0;
@@ -192,7 +192,7 @@ bool GuridMain::Init()
 	}
 
 
-	GMapDesc MapDesc = { 100, 100, 10.0f, L"../../data/pull.jpg", L"CustomizeMap.hlsl" };
+	GMapDesc MapDesc = { 100, 100, 10.0f, L"data/pull.jpg", L"data/shader/CustomizeMap.hlsl" };
 	m_CustomMap.Init(GetDevice(), m_pImmediateContext);
 	if (FAILED(m_CustomMap.Load(MapDesc)))
 	{
