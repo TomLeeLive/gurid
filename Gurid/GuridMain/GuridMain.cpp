@@ -114,6 +114,7 @@ bool GuridMain::Init()
 	//사운드 로딩
 	hr = this->SoundLoad();
 
+	//m_pSound.Play(1, true);
 	return true;
 }
 bool GuridMain::Frame()
@@ -360,19 +361,19 @@ bool GuridMain::SoundLoad()
 
 	int iIndex = 0;
 
-	iIndex = m_pSound.Load("sound/0_howto.wav");
-	iIndex = m_pSound.Load("sound/1_intro.wav");
-	iIndex = m_pSound.Load("sound/2_get_ready.wav");
-	iIndex = m_pSound.Load("sound/3_wave_clear.wav");
-	iIndex = m_pSound.Load("sound/4_wave_start.wav");
-	iIndex = m_pSound.Load("sound/5_game_over.wav");
-	iIndex = m_pSound.Load("sound/tank_1_move.wav");
-	iIndex = m_pSound.Load("sound/tank_2_move_fast.wav");
-	iIndex = m_pSound.Load("sound/tank_3_head_move.wav");
-	iIndex = m_pSound.Load("sound/tank_4_cannon_shoot.wav");
-	iIndex = m_pSound.Load("sound/tank_5_shell_passby.wav");
-	iIndex = m_pSound.Load("sound/tank_7_shell_hit.wav");
-	iIndex = m_pSound.Load("sound/tank_8_explosion.wav");
+	iIndex = m_pSound.Load("data/sound/0_howto.wav");
+	iIndex = m_pSound.Load("data/sound/1_intro.wav");
+	iIndex = m_pSound.Load("data/sound/2_get_ready.wav");
+	iIndex = m_pSound.Load("data/sound/3_wave_clear.wav");
+	iIndex = m_pSound.Load("data/sound/4_wave_start.wav");
+	iIndex = m_pSound.Load("data/sound/5_game_over.wav");
+	iIndex = m_pSound.Load("data/sound/tank_1_move.wav");
+	iIndex = m_pSound.Load("data/sound/tank_2_move_fast.wav");
+	iIndex = m_pSound.Load("data/sound/tank_3_head_move.wav");
+	iIndex = m_pSound.Load("data/sound/tank_4_cannon_shoot.wav");
+	iIndex = m_pSound.Load("data/sound/tank_5_shell_passby.wav");
+	iIndex = m_pSound.Load("data/sound/tank_7_shell_hit.wav");
+	iIndex = m_pSound.Load("data/sound/tank_8_explosion.wav");
 
 	return hr;
 }
