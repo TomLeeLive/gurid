@@ -4,7 +4,10 @@
 
 
 
-extern int g_iWave;
+extern int g_iWave;   //Wave Count, 표시
+extern int g_iHP;	  //주인공 체력 표시
+extern int g_iBoost;  //주인공 부스트 표시
+extern int g_iShell;  //주인공 잔탄 표시
 
 #include "GBasisLib_0.h"
 #include "GShape.h"

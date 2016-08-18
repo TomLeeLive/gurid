@@ -33,7 +33,7 @@ GCarManager::~GCarManager()
 bool GCarManager::frame(GTimer* timer, GGuridCamera* camera) {
 	
 	D3DXVECTOR3 vPlayerPos;
-	bool		bNeedForPlayerPos = true;
+	bool		bNeedForPlayerStatus = true;
 
 	vector<shared_ptr<GCar>>::iterator _F = m_vecCars.begin();
 	vector<shared_ptr<GCar>>::iterator _L = m_vecCars.end();
@@ -41,9 +41,15 @@ bool GCarManager::frame(GTimer* timer, GGuridCamera* camera) {
 
 	for (; _F != _L; ++_F)
 	{
-		if(bNeedForPlayerPos){
+		if(bNeedForPlayerStatus){
 			vPlayerPos = D3DXVECTOR3((*_F)->m_matWorld_body._41, (*_F)->m_matWorld_body._42, (*_F)->m_matWorld_body._43);
-			bNeedForPlayerPos = false;
+
+			
+			g_iHP = (*_F)->m_iHP;
+			g_iBoost = (*_F)->m_iBoost;
+			g_iShell = (*_F)->m_iShell;
+
+			bNeedForPlayerStatus = false;
 		}
 
 		(*_F)->frame(timer->GetSPF(), camera, vPlayerPos);

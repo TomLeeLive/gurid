@@ -1,6 +1,10 @@
 #include "_StdAfx.h"
 
-int g_iWave = 1;//Wave Count, 표시
+int g_iWave = 1;	//Wave Count, 표시
+int g_iHP = 100;	//주인공 체력 표시
+int g_iBoost = 100; //주인공 부스트 표시
+int g_iShell = 10;  //주인공 잔탄 표시
+
 
 //--------------------------------------------------------------------------------------
 // CameraViewStyle
@@ -149,13 +153,38 @@ void GuridMain::ColCheck() {
 		{	
 			int nRet = BoxBoxIntersectionTest(*((*_B).get()), *(*_F));
 			if (nRet == 1) {
-				// 복잡한 collision handling을 할 수 있겠지만, 지금은 단순히 멈추기
-				//(*_B)->m_iHP--;
+				
+				//적탱크에 주인공 총알이 맞았을때.
+				if ((*_F)->m_bPlayer == true && (*_B)->m_bPlayer == false) {
+					m_iScore += 100;
+					(*_B).reset();
+					*_B = 0;
+				}
+
+				//주인공탱크에 적총알이 맞았을때
+				if ((*_F)->m_bPlayer == false && (*_B)->m_bPlayer == true) {
+					(*_B)->m_iHP -= 10;
+				}
+
+				//총알 erase를 위해..
 				(*_F).reset();//delete (*_F);
 				*_F = 0;
 				break;
 			}
 		}
+
+		_B = m_TankManager.m_vecCars.begin();
+		while (_B != m_TankManager.m_vecCars.end())
+		{
+			if (*_B == 0) {
+
+				_B = m_TankManager.m_vecCars.erase(_B);
+			}
+			else {
+				_B++;
+			}
+		}
+
 	}
 
 	_F = m_ShellManager.m_vecShells.begin();
@@ -228,6 +257,33 @@ bool GuridMain::Render()
 			pBuffer,
 			D2D1::ColorF(0, 0, 1, 1)
 			);
+
+		RECT rc4 = { 30,75, m_iWindowWidth, m_iWindowHeight };
+		_stprintf_s(pBuffer, _T("HP : %d"), g_iHP);
+
+		m_Font.DrawText(rc4,
+			pBuffer,
+			D2D1::ColorF(1, 0, 1, 1)
+			);
+
+		RECT rc5 = { 30,100, m_iWindowWidth, m_iWindowHeight };
+		_stprintf_s(pBuffer, _T("Boost : %d"), g_iBoost);
+
+		m_Font.DrawText(rc5,
+			pBuffer,
+			D2D1::ColorF(1, 1, 0, 1)
+			);
+
+		RECT rc6 = { 30,125, m_iWindowWidth, m_iWindowHeight };
+		_stprintf_s(pBuffer, _T("Cannon : %d"), g_iShell);
+
+		m_Font.DrawText(rc6,
+			pBuffer,
+			D2D1::ColorF(0, 1, 1, 1)
+			);
+
+
+
 		m_Font.End();
 	}
 	m_pSwapChain->Present(0, 0);
