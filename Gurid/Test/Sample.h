@@ -16,7 +16,7 @@ T_STR CameraViewStyle[] =
 	_T("User g_matView"),
 };
 
-#define G_MACRO_TIRES 4
+
 
 enum cartypes {
 	SEDAN = 0,	//¼¼´Ü

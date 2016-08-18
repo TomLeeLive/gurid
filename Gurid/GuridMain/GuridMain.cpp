@@ -1,5 +1,8 @@
 #include "_StdAfx.h"
 
+
+GuridMain* g_pApp;
+
 int g_iWave = 1;	//Wave Count, 표시
 int g_iHP = 100;	//주인공 체력 표시
 int g_iBoost = 100; //주인공 부스트 표시
@@ -163,14 +166,14 @@ void GuridMain::ColCheck() {
 				
 				//적탱크에 주인공 총알이 맞았을때.
 				if ((*_F)->m_bPlayer == true && (*_B)->m_bPlayer == false) {
-					m_iScore += 100;
+					m_iScore += G_MACRO_ADD_SCORE;
 					(*_B).reset();
 					*_B = 0;
 				}
 
 				//주인공탱크에 적총알이 맞았을때
 				if ((*_F)->m_bPlayer == false && (*_B)->m_bPlayer == true) {
-					(*_B)->m_iHP -= 10;
+					(*_B)->m_iHP -= G_MACRO_ENEMY_SHELL_DAMAGE;
 				}
 
 				//총알 erase를 위해..

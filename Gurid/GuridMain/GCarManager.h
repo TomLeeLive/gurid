@@ -1,6 +1,6 @@
 #pragma once
 
-#define G_MACRO_MAX_TANK 4
+
 
 class GCarManager
 {

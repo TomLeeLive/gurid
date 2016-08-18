@@ -1,7 +1,6 @@
 #pragma once
 
-#define G_MACRO_TIRES 6
-#define G_MACRO_TANK_TIRES 6
+
 
 enum cartypes {
 	SEDAN = 0,	//¼¼´Ü

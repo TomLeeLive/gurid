@@ -1,6 +1,6 @@
 #include "_StdAfx.h"
 
-#define G_MACRO_CANNON_LENGTH 5.0f
+
 GShell::GShell(GCar* car, float fFireTime, bool bPlayer) {
 	m_bPlayer = bPlayer;
 	m_vLook = car->m_vHeadLook;

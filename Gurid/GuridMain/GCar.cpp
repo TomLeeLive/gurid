@@ -1,7 +1,6 @@
 #include "_StdAfx.h"
 
-#define G_MACRO_CAR_SPEED 3.0f;
-#define G_MACRO_CAR_MAX_SPEED 10.0f;
+
 
 bool GCar::init(ID3D11Device* pDevice) {
 
