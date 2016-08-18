@@ -1,6 +1,7 @@
 #pragma once
 #include "GMap.h"
 #include "GDirectWrite.h"
+#include "GShape.h"
 //#define BOX_CNT 3
 
 
@@ -14,10 +15,18 @@ struct G_RAY
 class GuridMain : public GBASISLib_0
 {
 public:
-	//GDirectWrite				m_Font;
-	int							m_iScore;					//점수 계산용
-	float						m_fPlayTime;				//플레이 타임(생존시간) 출력용
 
+	//HP, 부스터, 총알 게이지-----------------------------------------------------------------------
+	GPlaneShape					m_pBar[3];
+	D3DXMATRIX					m_mPlaneWorld[3];
+	D3DXMATRIX					m_mPlaneView;
+	D3DXMATRIX					m_mPlaneProj;
+	//텍스트----------------------------------------------------------------------------------------
+	GDirectWrite				m_Font;
+	IDXGISurface1*				m_pBackBuffer = NULL;
+	int							m_iScore;					//점수 계산용
+	int							m_fPlayTime;				//플레이 타임(생존시간) 출력용
+	//----------------------------------------------------------------------------------------------
 	GCarManager					m_TankManager;
 	GShellManager				m_ShellManager;
 	GMap						m_CustomMap;

@@ -171,4 +171,4 @@ Sample::~Sample(void)
 {
 
 }
-GBASIS_RUN(L"Gurid Test Sample");
+GBASIS_RUN(Gurid v0.0.1);

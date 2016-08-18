@@ -22,6 +22,7 @@ int GuridMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 bool GuridMain::Init()
 {
+
 	if (FAILED(m_pDirectionLine.Create(GetDevice(), L"data/shader/Line.hlsl")))
 	{
 		MessageBox(0, _T("m_pDirectionLIne 실패"), _T("Fatal error"), MB_OK);
@@ -32,7 +33,6 @@ bool GuridMain::Init()
 	D3DXMatrixRotationX(&matRotX, D3DXToRadian(90));
 	D3DXMatrixScaling(&matScale, 100.0f, 100.0f, 100.0f);
 	D3DXMatrixMultiply(&m_matWorldPlaneBase, &matScale, &matRotX);
-
 	// 카메라 세팅
 	D3DXVECTOR3 vTargetPosition = D3DXVECTOR3(0.0f, -0.1f, 0.0f);
 	D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
@@ -85,7 +85,21 @@ bool GuridMain::Init()
 	{
 		return false;
 	}
-
+	//게이지 hp 부스터 총알----------------------------------------------------------------------------------------
+	for (int iPlane = 0; iPlane < 3; iPlane++)
+	{
+		if (FAILED(m_pBar[iPlane].Create(GetDevice(), L"data/shader/Plane.hlsl", L"data/grids.jpg")))
+		{
+			MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
+			return 0;
+		}
+	}
+	D3DXMatrixIdentity(&m_mPlaneWorld[0]);
+	D3DXMatrixIdentity(&m_mPlaneWorld[1]);
+	D3DXMatrixIdentity(&m_mPlaneWorld[2]);
+	//텍스트 ---------------------------------------------------------------------------------------------
+	HRESULT hr = GetSwapChain()->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&m_pBackBuffer);
+	m_Font.Set(g_hWnd, m_iWindowWidth, m_iWindowHeight, m_pBackBuffer);
 	return true;
 }
 bool GuridMain::Frame()
@@ -97,7 +111,6 @@ bool GuridMain::Frame()
 	//m_pMainCamera->Update(m_Timer.GetSPF());
 	//m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
 	
-
 	m_TankManager.frame(&m_Timer, m_pMainCamera);
 
 	m_CustomMap.Frame();
@@ -106,6 +119,7 @@ bool GuridMain::Frame()
 
 	ColCheck();
 
+	m_fPlayTime = (int)g_fDurationTime;
 	return true;
 }
 void GuridMain::ShellManagerFrame(){
@@ -134,7 +148,7 @@ void GuridMain::ColCheck() {
 			int nRet = BoxBoxIntersectionTest(*((*_B).get()), *(*_F));
 			if (nRet == 1) {
 				// 복잡한 collision handling을 할 수 있겠지만, 지금은 단순히 멈추기
-
+				//(*_B)->m_iHP--;
 				(*_F).reset();//delete (*_F);
 				*_F = 0;
 				break;
@@ -159,13 +173,9 @@ void GuridMain::ColCheck() {
 bool GuridMain::Render()
 {
 	HRESULT hr;
-	
-
 
 	m_pSkyBoxObj->SetMatrix(0, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_pSkyBoxObj->Render(m_pImmediateContext, m_pMainCamera);
-
-
 
 	//DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
 	//DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
@@ -176,7 +186,39 @@ bool GuridMain::Render()
 	m_TankManager.render(m_pMainCamera);
 	//총알 렌더링
 	m_ShellManager.render();
+	//게이지 렌더링
+	for (int iBar = 0; iBar < 3; iBar++)
+	{
+		m_pBar[iBar].SetMatrix(&m_mPlaneWorld[iBar], &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		m_pBar[iBar].Render(m_pImmediateContext);
+	}
+	//텍스트 test
+	TCHAR pBuffer[256];
+	memset(pBuffer, 0, sizeof(TCHAR) * 256);
+	_stprintf_s(pBuffer, _T("PlayTime : %d"), m_fPlayTime);
+	if (m_Font.m_pTextFormat)
+	{
+		D2D1_SIZE_F rtSize = m_Font.m_pRT->GetSize();
+		//Draw a grid background.
+		int width = static_cast <int> (rtSize.width);
+		int height = static_cast <int> (rtSize.height);
+		m_Font.Begin();
+		m_Font.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		m_Font.m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		RECT rc1 = { 0,0, m_iWindowWidth, m_iWindowHeight / 2 };
+		m_Font.DrawText(rc1,
+			pBuffer,
+			D2D1::ColorF(1, 1, 1, 1)
+			);
 
+		RECT rc2 = {30,25, m_iWindowWidth, m_iWindowHeight };
+		m_Font.DrawText(rc2,
+			L"Score",
+			D2D1::ColorF(1, 1, 1, 0.5)
+			);
+		m_Font.End();
+	}
+	m_pSwapChain->Present(0, 0);
 	return true;
 }
 
@@ -213,9 +255,7 @@ HRESULT GuridMain::DeleteResource()
 }
 bool GuridMain::Release()
 {
-
-
-
+	m_Font.Release();
 	m_CustomMap.Release();
 	//SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
