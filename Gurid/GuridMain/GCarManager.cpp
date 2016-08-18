@@ -4,6 +4,8 @@
 
 GCarManager::GCarManager()
 {
+	srand(time(NULL));
+
 	m_vecCars.push_back(make_shared<GCar>(TANK, true));
 	for (int i = 0; i < G_MACRO_MAX_TANK-1; i++) {
 		m_vecCars.push_back(make_shared<GCar>(TANK));
@@ -30,6 +32,8 @@ GCarManager::~GCarManager()
 
 bool GCarManager::frame(GTimer* timer, GGuridCamera* camera) {
 	
+	D3DXVECTOR3 vPlayerPos;
+	bool		bNeedForPlayerPos = true;
 
 	vector<shared_ptr<GCar>>::iterator _F = m_vecCars.begin();
 	vector<shared_ptr<GCar>>::iterator _L = m_vecCars.end();
@@ -37,7 +41,12 @@ bool GCarManager::frame(GTimer* timer, GGuridCamera* camera) {
 
 	for (; _F != _L; ++_F)
 	{
-		(*_F)->frame(timer->GetSPF(), camera);
+		if(bNeedForPlayerPos){
+			vPlayerPos = D3DXVECTOR3((*_F)->m_matWorld_body._41, (*_F)->m_matWorld_body._42, (*_F)->m_matWorld_body._43);
+			bNeedForPlayerPos = false;
+		}
+
+		(*_F)->frame(timer->GetSPF(), camera, vPlayerPos);
 	}
 	return true;
 

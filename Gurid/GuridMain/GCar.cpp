@@ -179,10 +179,16 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 
 	return true;
 }
-bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
+bool GCar::frame_enemy(float fTime, GGuridCamera* cam,D3DXVECTOR3 vPlayerPos){
+
+	vPlayerPos.y = 0;
+	D3DXVECTOR3 vLook_toPlayer;
+	D3DXMATRIX mat_r_toPlayer;
+	D3DXMatrixIdentity(&mat_r_toPlayer);
 
 
-	D3DXMATRIX matWorld;
+
+	//D3DXMATRIX matWorld;
 
 	D3DXMATRIX mat_s, mat_t, mat_r_tire_right, mat_r_tire_left, mat_r_z, mat_r_x;
 	D3DXMatrixIdentity(&mat_s);
@@ -213,6 +219,10 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 
 	m_matWorld_body._11 *= m_fBodyXScale;		// 차 몸체 X Scale.
 	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
+
+	//바퀴 회전을 위해
+	rot_right += 100.0f*fTime;
+	rot_left += 100.0f*fTime;
 
 /*
 	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
@@ -254,19 +264,39 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 	//mainCamera->m_vObjectVector[2] = m_vLook;
 	//mainCamera->Update(fTime);				
 
-	matWorld = m_matWorld;//*mainCamera->GetWorldMatrix();
-	matWorld._42 = m_fHeight;//-0.5f;				// 차 전체 높이 조정
+	//matWorld = m_matWorld;//*mainCamera->GetWorldMatrix();
+	m_matWorld._42 = m_fHeight;//-0.5f;				// 차 전체 높이 조정
 
 
-	m_matWorld_body *= m_matRotation;
-	m_matWorld_body *= matWorld;
+
+	//플레이어 방향으로 회전을 하기 위해서..
+	D3DXVECTOR3 vPos = D3DXVECTOR3(m_matWorld._41, 0.0f, m_matWorld._43);
+	vLook_toPlayer = vPlayerPos - vPos;
+	D3DXVec3Normalize(&vLook_toPlayer, &vLook_toPlayer);
+	D3DXVECTOR3 vRight, vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	D3DXVec3Cross(&vRight, &vUp, &vLook_toPlayer);
+	D3DXVec3Cross(&vUp, &vLook_toPlayer, &vRight);
+
+	mat_r_toPlayer._11 = vRight.x;		    mat_r_toPlayer._12 = vRight.y;			mat_r_toPlayer._13 = vRight.z;
+	mat_r_toPlayer._21 = vUp.x;				mat_r_toPlayer._22 = vUp.y;				mat_r_toPlayer._23 = vUp.z;
+	mat_r_toPlayer._31 = vLook_toPlayer.x;  mat_r_toPlayer._32 = vLook_toPlayer.y;  mat_r_toPlayer._33 = vLook_toPlayer.z;
+	m_matWorld_body *= mat_r_toPlayer;
 
 
+	//이동
+	D3DXVECTOR3 temp = D3DXVECTOR3(m_matWorld._41, m_matWorld._42, m_matWorld._43);//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
+	temp = temp + m_fSpeed*fTime*vLook_toPlayer;
+	m_matWorld._41 = temp.x; m_matWorld._42 = temp.y; m_matWorld._43 = temp.z;
+
+	//m_matWorld_body *= m_matRotation;
+	m_matWorld_body *= m_matWorld;
+
+	
 
 
 	D3DXMatrixRotationY(&m_matHeadRotation, D3DXToRadian(-rot_head));
 
-	m_matHeadRotation *= m_matRotation;
+	m_matHeadRotation *= mat_r_toPlayer;
 
 	m_vHeadLook.x = m_matHeadRotation._31;
 	m_vHeadLook.y = m_matHeadRotation._32;
@@ -276,7 +306,7 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 	m_matWorld_head._11 *= m_fHeadXScale;// 3.0f;		// 차 머리 X Scale
 	m_matWorld_head._33 *= m_fHeadZScale;// 3.0f;		// 차 머리 Z Scale
 	m_matWorld_head *= m_matHeadRotation;
-	m_matWorld_head *= matWorld;
+	m_matWorld_head *= m_matWorld;
 
 	//matWorld2._41 = ;
 	m_matWorld_head._42 = m_fHeadHeight;
@@ -293,10 +323,10 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
 		D3DXMatrixTranslation(&mat_t, m_vTirePos[i].x, m_vTirePos[i].y, m_vTirePos[i].z);
 		if (i<3) {
-			m_matWorld_tire[i] = mat_s*mat_r_tire_left*mat_r_z*mat_t*m_matRotation*matWorld;
+			m_matWorld_tire[i] = mat_s*mat_r_tire_left*mat_r_z*mat_t*mat_r_toPlayer*m_matWorld;
 		}
 		else {
-			m_matWorld_tire[i] = mat_s*mat_r_tire_right*mat_r_z*mat_t*m_matRotation*matWorld;
+			m_matWorld_tire[i] = mat_s*mat_r_tire_right*mat_r_z*mat_t*mat_r_toPlayer*m_matWorld;
 		}
 	}
 
@@ -304,7 +334,7 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 		D3DXMatrixScaling(&mat_s, 1.0f, 3.0f, 1.0f);
 		D3DXMatrixRotationX(&mat_r_x, D3DXToRadian(90.0f));
 		D3DXMatrixTranslation(&mat_t, m_vCannonPos.x, m_vCannonPos.y, m_vCannonPos.z);
-		m_matWorld_cannon = mat_s*mat_r_x*mat_t*m_matHeadRotation*matWorld;
+		m_matWorld_cannon = mat_s*mat_r_x*mat_t*m_matHeadRotation*m_matWorld;
 	}
 	
 		
@@ -312,13 +342,13 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 
 	return true;
 }
-bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
+bool GCar::frame( float fTime, GGuridCamera* mainCamera,D3DXVECTOR3 vPlayerPos) {
 	
 	if (m_bPlayer == true) {
 		frame_player(fTime, mainCamera);
 	}
 	else {
-		frame_enemy(fTime, mainCamera);
+		frame_enemy(fTime, mainCamera, vPlayerPos);
 	}
 
 	initBox(this, D3DXVECTOR3(-7, -7, -7), D3DXVECTOR3(7, 7, 7));

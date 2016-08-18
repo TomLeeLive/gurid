@@ -34,6 +34,7 @@ public:
 	//D3DXVECTOR3 m_vHeadRight;		// 차의 방향(Right)
 	//D3DXVECTOR3 m_vHeadUp;			// 차의 방향(Up)
 
+	float m_fSpeed;
 	float m_fFireTime;			//포탄 발사후 쿨타임(다음 발사까지의 시간)	
 	float m_fCoolTime;			//마지막 포탄 발사된 시간
 	int	  m_iHP;				//차 체력
@@ -65,10 +66,10 @@ public:
 	GCylinder					m_pCannon;			//탱크 주포
 
 	bool frame_player(float fTime, GGuridCamera* mainCamera);
-	bool frame_enemy(float fTime, GGuridCamera* mainCamera);
+	bool frame_enemy(float fTime, GGuridCamera* mainCamera, D3DXVECTOR3 vPlayerPos);
 
 	virtual bool init(ID3D11Device* pDevice);
-	virtual bool frame( float fTime, GGuridCamera* mainCamera);
+	virtual bool frame( float fTime, GGuridCamera* mainCamera, D3DXVECTOR3 vPlayerPos);
 	virtual bool render(ID3D11DeviceContext*    pImmediateContext, GGuridCamera*			pMainCamera);
 	virtual bool release();
 
@@ -95,6 +96,7 @@ public:
 		return out;
 	}
 	void Create(cartypes type) {
+		m_fSpeed	= 3.0f;
 		m_fFireTime = 0.0f;
 		m_fCoolTime = 0.5f;
 		m_iHP		= 100;
@@ -111,8 +113,10 @@ public:
 
 		D3DXMatrixIdentity(&m_matWorld_cannon);
 
+		if(m_bPlayer== false){
+			D3DXMatrixTranslation(&m_matWorld, rand()%400, rand() % 400, rand() % 400/*, 200.0f, 0.0f, 200.0f*/);
+		}
 
-		D3DXMatrixTranslation(&m_matWorld, 50.0f, 0.0f, 50.0f);
 		if (type == TANK) {
 
 			D3DXMatrixIdentity(&m_matRotation);
