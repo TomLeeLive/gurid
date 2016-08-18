@@ -1,7 +1,7 @@
 #pragma once
 #include "GMap.h"
 
-#define BOX_CNT 3
+//#define BOX_CNT 3
 #define G_MACRO_MAX_TANK 2
 
 struct G_RAY
@@ -14,6 +14,8 @@ struct G_RAY
 class GuridMain : public GBASISLib_0
 {
 public:
+	int							m_iScore;					//점수 계산용
+	float						m_fPlayTime;				//플레이 타임(생존시간) 출력용
 
 	GShellManager				m_ShellManager;
 	GMap						m_CustomMap;
@@ -28,8 +30,6 @@ public:
 	//--------------------------------------------------------------------------------------
 	// Matrix
 	//--------------------------------------------------------------------------------------
-	//D3DXMATRIX					m_matWorld;
-	//D3DXMATRIX					m_World[2];
 	D3DXMATRIX					m_matWorldPlaneBase;
 	//--------------------------------------------------------------------------------------
 	// 뷰포트 설정
@@ -47,7 +47,6 @@ public:
 	float						m_fCameraPitch;
 	float						m_fCameraRoll;
 	float						m_fRadius;
-	//OBB
 public:
 	G_RAY		m_Ray;
 	G_BOX		m_Box[3];
@@ -58,11 +57,6 @@ public:
 	D3DXVECTOR3 m_vDxR;
 
 public:
-#pragma region OBBOBB
-	////OBB
-	//bool ChkOBBToRay(G_RAY* pRay, G_BOX* pBox);
-	//bool IntersectBox(G_RAY* pRay, G_BOX* pBox);
-#pragma endregion	
 	void		ColCheck();
 	//Default
 	bool		Init();

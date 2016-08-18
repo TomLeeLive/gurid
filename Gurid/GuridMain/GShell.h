@@ -2,7 +2,8 @@
 class GShell : public GBoundingBoxOBB , public GCylinder
 {
 public:
-	//CBox  m_Box;					//바운딩 박스
+	bool  m_bPlayer;			//플레이어 발사 총알인지? if 플레이어 --> true
+	//CBox  m_Box;				//바운딩 박스
 	float m_fSpeed;				//포탄 스피드
 	float m_fFireTime;			//포탄이 생성된 후 경과시간.
 	float m_fEndTime;			//포탄이 소멸되는 시간.
@@ -36,7 +37,7 @@ public:
 	}
 
 	GShell();
-	GShell(GCar* car, float fFireTime);
+	GShell(GCar* car, float fFireTime, bool bPlayer);
 	virtual ~GShell();
 };
 

@@ -19,7 +19,7 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD)
 	{
 		if (timer->m_fDurationTime - m_fFireTime > m_fCoolTime) {
-			m_vecShell.push_back(make_shared<GShell>(car, timer->m_fDurationTime));
+			m_vecShell.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
 			m_fFireTime = timer->m_fDurationTime;
 		}
 	}

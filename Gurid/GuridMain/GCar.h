@@ -23,9 +23,7 @@ public:
 		R3 = 5, //뒤 왼쪽
 
 	};
-	//CBox		m_BoxHead;		// 바운딩 박스
-	//CBox		m_BoxBody;		// 바운딩 박스 몸통
-
+	
 	D3DXMATRIX	m_matRotation;	// 차의 방향(회전)
 	D3DXVECTOR3 m_vLook;		// 차의 방향(look)
 	//D3DXVECTOR3 m_vRight;		// 차의 방향(Right)
@@ -36,7 +34,9 @@ public:
 	//D3DXVECTOR3 m_vHeadRight;		// 차의 방향(Right)
 	//D3DXVECTOR3 m_vHeadUp;			// 차의 방향(Up)
 
-
+	int	  m_iHP;				//차 체력
+	int   m_iBoost;				//차 부스트
+	int	  m_iShell;				//발사 가능 탄환 수
 	bool  m_bPlayer;			//플레이어 인지?
 	UINT  m_cartype;			//차 타입
 	float m_fHeight;			// 차 전체 높이 조정
@@ -93,6 +93,10 @@ public:
 		return out;
 	}
 	void Create(cartypes type) {
+		m_iHP		= 100;
+		m_iBoost	= 100;
+		m_iShell    = 10;
+
 		//D3DXMatrixIdentity(&m_matRotation);
 		//D3DXMatrixIdentity(&m_matHeadRotation);
 		D3DXMatrixIdentity(&m_matWorld);
