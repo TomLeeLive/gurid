@@ -20,7 +20,7 @@ public:
 	bool	Init();
 	int     Load(char* pLoadName);
 	int     Load(char* pLoadName, bool bLoop);
-	void	Play(int iIndex, bool bPlay);
+	void	Play(int iIndex, bool bPlay, bool bReUse = false);
 	void    Stop(int iIndex)
 	{
 		m_pChannel[iIndex]->stop();

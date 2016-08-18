@@ -167,6 +167,10 @@ void GuridMain::ColCheck() {
 				
 				//적탱크에 주인공 총알이 맞았을때.
 				if ((*_F)->m_bPlayer == true && (*_B)->m_bPlayer == false) {
+
+					//탱크 터지는 소리
+					m_pSound.Play(12, true);
+					
 					m_iScore += G_MACRO_ADD_SCORE;
 					(*_B).reset();
 					*_B = 0;
@@ -174,6 +178,11 @@ void GuridMain::ColCheck() {
 
 				//주인공탱크에 적총알이 맞았을때
 				if ((*_F)->m_bPlayer == false && (*_B)->m_bPlayer == true) {
+
+					//포탄 맞는 소리
+					m_pSound.Play(9, true);
+					//m_pSound.Play(12, true);
+
 					(*_B)->m_iHP -= G_MACRO_ENEMY_SHELL_DAMAGE;
 				}
 
@@ -367,14 +376,42 @@ bool GuridMain::SoundLoad()
 	iIndex = m_pSound.Load("data/sound/3_wave_clear.wav");
 	iIndex = m_pSound.Load("data/sound/4_wave_start.wav");
 	iIndex = m_pSound.Load("data/sound/5_game_over.wav");
-	iIndex = m_pSound.Load("data/sound/tank_1_move.wav");
-	iIndex = m_pSound.Load("data/sound/tank_2_move_fast.wav");
-	iIndex = m_pSound.Load("data/sound/tank_3_head_move.wav");
-	iIndex = m_pSound.Load("data/sound/tank_4_cannon_shoot.wav");
-	iIndex = m_pSound.Load("data/sound/tank_5_shell_passby.wav");
-	iIndex = m_pSound.Load("data/sound/tank_7_shell_hit.wav");
-	iIndex = m_pSound.Load("data/sound/tank_8_explosion.wav");
+	iIndex = m_pSound.Load("data/sound/tank_1_move.wav");				//1.탱크진행소리
+	iIndex = m_pSound.Load("data/sound/tank_2_move_fast.wav");			//2.탱크빨리진행소리
+	iIndex = m_pSound.Load("data/sound/tank_3_head_move.wav");			//3.탱크머리회전소리
+	iIndex = m_pSound.Load("data/sound/tank_4_cannon_shoot.wav");		//4.포탄맞는소리
+	iIndex = m_pSound.Load("data/sound/tank_5_shell_passby.wav");		//5.포탄지나가는소리
+	iIndex = m_pSound.Load("data/sound/tank_7_shell_hit.wav");			//7.포탄발사소리
+	iIndex = m_pSound.Load("data/sound/tank_8_explosion.wav");			//8.탱크터지는소리
 
+/*
+	------------------------------------------
+0	0.HowTo.
+	안녕하세요. 개발자 이재준 입니다.
+
+	탱크 조작은 W,A,S,D 로 전후진좌우 이동
+	Space로 포탄발사
+	Q,E로 탱크 포탑 회전
+	LShift로 가속(Boost)
+	마우스 오른쪽 클릭후 드래그하여 시점 변경
+
+	입니다.
+	------------------------------------------
+1	1_intro.wav 나는 니가 지난 여름에 한 탱크 게임을 알고 있다.(I Know the tank game you did last summer.)
+2	2.Get ready!
+3	3.Wave Clear!
+4	4.Wave Start!
+5	5.Game Over!
+	------------------------------------------
+6	1.탱크진행소리
+7	2.탱크빨리진행소리
+8	3.탱크머리회전소리
+9	4.포탄맞는소리
+10	5.포탄지나가는소리
+11	7.포탄발사소리
+12	8.탱크터지는소리
+	------------------------------------------
+*/
 	return hr;
 }
 

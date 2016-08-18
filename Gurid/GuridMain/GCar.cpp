@@ -66,18 +66,23 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 
 	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
 	{
+		if(mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED){ g_pApp->m_pSound.Play(7, true, true); } else { g_pApp->m_pSound.Play(6, true, true); }
+
 		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime*fSpeed));
 		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
 		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_D) == KEY_HOLD)
 	{
+		if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pApp->m_pSound.Play(7, true, true); } else { g_pApp->m_pSound.Play(6, true, true); }
+
 		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime*fSpeed));
 		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
 		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
 	}
 	else if (I_Input.KeyCheck(DIK_W) == KEY_HOLD)
 	{
+		if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pApp->m_pSound.Play(7, true, true); } else { g_pApp->m_pSound.Play(6, true, true); }
 		//m_matWorld_body._41 += m_vLook.x* 20.0f*fTime;
 		//m_matWorld_body._43 += m_vLook.z* 20.0f*fTime;;
 		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
@@ -85,21 +90,26 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	}
 	else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
 	{
+		if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pApp->m_pSound.Play(7, true, true); } else { g_pApp->m_pSound.Play(6, true, true); }
 		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
 		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
 	}
+	else {
+		g_pApp->m_pSound.Stop(7);
+		g_pApp->m_pSound.Stop(6);
+	}
 	if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
 	{
-		//mainCamera->m_vObjectVector[2].x;
-		//mainCamera->m_vObjectVector[2].y;
-		//mainCamera->m_vObjectVector[2].z;
-
+		g_pApp->m_pSound.Play(8, true, true);
 		rot_head += 100.0f*fTime;// m_Timer.GetSPF();
 	}
-	if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
+	else if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
 	{
-		//rot -= 100.0f*fTime;// m_Timer.GetSPF();
+		g_pApp->m_pSound.Play(8, true, true);
 		rot_head -= 100.0f*fTime;// m_Timer.GetSPF();
+	}
+	else {
+		g_pApp->m_pSound.Stop(8);
 	}
 
 	if (I_Input.KeyCheck(DIK_LSHIFT) == KEY_HOLD)

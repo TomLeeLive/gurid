@@ -35,7 +35,7 @@ int   KSound::Load(char* pLoadName, bool bLoop)
 
 	return m_iSoundList - 1;
 }
-void  KSound::Play(int iIndex, bool bPlay)
+void  KSound::Play(int iIndex, bool bPlay, bool bReUse)
 {
 	bool playing = false;
 	
@@ -46,6 +46,15 @@ void  KSound::Play(int iIndex, bool bPlay)
 			m_pChannel[iIndex]->isPlaying(&playing);
 		}
 	}
+
+	if (bReUse == true) {
+		
+		m_pSystem->playSound(FMOD_CHANNEL_REUSE,
+				m_pSound[iIndex], false, &m_pChannel[iIndex]);
+		//m_pSound[iIndex], false, &m_pChannela);
+		return;
+	}
+
 	if (playing == false)
 	{		
 		m_pSystem->playSound(FMOD_CHANNEL_FREE,

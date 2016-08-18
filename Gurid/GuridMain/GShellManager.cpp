@@ -21,6 +21,10 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD )//&& car->m_bPlayer)
 	{
 		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
+
+			//ÃÑ¾Ë ¹ß»ç ¼Ò¸®
+			g_pApp->m_pSound.Play(11, true);
+
 			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
 			car->m_fFireTime = timer->m_fDurationTime;
 #ifdef _DEBUG
@@ -35,6 +39,10 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 	//ÀûÅÊÅ© ÃÑ¾Ë ¹ß»ç START
 	if (car->m_bPlayer == false) {
 		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
+
+			////ÃÑ¾Ë ¹ß»ç ¼Ò¸®
+			//g_pApp->m_pSound.Play(9, true);
+
 			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
 			car->m_fFireTime = timer->m_fDurationTime;
 #ifdef _DEBUG
