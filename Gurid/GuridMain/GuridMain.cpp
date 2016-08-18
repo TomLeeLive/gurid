@@ -106,10 +106,17 @@ bool GuridMain::Init()
 	//텍스트 ---------------------------------------------------------------------------------------------
 	HRESULT hr = GetSwapChain()->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)m_pBackBuffer.GetAddressOf());
 	m_Font.Set(g_hWnd, m_iWindowWidth, m_iWindowHeight, m_pBackBuffer.Get());
+
+
+	//사운드 로딩
+	hr = this->SoundLoad();
+
 	return true;
 }
 bool GuridMain::Frame()
 {
+	m_pSound.Frame();
+
 	//--------------------------------------------------------------------------------------
 	// 엔진에 있는 뷰 및 투영 행렬 갱신
 	//--------------------------------------------------------------------------------------
@@ -323,6 +330,7 @@ HRESULT GuridMain::DeleteResource()
 }
 bool GuridMain::Release()
 {
+	m_pSound.Release();
 	m_Font.Release();
 	m_CustomMap.Release();
 	//SAFE_DEL(m_pCamera);
@@ -337,6 +345,31 @@ bool GuridMain::DrawDebug()
 HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
 {
 	HRESULT hr = S_OK;
+
+	return hr;
+}
+
+bool GuridMain::SoundLoad()
+{
+	HRESULT hr = 0;
+
+	m_pSound.Init();
+
+	int iIndex = 0;
+
+	iIndex = m_pSound.Load("sound/0_howto.wav");
+	iIndex = m_pSound.Load("sound/1_intro.wav");
+	iIndex = m_pSound.Load("sound/2_get_ready.wav");
+	iIndex = m_pSound.Load("sound/3_wave_clear.wav");
+	iIndex = m_pSound.Load("sound/4_wave_start.wav");
+	iIndex = m_pSound.Load("sound/5_game_over.wav");
+	iIndex = m_pSound.Load("sound/tank_1_move.wav");
+	iIndex = m_pSound.Load("sound/tank_2_move_fast.wav");
+	iIndex = m_pSound.Load("sound/tank_3_head_move.wav");
+	iIndex = m_pSound.Load("sound/tank_4_cannon_shoot.wav");
+	iIndex = m_pSound.Load("sound/tank_5_shell_passby.wav");
+	iIndex = m_pSound.Load("sound/tank_7_shell_hit.wav");
+	iIndex = m_pSound.Load("sound/tank_8_explosion.wav");
 
 	return hr;
 }
