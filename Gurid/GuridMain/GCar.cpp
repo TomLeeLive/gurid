@@ -51,14 +51,16 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	static float rot_right = 0.0f, rot_left = 0.0f, rot_head = 0.0f;// 바퀴 회전 각도
 
 	//float 누적발생에 대한 오차를 줄이기 위해..
-	if (angle > 360.0f || angle < -360.0f)
-		angle = 0.0f;
+	if (angle > 360.0f || angle < -360.0f){
+		angle = 0.0f; D3DXMatrixIdentity(&m_matRotation);
+	}
 	if (rot_right > 360.0f || rot_right < -360.0f)
 		rot_right = 0.0f;
 	if (rot_left > 360.0f || rot_left < -360.0f)
 		rot_left = 0.0f;
-	if (rot_head > 360.0f || rot_head < -360.0f)
-		rot_head = 0.0f;
+	if (rot_head > 360.0f || rot_head < -360.0f){
+		rot_head = 0.0f; D3DXMatrixIdentity(&m_matHeadRotation);
+	}
 
 	m_matWorld_body._11 *= m_fBodyXScale;		// 차 몸체 X Scale.
 	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
@@ -198,14 +200,16 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam){
 	static float rot_right = 0.0f, rot_left = 0.0f, rot_head = 0.0f;// 바퀴 회전 각도
 
 	//float 누적발생에 대한 오차를 줄이기 위해..
-	if (angle > 360.0f || angle < -360.0f)
-		angle = 0.0f;
+	if (angle > 360.0f || angle < -360.0f) {
+		angle = 0.0f; D3DXMatrixIdentity(&m_matRotation);
+	}
 	if (rot_right > 360.0f || rot_right < -360.0f)
 		rot_right = 0.0f;
 	if (rot_left > 360.0f || rot_left < -360.0f)
 		rot_left = 0.0f;
-	if (rot_head > 360.0f || rot_head < -360.0f)
-		rot_head = 0.0f;
+	if (rot_head > 360.0f || rot_head < -360.0f) {
+		rot_head = 0.0f; D3DXMatrixIdentity(&m_matHeadRotation);
+	}
 
 	m_matWorld_body._11 *= m_fBodyXScale;		// 차 몸체 X Scale.
 	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
