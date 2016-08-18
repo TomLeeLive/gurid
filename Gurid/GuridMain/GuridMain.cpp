@@ -208,13 +208,23 @@ bool GuridMain::Render()
 		RECT rc1 = { 0,0, m_iWindowWidth, m_iWindowHeight / 2 };
 		m_Font.DrawText(rc1,
 			pBuffer,
-			D2D1::ColorF(1, 1, 1, 1)
+			D2D1::ColorF(1, 0, 0, 1)
 			);
 
 		RECT rc2 = {30,25, m_iWindowWidth, m_iWindowHeight };
+		_stprintf_s(pBuffer, _T("Score : %d"), m_iScore);
+
 		m_Font.DrawText(rc2,
-			L"Score",
-			D2D1::ColorF(1, 1, 1, 0.5)
+			pBuffer,
+			D2D1::ColorF(0, 1, 0, 1)
+			);
+
+		RECT rc3 = { 30,50, m_iWindowWidth, m_iWindowHeight };
+		_stprintf_s(pBuffer, _T("Wave : %d"), m_iWave);
+
+		m_Font.DrawText(rc3,
+			pBuffer,
+			D2D1::ColorF(0, 0, 1, 1)
 			);
 		m_Font.End();
 	}
@@ -275,6 +285,7 @@ HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
 
 GuridMain::GuridMain(void)
 {
+	m_iWave = 1;
 	m_iScore = 0;
 	m_fPlayTime = 0.0f;
 
