@@ -33,7 +33,7 @@
     <ClCompile Include="GShellManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionDetection.cpp">
+    <ClCompile Include="GBoundingBoxOBB.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,7 +59,7 @@
     <ClInclude Include="GShellManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionDetection.hpp">
+    <ClInclude Include="GBoundingBoxOBB.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

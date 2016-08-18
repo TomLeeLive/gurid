@@ -7,7 +7,7 @@
 
 //#include "CollisionDetection.hpp"
 
-int BoxBoxIntersectionTest(const CBox& box0,const CBox& box1)
+int BoxBoxIntersectionTest(const GBoundingBoxOBB& box0,const GBoundingBoxOBB& box1)
 {
  // compute difference of box centers,D=C1-C0
  real D[3]=
@@ -147,7 +147,7 @@ int BoxBoxIntersectionTest(const CBox& box0,const CBox& box1)
 }
 
 
-D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox)
+D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, GBoundingBoxOBB* pBox)
 {
 	int i, j;
 	real fMat[16];
@@ -158,7 +158,7 @@ D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox)
 	return pMat;
 }
 
-void SetBoxTransform(const D3DXMATRIX* pMat, CBox* pBox)
+void SetBoxTransform(const D3DXMATRIX* pMat, GBoundingBoxOBB* pBox)
 {
 	int i, j;
 	for (i = 0; i < 3; ++i) {
@@ -168,7 +168,7 @@ void SetBoxTransform(const D3DXMATRIX* pMat, CBox* pBox)
 	}
 }
 
-void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax)
+void initBox(GBoundingBoxOBB *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax)
 {
 	pBox->center[0] = (vecMin.x + vecMax.x) / 2.0F;
 	pBox->center[1] = (vecMin.y + vecMax.y) / 2.0F;
@@ -184,7 +184,7 @@ void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax)
 	pBox->translation[0] = 0.0F; pBox->translation[1] = 0.0F; pBox->translation[2] = 0.0F;
 }
 
-void moveBox(CBox *pBox, const D3DXMATRIX& mat)
+void moveBox(GBoundingBoxOBB *pBox, const D3DXMATRIX& mat)
 {
 	D3DXMATRIX matBox;
 	// 박스의 transform을 가져온다.

@@ -1,5 +1,5 @@
 #pragma once
-class GShell : public CBox , public GCylinder
+class GShell : public GBoundingBoxOBB , public GCylinder
 {
 public:
 	//CBox  m_Box;					//바운딩 박스

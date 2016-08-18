@@ -11,7 +11,7 @@ enum cartypes {
 	CARTYPE_LAST//Â÷·® ¼ö
 };
 
-class GCar : public CBox
+class GCar : public GBoundingBoxOBB
 {
 public:
 	enum tirepos {

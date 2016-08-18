@@ -3,7 +3,7 @@
 
 typedef	float real;
 
-class CBox
+class GBoundingBoxOBB
 {
 public:
  real center[3];
@@ -31,7 +31,7 @@ public:
  }
 };
 
-int BoxBoxIntersectionTest(const CBox& box0,const CBox& box1);
+int BoxBoxIntersectionTest(const GBoundingBoxOBB& box0,const GBoundingBoxOBB& box1);
 inline real DotProduct(const real v0[3],const real v1[3])
 {//=v0.v1
  return v0[0]*v1[0]+v0[1]*v1[1]+v0[2]*v1[2];
@@ -40,10 +40,10 @@ inline real DotProduct(const real v0[3],const real v1[3])
 
 
 // bounding box 관련 함수들
-D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, CBox* pBox);
-void SetBoxTransform(const D3DXMATRIX *pMat, CBox* pBox);
-void initBox(CBox *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax);
-void moveBox(CBox *pBox, const D3DXMATRIX& mat);
+D3DXMATRIX* GetBoxTransform(D3DXMATRIX *pMat, GBoundingBoxOBB* pBox);
+void SetBoxTransform(const D3DXMATRIX *pMat, GBoundingBoxOBB* pBox);
+void initBox(GBoundingBoxOBB *pBox, const D3DXVECTOR3& vecMin, const D3DXVECTOR3& vecMax);
+void moveBox(GBoundingBoxOBB *pBox, const D3DXMATRIX& mat);
 
 
 #endif//of #ifndef __COLLISIONDETECTION_HPP

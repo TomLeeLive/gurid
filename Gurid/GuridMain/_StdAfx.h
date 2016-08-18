@@ -10,7 +10,7 @@
 #include "GShape.h"
 #include "GBackViewCamera.h"
 
-#include "CollisionDetection.hpp"
+#include "GBoundingBoxOBB.hpp"
 #include "GGuridCamera.h"
 #include "GCar.h"
 #include "GShell.h"
