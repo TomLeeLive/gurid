@@ -165,8 +165,8 @@ bool GuridMain::Render()
 		m_pTank[i]->render(m_pImmediateContext, m_pMainCamera);
 	}
 
-	DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
-	DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
+	//DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
+	//DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
 	m_CustomMap.SetMatrix(m_pMainCamera->GetWorldMatrix(), m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_CustomMap.Render(m_pImmediateContext);
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "GMap.h"
-
+#include "GDirectWrite.h"
 //#define BOX_CNT 3
 #define G_MACRO_MAX_TANK 2
 
@@ -14,6 +14,7 @@ struct G_RAY
 class GuridMain : public GBASISLib_0
 {
 public:
+	//GDirectWrite				m_Font;
 	int							m_iScore;					//점수 계산용
 	float						m_fPlayTime;				//플레이 타임(생존시간) 출력용
 

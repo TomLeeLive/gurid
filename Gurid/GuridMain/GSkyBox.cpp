@@ -145,12 +145,12 @@ HRESULT GSkyBox::LoadTextures(ID3D11Device* pDevice, TCHAR* pLoadTextureString)
 
 	TCHAR* g_szSkyTextures[] =
 	{
-		L"..\\..\\data\\st00_cm_front.bmp",
-		L"..\\..\\data\\st00_cm_back.bmp",
-		L"..\\..\\data\\st00_cm_right.bmp",
-		L"..\\..\\data\\st00_cm_left.bmp",
-		L"..\\..\\data\\st00_cm_up.bmp",
-		L"..\\..\\data\\st00_cm_down.bmp"
+		L"data/st00_cm_front.bmp",
+		L"data/st00_cm_back.bmp",
+		L"data/st00_cm_right.bmp",
+		L"data/st00_cm_left.bmp",
+		L"data/st00_cm_up.bmp",
+		L"data/st00_cm_down.bmp"
 	};
 	int iNumTexture = sizeof(g_szSkyTextures) / sizeof(g_szSkyTextures[0]);
 
@@ -168,12 +168,12 @@ HRESULT GSkyBox::CreateTextureArray(ID3D11Device* pDevice, ID3D11DeviceContext* 
 
 	TCHAR* g_szSkyTextures[] =
 	{
-		L"..\\..\\data\\st00_cm_front.bmp",
-		L"..\\..\\data\\st00_cm_back.bmp",
-		L"..\\..\\data\\st00_cm_right.bmp",
-		L"..\\..\\data\\st00_cm_left.bmp",
-		L"..\\..\\data\\st00_cm_up.bmp",
-		L"..\\..\\data\\st00_cm_down.bmp"
+		L"data/st00_cm_front.bmp",
+		L"data/st00_cm_back.bmp",
+		L"data/st00_cm_right.bmp",
+		L"data/st00_cm_left.bmp",
+		L"data/st00_cm_up.bmp",
+		L"data/st00_cm_down.bmp"
 	};
 	int iNumTexture = sizeof(g_szSkyTextures) / sizeof(g_szSkyTextures[0]);
 	//--------------------------------------------------------------------------------------
