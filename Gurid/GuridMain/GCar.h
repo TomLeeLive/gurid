@@ -34,6 +34,8 @@ public:
 	//D3DXVECTOR3 m_vHeadRight;		// 차의 방향(Right)
 	//D3DXVECTOR3 m_vHeadUp;			// 차의 방향(Up)
 
+	float m_fFireTime;			//포탄 발사후 쿨타임(다음 발사까지의 시간)	
+	float m_fCoolTime;			//마지막 포탄 발사된 시간
 	int	  m_iHP;				//차 체력
 	int   m_iBoost;				//차 부스트
 	int	  m_iShell;				//발사 가능 탄환 수
@@ -67,7 +69,7 @@ public:
 
 	virtual bool init(ID3D11Device* pDevice);
 	virtual bool frame( float fTime, GGuridCamera* mainCamera);
-	virtual bool render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera);
+	virtual bool render(ID3D11DeviceContext*    pImmediateContext, GGuridCamera*			pMainCamera);
 	virtual bool release();
 
 
@@ -93,6 +95,8 @@ public:
 		return out;
 	}
 	void Create(cartypes type) {
+		m_fFireTime = 0.0f;
+		m_fCoolTime = 0.5f;
 		m_iHP		= 100;
 		m_iBoost	= 100;
 		m_iShell    = 10;
@@ -156,11 +160,7 @@ public:
 			m_vTireScale = D3DXVECTOR3(3.0f, 0.5f, 3.0f);
 		}
 	}
-	GCar(cartypes type) {
-		m_bPlayer = false;
-		Create(type);
-	};
-	GCar(cartypes type, bool player) {
+	GCar(cartypes type, bool player = false) {
 		m_bPlayer = player;
 		Create(type);
 	};

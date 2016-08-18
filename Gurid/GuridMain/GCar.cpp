@@ -302,7 +302,7 @@ bool GCar::frame( float fTime, GGuridCamera* mainCamera) {
 
 	return true;
 }
-bool GCar::render(ID3D11DeviceContext*    pImmediateContext, GBackViewCamera*			pMainCamera) {
+bool GCar::render(ID3D11DeviceContext*    pImmediateContext, GGuridCamera*			pMainCamera) {
 
 	DX::ApplyDSS(pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
 	m_pBody.SetMatrix(&m_matWorld_body, &pMainCamera->m_matView, &pMainCamera->m_matProj);

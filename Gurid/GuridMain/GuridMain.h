@@ -2,7 +2,7 @@
 #include "GMap.h"
 
 //#define BOX_CNT 3
-#define G_MACRO_MAX_TANK 2
+
 
 struct G_RAY
 {
@@ -17,9 +17,10 @@ public:
 	int							m_iScore;					//점수 계산용
 	float						m_fPlayTime;				//플레이 타임(생존시간) 출력용
 
+	GCarManager					m_TankManager;
 	GShellManager				m_ShellManager;
 	GMap						m_CustomMap;
-	shared_ptr<GCar>			m_pTank[G_MACRO_MAX_TANK];	// 0:플레이어, 그 외에 모두 적
+	//shared_ptr<GCar>			m_pTank[G_MACRO_MAX_TANK];	// 0:플레이어, 그 외에 모두 적
 
 	shared_ptr<GSkyBox >   		m_pSkyBoxObj;
 
@@ -58,6 +59,7 @@ public:
 
 public:
 	void		ColCheck();
+	void		ShellManagerFrame();
 	//Default
 	bool		Init();
 	bool		Frame();

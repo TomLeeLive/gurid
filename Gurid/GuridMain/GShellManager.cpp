@@ -5,8 +5,8 @@
 GShellManager::GShellManager()
 {
 
-	m_fFireTime = 0.0f;
-	m_fCoolTime = 0.5f;
+	//m_fFireTime = 0.0f;
+	//m_fCoolTime = 0.5f;
 }
 
 
@@ -16,18 +16,23 @@ GShellManager::~GShellManager()
 
 
 bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
-	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD)
+	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD )//&& car->m_bPlayer)
 	{
-		if (timer->m_fDurationTime - m_fFireTime > m_fCoolTime) {
-			m_vecShell.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
-			m_fFireTime = timer->m_fDurationTime;
+		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
+			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
+			car->m_fFireTime = timer->m_fDurationTime;
+#ifdef _DEBUG
+			TCHAR buf[80];
+			wsprintf(buf, L"m_vecShells size:%d\n", m_vecShells.size());
+			OutputDebugString(buf);
+#endif
 		}
 	}
 
 
 
-	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();
-	vector<shared_ptr<GShell>>::iterator _L = m_vecShell.end();
+	vector<shared_ptr<GShell>>::iterator _F = m_vecShells.begin();
+	vector<shared_ptr<GShell>>::iterator _L = m_vecShells.end();
 	for (; _F != _L; ++_F)
 	{
 		//(*_F)->m_matWorld = m_pMainCamera->m_matWorld;
@@ -52,8 +57,8 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 
 
 
-	_F = m_vecShell.begin();
-	_L = m_vecShell.end();
+	_F = m_vecShells.begin();
+	_L = m_vecShells.end();
 	for (; _F != _L; ++_F)
 	{
 		if (timer->m_fDurationTime - (*_F)->m_fFireTime > (*_F)->m_fEndTime) {
@@ -62,12 +67,12 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 		}
 	}
 
-	_F = m_vecShell.begin();
-	while (_F != m_vecShell.end())
+	_F = m_vecShells.begin();
+	while (_F != m_vecShells.end())
 	{
 		if (*_F == 0) {
 
-			_F = m_vecShell.erase(_F);
+			_F = m_vecShells.erase(_F);
 		}
 		else {
 			_F++;
@@ -79,8 +84,8 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 }
 bool GShellManager::render() {
 
-	vector<shared_ptr<GShell>>::iterator _F = m_vecShell.begin();
-	vector<shared_ptr<GShell>>::iterator _L = m_vecShell.end();
+	vector<shared_ptr<GShell>>::iterator _F = m_vecShells.begin();
+	vector<shared_ptr<GShell>>::iterator _L = m_vecShells.end();
 	for (; _F != _L; ++_F)
 	{
 		(*_F)->Render(g_pImmediateContext);

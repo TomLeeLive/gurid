@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GBoundingBoxOBB.cpp" />
+    <ClCompile Include="GCarManager.cpp" />
     <ClCompile Include="GGuridCamera.cpp" />
     <ClCompile Include="GCar.cpp" />
     <ClCompile Include="GShell.cpp" />
@@ -104,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GBoundingBoxOBB.hpp" />
+    <ClInclude Include="GCarManager.h" />
     <ClInclude Include="GGuridCamera.h" />
     <ClInclude Include="GCar.h" />
     <ClInclude Include="GShell.h" />
