@@ -23,8 +23,7 @@ public:
 	D3DXMATRIX					m_mPlaneProj;
 	//텍스트----------------------------------------------------------------------------------------
 	GDirectWrite				m_Font;
-	IDXGISurface1*				m_pBackBuffer = NULL;
-	int							m_iWave;					//Wave Count, 표시
+	ComPtr<IDXGISurface1>		m_pBackBuffer = NULL;	
 	int							m_iScore;					//점수 계산용
 	int							m_fPlayTime;				//플레이 타임(생존시간) 출력용
 	//----------------------------------------------------------------------------------------------

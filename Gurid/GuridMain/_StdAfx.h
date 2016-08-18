@@ -4,7 +4,7 @@
 
 
 
-
+extern int g_iWave;
 
 #include "GBasisLib_0.h"
 #include "GShape.h"

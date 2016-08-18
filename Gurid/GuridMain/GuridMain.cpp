@@ -1,5 +1,7 @@
 #include "_StdAfx.h"
 
+int g_iWave = 1;//Wave Count, 표시
+
 //--------------------------------------------------------------------------------------
 // CameraViewStyle
 //--------------------------------------------------------------------------------------
@@ -98,8 +100,8 @@ bool GuridMain::Init()
 	D3DXMatrixIdentity(&m_mPlaneWorld[1]);
 	D3DXMatrixIdentity(&m_mPlaneWorld[2]);
 	//텍스트 ---------------------------------------------------------------------------------------------
-	HRESULT hr = GetSwapChain()->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&m_pBackBuffer);
-	m_Font.Set(g_hWnd, m_iWindowWidth, m_iWindowHeight, m_pBackBuffer);
+	HRESULT hr = GetSwapChain()->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)m_pBackBuffer.GetAddressOf());
+	m_Font.Set(g_hWnd, m_iWindowWidth, m_iWindowHeight, m_pBackBuffer.Get());
 	return true;
 }
 bool GuridMain::Frame()
@@ -220,7 +222,7 @@ bool GuridMain::Render()
 			);
 
 		RECT rc3 = { 30,50, m_iWindowWidth, m_iWindowHeight };
-		_stprintf_s(pBuffer, _T("Wave : %d"), m_iWave);
+		_stprintf_s(pBuffer, _T("Wave : %d"), g_iWave);
 
 		m_Font.DrawText(rc3,
 			pBuffer,
@@ -285,7 +287,7 @@ HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
 
 GuridMain::GuridMain(void)
 {
-	m_iWave = 1;
+	//m_iWave = 1;
 	m_iScore = 0;
 	m_fPlayTime = 0.0f;
 
