@@ -76,9 +76,7 @@ bool GuridMain::Init()
 	m_pSkyBoxObj->CreateTextureArray(GetDevice(), GetContext());
 
 
-	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
-		m_pTank[i]->init(GetDevice());
-	}
+	m_TankManager.init();
 
 
 	GMapDesc MapDesc = { 100, 100, 10.0f, L"data/pull.jpg", L"data/shader/CustomizeMap.hlsl" };
@@ -100,36 +98,40 @@ bool GuridMain::Frame()
 	//m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
 	
 
-	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
-		//m_pTank[i].reset();
-		m_pTank[i]->frame(m_Timer.GetSPF(), m_pMainCamera);
-	}
-
+	m_TankManager.frame(&m_Timer, m_pMainCamera);
 
 	m_CustomMap.Frame();
 	
-
-	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
-		m_ShellManager.frame(m_pTank[i].get(), &m_Timer, m_pMainCamera);
-	}
-
-
+	ShellManagerFrame();
 
 	ColCheck();
 
-	
 	return true;
 }
+void GuridMain::ShellManagerFrame(){
+	vector<shared_ptr<GCar>>::iterator _F = m_TankManager.m_vecCars.begin();
+	vector<shared_ptr<GCar>>::iterator _L = m_TankManager.m_vecCars.end();
+
+	for (; _F != _L; ++_F)
+	{
+		m_ShellManager.frame((*_F).get(), &m_Timer, m_pMainCamera);
+
+	}
+}
 void GuridMain::ColCheck() {
-	vector<shared_ptr<GShell>>::iterator _F = m_ShellManager.m_vecShell.begin();
-	vector<shared_ptr<GShell>>::iterator _L = m_ShellManager.m_vecShell.end();
+	vector<shared_ptr<GShell>>::iterator _F = m_ShellManager.m_vecShells.begin();
+	vector<shared_ptr<GShell>>::iterator _L = m_ShellManager.m_vecShells.end();
 
 	
 	for (; _F != _L; ++_F)
 	{
 		// Collision Detection Test!
-		for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
-			int nRet = BoxBoxIntersectionTest(*(m_pTank[i].get()), *(*_F));
+		vector<shared_ptr<GCar>>::iterator _B = m_TankManager.m_vecCars.begin();
+		vector<shared_ptr<GCar>>::iterator _E = m_TankManager.m_vecCars.end();
+
+		for (; _B != _E; ++_B)
+		{	
+			int nRet = BoxBoxIntersectionTest(*((*_B).get()), *(*_F));
 			if (nRet == 1) {
 				// 복잡한 collision handling을 할 수 있겠지만, 지금은 단순히 멈추기
 
@@ -140,12 +142,12 @@ void GuridMain::ColCheck() {
 		}
 	}
 
-	_F = m_ShellManager.m_vecShell.begin();
-	while (_F != m_ShellManager.m_vecShell.end())
+	_F = m_ShellManager.m_vecShells.begin();
+	while (_F != m_ShellManager.m_vecShells.end())
 	{
 		if (*_F == 0) {
 
-			_F = m_ShellManager.m_vecShell.erase(_F);
+			_F = m_ShellManager.m_vecShells.erase(_F);
 		}
 		else {
 			_F++;
@@ -158,18 +160,20 @@ bool GuridMain::Render()
 {
 	HRESULT hr;
 	
+
+
 	m_pSkyBoxObj->SetMatrix(0, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_pSkyBoxObj->Render(m_pImmediateContext, m_pMainCamera);
 
-	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
-		m_pTank[i]->render(m_pImmediateContext, m_pMainCamera);
-	}
+
 
 	//DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
 	//DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
 	m_CustomMap.SetMatrix(m_pMainCamera->GetWorldMatrix(), m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
 	m_CustomMap.Render(m_pImmediateContext);
 
+	//탱크 렌더링
+	m_TankManager.render(m_pMainCamera);
 	//총알 렌더링
 	m_ShellManager.render();
 
@@ -210,9 +214,7 @@ HRESULT GuridMain::DeleteResource()
 bool GuridMain::Release()
 {
 
-	for (int i = 0; i < G_MACRO_MAX_TANK; i++) {
-		m_pTank[i].reset();
-	}
+
 
 	m_CustomMap.Release();
 	//SAFE_DEL(m_pCamera);
@@ -241,10 +243,7 @@ GuridMain::GuridMain(void)
 	//m_pCar[TRUCK] = new GCar(TRUCK);
 	//m_pCar[JEEP] = new GCar(JEEP);
 
-	m_pTank[0] = make_shared<GCar>(TANK,true);
-	for (int i = 1; i < G_MACRO_MAX_TANK; i++){
-		m_pTank[i] = make_shared<GCar>(TANK);
-	}
+
 
 	// 추가
 	m_fCameraYaw = 0.0f;

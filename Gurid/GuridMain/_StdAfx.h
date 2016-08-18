@@ -13,6 +13,7 @@
 #include "GBoundingBoxOBB.hpp"
 #include "GGuridCamera.h"
 #include "GCar.h"
+#include "GCarManager.h"
 #include "GShell.h"
 #include "GShellManager.h"
 #include "GSkyBox.h"
