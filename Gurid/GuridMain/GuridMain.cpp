@@ -298,4 +298,4 @@ GuridMain::~GuridMain(void)
 {
 
 }
-GBASIS_RUN(Gurid v0.0.1);
+GBASIS_RUN(Gurid v0.0.2);

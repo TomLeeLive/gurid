@@ -16,6 +16,8 @@ GShellManager::~GShellManager()
 
 
 bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
+
+	//ÁÖÀÎ°ø ÅÊÅ© ÃÑ¾Ë ¹ß»ç START
 	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD )//&& car->m_bPlayer)
 	{
 		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
@@ -28,7 +30,21 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 #endif
 		}
 	}
+	//ÁÖÀÎ°ø ÅÊÅ© ÃÑ¾Ë ¹ß»ç END
 
+	//ÀûÅÊÅ© ÃÑ¾Ë ¹ß»ç START
+	if (car->m_bPlayer == false) {
+		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
+			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
+			car->m_fFireTime = timer->m_fDurationTime;
+#ifdef _DEBUG
+			TCHAR buf[80];
+			wsprintf(buf, L"m_vecShells size:%d\n", m_vecShells.size());
+			OutputDebugString(buf);
+#endif
+		}
+	}
+	//ÀûÅÊÅ© ÃÑ¾Ë ¹ß»ç END
 
 
 	vector<shared_ptr<GShell>>::iterator _F = m_vecShells.begin();
