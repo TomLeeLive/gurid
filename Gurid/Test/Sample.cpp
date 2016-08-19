@@ -2,10 +2,10 @@
 #include "GTimer.h"
 
 
-
+GuridMain* g_pMain;
 
 // 윈도우 메세지 
-int Sample::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+int GuridMain::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	if (m_pMainCamera != nullptr)
 	{
@@ -13,15 +13,15 @@ int Sample::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	}
 	return -1;  
 }
-bool Sample::Init()
+bool GuridMain::Init()
 {
-	if (FAILED(m_pDirectionLine.Create(GetDevice(), L"../../data/shader/Line.hlsl")))
+	if (FAILED(m_pDirectionLine.Create(GetDevice(), L"data/shader/Line.hlsl")))
 	{
 		MessageBox(0, _T("m_pDirectionLIne 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
 
-	if (FAILED(m_pPlane.Create(GetDevice(), L"../../data/shader/Plane.hlsl", L"../../data/grids.jpg")))
+	if (FAILED(m_pPlane.Create(GetDevice(), L"data/shader/Plane.hlsl", L"data/grids.jpg")))
 	{
 		MessageBox(0, _T("m_pPlane 실패"), _T("Fatal error"), MB_OK);
 		return 0;
@@ -71,7 +71,7 @@ bool Sample::Init()
 
 	return true;
 }
-bool Sample::Frame()
+bool GuridMain::Frame()
 {
 
 	
@@ -89,7 +89,7 @@ bool Sample::Frame()
 
 	return true;
 }
-bool Sample::Render()
+bool GuridMain::Render()
 {
 	HRESULT hr;	
 
@@ -105,7 +105,7 @@ bool Sample::Render()
 //--------------------------------------------------------------------------------------
 // 
 //--------------------------------------------------------------------------------------
-HRESULT Sample::CreateResource()
+HRESULT GuridMain::CreateResource()
 {
 	HRESULT hr;
 	if (FAILED(hr = ScreenViewPort(m_SwapChainDesc.BufferDesc.Width, m_SwapChainDesc.BufferDesc.Height)))
@@ -123,7 +123,7 @@ HRESULT Sample::CreateResource()
 //--------------------------------------------------------------------------------------
 // 
 //--------------------------------------------------------------------------------------
-HRESULT Sample::DeleteResource()
+HRESULT GuridMain::DeleteResource()
 {
 	HRESULT hr= S_OK;	
 
@@ -133,7 +133,7 @@ HRESULT Sample::DeleteResource()
 	if( m_pImmediateContext ) m_pImmediateContext->ClearState();
 	return S_OK;
 }
-bool Sample::Release()
+bool GuridMain::Release()
 {
 	SAFE_DEL(m_pCar[0]);
 
@@ -141,19 +141,19 @@ bool Sample::Release()
 	SAFE_DEL(m_pMainCamera);
 	return true;
 }
-bool Sample::DrawDebug()
+bool GuridMain::DrawDebug()
 {
 	
 	return GBASISLib_0::DrawDebug();
 }
-HRESULT Sample::ScreenViewPort(UINT iWidth, UINT iHeight)
+HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
 {	
 	HRESULT hr = S_OK;
 	
 	return hr;
 }
 
-Sample::Sample(void)
+GuridMain::GuridMain(void)
 {	
 	m_pCar[SEDAN] = new GCar(SEDAN);
 
@@ -167,7 +167,7 @@ Sample::Sample(void)
 	SAFE_ZERO(m_pMainCamera);
 }
 
-Sample::~Sample(void)
+GuridMain::~GuridMain(void)
 {
 
 }
