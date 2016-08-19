@@ -23,7 +23,7 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
 
 			//총알 발사 소리
-			g_pApp->m_pSound.Play(SND_TANKSHELLFIRE, true);
+			g_pMain->m_pSound.Play(SND_TANKSHELLFIRE, true);
 
 			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
 			car->m_fFireTime = timer->m_fDurationTime;
@@ -41,7 +41,7 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
 
 			////총알 발사 소리
-			//g_pApp->m_pSound.Play(SND_TANKSHELLHIT, true);
+			//g_pMain->m_pSound.Play(SND_TANKSHELLHIT, true);
 
 			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
 			car->m_fFireTime = timer->m_fDurationTime;

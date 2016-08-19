@@ -1,7 +1,7 @@
 #include "_StdAfx.h"
 
 
-GuridMain* g_pApp;
+GuridMain* g_pMain;
 
 int g_iWave = 1;	//Wave Count, 표시
 int g_iHP = 100;	//주인공 체력 표시

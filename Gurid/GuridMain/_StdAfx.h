@@ -1,13 +1,13 @@
 #ifndef _STDAFX_H_ //인클루드 가드
 #define	 _STDAFX_H_
 
-#define GMAIN			g_pApp
-#define GHINST			g_pApp->m_hInstance
-#define GHWND			g_pApp->m_hWnd
-#define GDEVICE			g_pApp->m_pd3dDevice
-#define GCONTEXT		g_pApp->m_pImmediateContext
-#define GGAME			g_pGameplay
-#define GGAMEMULTI		g_pGameMultiplay
+#define GMAIN			g_pMain
+#define GHINST			g_pMain->m_hInstance
+#define GHWND			g_pMain->m_hWnd
+#define GDEVICE			g_pMain->m_pd3dDevice
+#define GCONTEXT		g_pMain->m_pImmediateContext
+//#define GGAME			g_pGameplay
+//#define GGAMEMULTI		g_pGameMultiplay
 
 #define G_MACRO_ADD_SCORE 100			//적 폭파시 점수 값
 #define G_MACRO_ENEMY_SHELL_DAMAGE 10	//적 탄환 데미지 값
