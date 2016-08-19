@@ -6,7 +6,7 @@
 
 using namespace FMOD;
 
-const int g_iMaxSound = 13; //13개 음원을 처리 하려고 함.
+const int g_iMaxSound = SND_RESOURCES_LAST; //13개 음원을 처리 하려고 함.
 // c,  c++
 class GSound
 {
