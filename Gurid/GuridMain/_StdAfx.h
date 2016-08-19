@@ -24,7 +24,7 @@ extern int g_iBoost;  //주인공 부스트 표시
 extern int g_iShell;  //주인공 잔탄 표시
 
 enum SNDRESOURCES {
-	SND_HOTWO			= 0,	//0.Hotwo
+	SND_HOWTO			= 0,	//0.Hotwo
 	SND_INTRO			= 1,	//1.intro.wav
 	SND_GETREADY		= 2,	//2.Get ready!
 	SND_WAVECLEAR		= 3,	//3.Wave Clear!

@@ -1,6 +1,11 @@
 #include "_StdAfx.h"
 
 bool		GGameSingle::Frame() {
+	if (g_pMain->m_nGameBeforePhase != g_pMain->m_nGamePhase) {
+		g_pMain->m_pSound.Stop(SND_HOWTO);
+		g_pMain->m_pSound.Stop(SND_INTRO);
+		g_pMain->m_nGameBeforePhase = g_pMain->m_nGamePhase;
+	}
 
 	//--------------------------------------------------------------------------------------
 	// 엔진에 있는 뷰 및 투영 행렬 갱신

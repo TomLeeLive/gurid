@@ -1,5 +1,11 @@
 #include "_StdAfx.h"
-
+void		GGameCredit::SoundPlay() {
+	if (g_pMain->m_nGameBeforePhase != g_pMain->m_nGamePhase) {
+		g_pMain->m_pSound.Stop(SND_INTRO);
+		g_pMain->m_pSound.Stop(SND_HOWTO);
+		g_pMain->m_nGameBeforePhase = g_pMain->m_nGamePhase;
+	}
+}
 void GGameCredit::KeyCheck() {
 
 	if (I_Input.KeyCheck(DIK_RETURN) == KEY_HOLD || I_Input.KeyCheck(DIK_ESCAPE) == KEY_HOLD)

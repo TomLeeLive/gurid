@@ -117,8 +117,6 @@ bool GuridMain::Init()
 
 
 
-
-
 	m_GameMenu.Init();
 	m_GameHowto.Init();
 	m_GameCredit.Init();
@@ -413,7 +411,9 @@ GuridMain::GuridMain(void)
 {
 
 	m_nGamePhase = ST_START;//ST_START;
+	m_nGameBeforePhase = ST_SINGLEGAME;
 	m_nWavePhase = WAVE_ST_NEWENEMY_ADD;
+	m_nWaveBeforePhase = WAVE_ST_TO_MENU;
 
 	m_iScore = 0;
 	m_fPlayTime = 0.0f;

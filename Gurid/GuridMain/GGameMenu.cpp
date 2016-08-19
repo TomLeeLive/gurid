@@ -79,7 +79,16 @@ bool GGameMenu::Init()
 #pragma endregion
 	return true;
 }
+void GGameMenu::SoundPlay() {
+	if (g_pMain->m_nGameBeforePhase != g_pMain->m_nGamePhase) {
+		g_pMain->m_pSound.Stop(SND_HOWTO);
+		g_pMain->m_pSound.Play(SND_INTRO, true, true);
+		g_pMain->m_nGameBeforePhase = g_pMain->m_nGamePhase;
+	}
+}
 void GGameMenu::KeyCheck(){
+
+
 	//if (I_Input.KeyCheck(DIK_P) == KEY_UP)
 	//{
 	//	m_pSelectPlane = AddRect(T_BUTTON);
@@ -122,6 +131,11 @@ void GGameMenu::KeyCheck(){
 }
 bool GGameMenu::Frame()
 {
+	//if (g_pMain->m_nGameBeforePhase != g_pMain->m_nGamePhase) {
+	//	g_pMain->m_pSound.Play(SND_INTRO, true);
+	//	g_pMain->m_nGameBeforePhase = g_pMain->m_nGamePhase;
+	//}
+	SoundPlay();
 	KeyCheck();
 
 	GControlUI* pSelect = SelectRect();

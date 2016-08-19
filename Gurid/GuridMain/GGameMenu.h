@@ -16,6 +16,7 @@ public:
 	ComPtr<ID3D11ShaderResourceView> m_pTextureSRV[3];
 	GScene						m_Scene;
 public:
+	virtual void		SoundPlay();
 	virtual void		KeyCheck();
 
 	bool		Init();
