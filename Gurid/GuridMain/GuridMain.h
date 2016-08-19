@@ -28,6 +28,7 @@ public:
 	int							m_iScore;					//점수 계산용
 	int							m_fPlayTime;				//플레이 타임(생존시간) 출력용
 	//----------------------------------------------------------------------------------------------
+	GWaveManager				m_WaveManager;				//wave manager
 	GCarManager					m_TankManager;
 	GShellManager				m_ShellManager;
 	GMap						m_CustomMap;

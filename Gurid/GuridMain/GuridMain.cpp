@@ -219,7 +219,7 @@ void GuridMain::ColCheck() {
 		}
 	}
 
-
+	m_WaveManager.Frame();
 }
 bool GuridMain::Render()
 {

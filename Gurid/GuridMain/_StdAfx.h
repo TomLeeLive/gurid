@@ -40,10 +40,28 @@ enum SNDRESOURCES {
 	SND_RESOURCES_LAST	= 13
 };
 
+enum WAVE_STATE {
+	WAVE_ST_NEWENEMY_ADD = 0,
+	WAVE_ST_READY,
+	WAVE_ST_PLAY,
+	WAVE_ST_GAMEOVER,
+	WAVE_ST_TO_MENU
+};
+
+enum GAME_STATE {
+	ST_START = 0,
+	ST_SINGLEGAME,
+	ST_MULTI,
+	ST_END,
+	ST_HOWTO,
+	ST_CREDIT = 5
+};
+
 #include "GBasisLib_0.h"
 #include "GShape.h"
 #include "GBackViewCamera.h"
 
+#include "GWaveManager.h"
 #include "GSound.h"
 #include "GBoundingBoxOBB.hpp"
 #include "GGuridCamera.h"

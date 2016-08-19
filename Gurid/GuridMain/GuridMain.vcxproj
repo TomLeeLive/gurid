@@ -103,6 +103,7 @@
     <ClCompile Include="GSkyBox.cpp" />
     <ClCompile Include="GSound.cpp" />
     <ClCompile Include="GuridMain.cpp" />
+    <ClCompile Include="GWaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GBoundingBoxOBB.hpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="GSkyBox.h" />
     <ClInclude Include="GSound.h" />
     <ClInclude Include="GuridMain.h" />
+    <ClInclude Include="GWaveManager.h" />
     <ClInclude Include="_StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
