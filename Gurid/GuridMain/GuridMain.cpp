@@ -412,7 +412,7 @@ bool GuridMain::SoundLoad()
 GuridMain::GuridMain(void)
 {
 
-	m_nGamePhase = ST_SINGLEGAME;//ST_START;
+	m_nGamePhase = ST_START;//ST_START;
 	m_nWavePhase = WAVE_ST_NEWENEMY_ADD;
 
 	m_iScore = 0;

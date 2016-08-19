@@ -1,5 +1,13 @@
 #include "_StdAfx.h"
 
+void GGameHowto::KeyCheck() {
+
+	if (I_Input.KeyCheck(DIK_RETURN) == KEY_HOLD || I_Input.KeyCheck(DIK_ESCAPE) == KEY_HOLD)
+	{
+		g_pMain->m_nGamePhase = ST_START;
+		g_pMain->m_nGameBeforePhase = ST_HOWTO;
+	}
+}
 bool		GGameHowto::Init() {
 	I_Ime.ImeUi_Initialize(g_pMain->m_hWnd);
 

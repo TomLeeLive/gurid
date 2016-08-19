@@ -79,16 +79,50 @@ bool GGameMenu::Init()
 #pragma endregion
 	return true;
 }
+void GGameMenu::KeyCheck(){
+	//if (I_Input.KeyCheck(DIK_P) == KEY_UP)
+	//{
+	//	m_pSelectPlane = AddRect(T_BUTTON);
+	//}
+	//if (I_Input.KeyCheck(DIK_O) == KEY_UP)
+	//{
+	//	m_pSelectPlane = AddRect(T_EDIT);
+	//}
+
+	if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
+	{
+		g_pMain->m_nGamePhase = ST_SINGLEGAME;
+		g_pMain->m_nGameBeforePhase = ST_START;
+	}
+	if (I_Input.KeyCheck(DIK_M) == KEY_HOLD)
+	{
+		g_pMain->m_nGamePhase = ST_MULTI;
+		g_pMain->m_nGameBeforePhase = ST_START;
+	}
+	if (I_Input.KeyCheck(DIK_C) == KEY_HOLD)
+	{
+		g_pMain->m_nGamePhase = ST_CREDIT;
+		g_pMain->m_nGameBeforePhase = ST_START;
+	}
+	if (I_Input.KeyCheck(DIK_H) == KEY_HOLD)
+	{
+		g_pMain->m_nGamePhase = ST_HOWTO;
+		g_pMain->m_nGameBeforePhase = ST_START;
+	}
+	if (I_Input.KeyCheck(DIK_E) == KEY_HOLD || I_Input.KeyCheck(DIK_ESCAPE) == KEY_HOLD)
+	{
+		//°ÔÀÓÁ¾·á? ÆË¾÷ ¶ç¿ò
+		//if (MessageBox(GHWND, L"Quit?", L"Quit", MB_YESNO) == IDYES)
+		//{
+			PostQuitMessage(0);
+			return;
+		//}
+		//OutputDebugString(L"Quit\n");
+	}
+}
 bool GGameMenu::Frame()
 {
-	if (I_Input.KeyCheck(DIK_P) == KEY_UP)
-	{
-		m_pSelectPlane = AddRect(T_BUTTON);
-	}
-	if (I_Input.KeyCheck(DIK_O) == KEY_UP)
-	{
-		m_pSelectPlane = AddRect(T_EDIT);
-	}
+	KeyCheck();
 
 	GControlUI* pSelect = SelectRect();
 
