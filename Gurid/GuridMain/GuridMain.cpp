@@ -114,9 +114,26 @@ bool GuridMain::Init()
 	//사운드 로딩
 	hr = this->SoundLoad();
 
+
+
+
+
+
+	m_GameMenu.Init();
+
+
+
+
+
 	//m_pSound.Play(1, true);
 	return true;
 }
+
+
+
+
+
+
 bool GuridMain::Frame()
 {
 
@@ -144,8 +161,6 @@ bool GuridMain::Frame()
 		m_GameCredit.Frame();
 		break;
 	}
-
-
 	m_pSound.Frame();
 
 
@@ -260,7 +275,6 @@ bool GuridMain::Render()
 		m_GameCredit.Render();
 		break;
 	}
-
 	
 	return true;
 }
@@ -271,6 +285,13 @@ bool GuridMain::Render()
 HRESULT GuridMain::CreateResource()
 {
 	HRESULT hr;
+
+
+	m_GameMenu.CreateResource();
+
+
+
+
 	if (FAILED(hr = ScreenViewPort(m_SwapChainDesc.BufferDesc.Width, m_SwapChainDesc.BufferDesc.Height)))
 	{
 		return hr;
@@ -289,6 +310,13 @@ HRESULT GuridMain::CreateResource()
 HRESULT GuridMain::DeleteResource()
 {
 	HRESULT hr = S_OK;
+	
+	
+	if (m_pImmediateContext) m_pImmediateContext->ClearState();
+	return S_OK;
+
+
+
 
 	// 아래의 경고는 GetDevice()->ClearState();를 호출하지 않을 때 발생한다.
 	//D3D10: INFO: ID3D11Device::RSSetState: The currently bound RasterizerState is being deleted; 
@@ -298,6 +326,12 @@ HRESULT GuridMain::DeleteResource()
 }
 bool GuridMain::Release()
 {
+	m_GameMenu.Release();
+
+
+
+
+
 	m_pSound.Release();
 	m_Font.Release();
 	m_CustomMap.Release();
@@ -372,7 +406,8 @@ bool GuridMain::SoundLoad()
 
 GuridMain::GuridMain(void)
 {
-	m_nGamePhase = ST_SINGLEGAME;
+
+	m_nGamePhase = ST_SINGLEGAME;//ST_START;
 	m_nWavePhase = WAVE_ST_NEWENEMY_ADD;
 
 	m_iScore = 0;

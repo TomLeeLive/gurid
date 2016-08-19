@@ -61,6 +61,11 @@ enum GAME_STATE {
 #include "GShape.h"
 #include "GBackViewCamera.h"
 
+
+#include "GPlaneRect.h"				//for UI
+#include "GImeUI.h"					//for UI
+#pragma comment( lib, "IMM32.lib" ) //for UI
+
 #include "GWaveManager.h"
 #include "GSound.h"
 #include "GBoundingBoxOBB.hpp"
@@ -77,8 +82,8 @@ enum GAME_STATE {
 #include "GGameMenu.h"
 #include "GGameHowto.h"
 #include "GGameCredit.h"
-
 #include "GuridMain.h"
+
 #endif
 
 

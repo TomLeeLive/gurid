@@ -63,6 +63,12 @@
     <ClCompile Include="GGameEnd.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="GImeUI.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GPlaneRect.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GCar.h">
@@ -114,6 +120,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="GGameEnd.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GImeUI.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GPlaneRect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

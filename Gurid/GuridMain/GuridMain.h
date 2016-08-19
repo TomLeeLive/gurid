@@ -5,6 +5,17 @@
 //#define BOX_CNT 3
 
 
+////--------------------------------------------------------------------------------------
+//// Structures
+////--------------------------------------------------------------------------------------
+//struct SimpleVertex
+//{
+//	D3DXVECTOR3 p;
+//	D3DXVECTOR4 c;
+//	D3DXVECTOR2 t;
+//};
+
+
 struct G_RAY
 {
 	float			fExtent;
@@ -14,6 +25,16 @@ struct G_RAY
 
 class GuridMain : public GBASISLib_0
 {
+//public:
+//	VS_CONSTANT_BUFFER			m_cbData;
+//	std::vector<GControlUI*>	m_pUIList;
+//	GControlUI*					m_pSelectPlane;
+//	ComPtr<ID3D11ShaderResourceView> m_pTextureSRV[3];
+//	GScene						m_Scene;
+//public:
+//	GControlUI* AddRect(GUI_TYPE type);
+//	GControlUI* SelectRect();
+
 public:
 
 	GGameEnd		m_GameEnd;
