@@ -70,6 +70,14 @@ enum GAME_STATE {
 #include "GShell.h"
 #include "GShellManager.h"
 #include "GSkyBox.h"
+
+#include "GGameEnd.h"
+#include "GGameSingle.h"
+#include "GGameMulti.h"
+#include "GGameMenu.h"
+#include "GGameHowto.h"
+#include "GGameCredit.h"
+
 #include "GuridMain.h"
 #endif
 

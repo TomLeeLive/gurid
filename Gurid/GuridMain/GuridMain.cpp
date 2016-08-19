@@ -119,24 +119,36 @@ bool GuridMain::Init()
 }
 bool GuridMain::Frame()
 {
+
+	switch (m_nGamePhase)
+	{
+	case ST_START:
+		m_GameMenu.Frame();
+		break;
+
+	case ST_SINGLEGAME:
+		m_GameSingle.Frame();
+		break;
+
+	case ST_MULTI:
+		m_GameMulti.Frame();
+		break;
+
+	case ST_END:
+		m_GameEnd.Frame();
+		break;
+	case ST_HOWTO:
+		m_GameHowto.Frame();
+		break;
+	case ST_CREDIT:
+		m_GameCredit.Frame();
+		break;
+	}
+
+
 	m_pSound.Frame();
 
-	//--------------------------------------------------------------------------------------
-	// 엔진에 있는 뷰 및 투영 행렬 갱신
-	//--------------------------------------------------------------------------------------
 
-	//m_pMainCamera->Update(m_Timer.GetSPF());
-	//m_matWorld = *m_pMainCamera->GetWorldMatrix();//(const_cast< D3DXMATRIX* > (m_pMainCamera->GetWorldMatrix()));
-	
-	m_TankManager.frame(&m_Timer, m_pMainCamera);
-
-	m_CustomMap.Frame();
-	
-	ShellManagerFrame();
-
-	ColCheck();
-
-	m_fPlayTime = (int)g_fDurationTime;
 	return true;
 }
 void GuridMain::ShellManagerFrame(){
@@ -218,95 +230,38 @@ void GuridMain::ColCheck() {
 			_F++;
 		}
 	}
-
-	m_WaveManager.Frame();
 }
 bool GuridMain::Render()
 {
 	HRESULT hr;
 
-	m_pSkyBoxObj->SetMatrix(0, m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
-	m_pSkyBoxObj->Render(m_pImmediateContext, m_pMainCamera);
 
-	//DX::ApplyDSS(m_pImmediateContext, DX::GDxState::g_pDSSDepthEnable);
-	//DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
-	m_CustomMap.SetMatrix(m_pMainCamera->GetWorldMatrix(), m_pMainCamera->GetViewMatrix(), m_pMainCamera->GetProjMatrix());
-	m_CustomMap.Render(m_pImmediateContext);
-
-	//탱크 렌더링
-	m_TankManager.render(m_pMainCamera);
-	//총알 렌더링
-	m_ShellManager.render();
-	//게이지 렌더링
-	for (int iBar = 0; iBar < 3; iBar++)
+	switch (m_nGamePhase)
 	{
-		m_pBar[iBar].SetMatrix(&m_mPlaneWorld[iBar], &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		m_pBar[iBar].Render(m_pImmediateContext);
+	case ST_START:
+		m_GameMenu.Render();
+		break;
+
+	case ST_SINGLEGAME:
+		m_GameSingle.Render();
+		break;
+
+	case ST_MULTI:
+		m_GameMulti.Render();
+		break;
+
+	case ST_END:
+		m_GameEnd.Render();
+		break;
+	case ST_HOWTO:
+		m_GameHowto.Render();
+		break;
+	case ST_CREDIT:
+		m_GameCredit.Render();
+		break;
 	}
-	//텍스트 test
-	TCHAR pBuffer[256];
-	memset(pBuffer, 0, sizeof(TCHAR) * 256);
-	_stprintf_s(pBuffer, _T("PlayTime : %d"), m_fPlayTime);
-	if (m_Font.m_pTextFormat)
-	{
-		D2D1_SIZE_F rtSize = m_Font.m_pRT->GetSize();
-		//Draw a grid background.
-		int width = static_cast <int> (rtSize.width);
-		int height = static_cast <int> (rtSize.height);
-		m_Font.Begin();
-		m_Font.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-		m_Font.m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		RECT rc1 = { 0,0, m_iWindowWidth, m_iWindowHeight / 2 };
-		m_Font.DrawText(rc1,
-			pBuffer,
-			D2D1::ColorF(1, 0, 0, 1)
-			);
 
-		RECT rc2 = {30,25, m_iWindowWidth, m_iWindowHeight };
-		_stprintf_s(pBuffer, _T("Score : %d"), m_iScore);
-
-		m_Font.DrawText(rc2,
-			pBuffer,
-			D2D1::ColorF(0, 1, 0, 1)
-			);
-
-		RECT rc3 = { 30,50, m_iWindowWidth, m_iWindowHeight };
-		_stprintf_s(pBuffer, _T("Wave : %d"), g_iWave);
-
-		m_Font.DrawText(rc3,
-			pBuffer,
-			D2D1::ColorF(0, 0, 1, 1)
-			);
-
-		RECT rc4 = { 30,75, m_iWindowWidth, m_iWindowHeight };
-		_stprintf_s(pBuffer, _T("HP : %d"), g_iHP);
-
-		m_Font.DrawText(rc4,
-			pBuffer,
-			D2D1::ColorF(1, 0, 1, 1)
-			);
-
-		RECT rc5 = { 30,100, m_iWindowWidth, m_iWindowHeight };
-		_stprintf_s(pBuffer, _T("Boost : %d"), g_iBoost);
-
-		m_Font.DrawText(rc5,
-			pBuffer,
-			D2D1::ColorF(1, 1, 0, 1)
-			);
-
-		RECT rc6 = { 30,125, m_iWindowWidth, m_iWindowHeight };
-		_stprintf_s(pBuffer, _T("Cannon : %d"), g_iShell);
-
-		m_Font.DrawText(rc6,
-			pBuffer,
-			D2D1::ColorF(0, 1, 1, 1)
-			);
-
-
-
-		m_Font.End();
-	}
-	m_pSwapChain->Present(0, 0);
+	
 	return true;
 }
 
@@ -417,7 +372,9 @@ bool GuridMain::SoundLoad()
 
 GuridMain::GuridMain(void)
 {
-	//m_iWave = 1;
+	m_nGamePhase = ST_SINGLEGAME;
+	m_nWavePhase = WAVE_ST_NEWENEMY_ADD;
+
 	m_iScore = 0;
 	m_fPlayTime = 0.0f;
 

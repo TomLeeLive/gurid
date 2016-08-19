@@ -15,6 +15,19 @@ struct G_RAY
 class GuridMain : public GBASISLib_0
 {
 public:
+
+	GGameEnd		m_GameEnd;
+	GGameMenu		m_GameMenu;
+	GGameSingle		m_GameSingle;
+	GGameMulti		m_GameMulti;
+	GGameHowto		m_GameHowto;
+	GGameCredit		m_GameCredit;
+
+	WAVE_STATE		m_nWavePhase;					//Wave 상태
+	WAVE_STATE		m_nWaveBeforePhase;				//Wave 이전 상태
+	GAME_STATE		m_nGamePhase;					//게임 상태 변경(시작화면, 게임, 종료
+	GAME_STATE		m_nGameBeforePhase;				//게임 이전 상태 저장(for 게임오버 화면에서 점수 출력용. 멀티인지 싱글인지)
+
 	GSound			m_pSound;				// 사운드(fmod)
 
 	//HP, 부스터, 총알 게이지-----------------------------------------------------------------------

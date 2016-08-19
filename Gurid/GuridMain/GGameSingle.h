@@ -1,13 +1,14 @@
 #pragma once
-class GWaveManager
+class GGameSingle
 {
 public:
+
 	bool		Init() { return true; };
 	bool		Frame();
-	bool		Render() { return true; };
+	bool		Render();
 	bool		Release() { return true; };
 
-	GWaveManager();
-	virtual ~GWaveManager();
+	GGameSingle();
+	virtual ~GGameSingle();
 };
 

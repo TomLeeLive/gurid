@@ -96,6 +96,12 @@
   <ItemGroup>
     <ClCompile Include="GBoundingBoxOBB.cpp" />
     <ClCompile Include="GCarManager.cpp" />
+    <ClCompile Include="GGameCredit.cpp" />
+    <ClCompile Include="GGameEnd.cpp" />
+    <ClCompile Include="GGameHowto.cpp" />
+    <ClCompile Include="GGameMenu.cpp" />
+    <ClCompile Include="GGameMulti.cpp" />
+    <ClCompile Include="GGameSingle.cpp" />
     <ClCompile Include="GGuridCamera.cpp" />
     <ClCompile Include="GCar.cpp" />
     <ClCompile Include="GShell.cpp" />
@@ -108,6 +114,12 @@
   <ItemGroup>
     <ClInclude Include="GBoundingBoxOBB.hpp" />
     <ClInclude Include="GCarManager.h" />
+    <ClInclude Include="GGameCredit.h" />
+    <ClInclude Include="GGameEnd.h" />
+    <ClInclude Include="GGameHowto.h" />
+    <ClInclude Include="GGameMenu.h" />
+    <ClInclude Include="GGameMulti.h" />
+    <ClInclude Include="GGameSingle.h" />
     <ClInclude Include="GGuridCamera.h" />
     <ClInclude Include="GCar.h" />
     <ClInclude Include="GShell.h" />
