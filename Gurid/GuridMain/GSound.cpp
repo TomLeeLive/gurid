@@ -1,5 +1,5 @@
 #include "_StdAfx.h"
-void   KSound::Volume(int iIndex, float fVolume, bool bUp)
+void   GSound::Volume(int iIndex, float fVolume, bool bUp)
 {
 	float fCurrentVolume;
 	m_pChannel[iIndex]->getVolume(&fCurrentVolume);
@@ -8,7 +8,7 @@ void   KSound::Volume(int iIndex, float fVolume, bool bUp)
 	m_pChannel[iIndex]->setVolume(fCurrentVolume);
 
 }
-bool KSound::Init()
+bool GSound::Init()
 {
 
 	FMOD::System_Create(&m_pSystem);
@@ -16,7 +16,7 @@ bool KSound::Init()
 
 	return true;
 };
-int   KSound::Load(char* pLoadName)
+int   GSound::Load(char* pLoadName)
 {
 	m_pSystem->createSound(pLoadName,
 		FMOD_HARDWARE, 0, &m_pSound[m_iSoundList++]);
@@ -25,7 +25,7 @@ int   KSound::Load(char* pLoadName)
 
 	return m_iSoundList - 1;
 }
-int   KSound::Load(char* pLoadName, bool bLoop)
+int   GSound::Load(char* pLoadName, bool bLoop)
 {
 	m_pSystem->createSound(pLoadName,
 		FMOD_HARDWARE, 0, &m_pSound[m_iSoundList++]);
@@ -35,7 +35,7 @@ int   KSound::Load(char* pLoadName, bool bLoop)
 
 	return m_iSoundList - 1;
 }
-void  KSound::Play(int iIndex, bool bPlay, bool bReUse)
+void  GSound::Play(int iIndex, bool bPlay, bool bReUse)
 {
 	bool playing = false;
 	
@@ -47,7 +47,7 @@ void  KSound::Play(int iIndex, bool bPlay, bool bReUse)
 		}
 	}
 
-	if (bReUse == true) {
+	if (playing == false && bReUse == true) {
 		
 		m_pSystem->playSound(FMOD_CHANNEL_REUSE,
 				m_pSound[iIndex], false, &m_pChannel[iIndex]);
@@ -64,10 +64,10 @@ void  KSound::Play(int iIndex, bool bPlay, bool bReUse)
 	
 }
 
-void	KSound::Frame() {
+void	GSound::Frame() {
 	m_pSystem->update();
 }
-void  KSound::Release()
+void  GSound::Release()
 {
 	for (int iSound = 0; iSound < g_iMaxSound; iSound++)
 	{
@@ -76,12 +76,12 @@ void  KSound::Release()
 	m_pSystem->close();
 	m_pSystem->release();
 }
-KSound::KSound()
+GSound::GSound()
 {
 	m_iSoundList = 0;
 }
 
 
-KSound::~KSound()
+GSound::~GSound()
 {
 }

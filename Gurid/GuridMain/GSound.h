@@ -8,7 +8,7 @@ using namespace FMOD;
 
 const int g_iMaxSound = 13; //13개 음원을 처리 하려고 함.
 // c,  c++
-class KSound
+class GSound
 {
 public:
 	int				m_iSoundList;
@@ -36,7 +36,7 @@ public:
 	void	Frame();
 	
 public:
-	KSound();
-	virtual ~KSound();
+	GSound();
+	virtual ~GSound();
 };
 

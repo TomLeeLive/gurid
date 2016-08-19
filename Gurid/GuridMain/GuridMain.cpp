@@ -169,7 +169,7 @@ void GuridMain::ColCheck() {
 				if ((*_F)->m_bPlayer == true && (*_B)->m_bPlayer == false) {
 
 					//攀农 磐瘤绰 家府
-					m_pSound.Play(12, true);
+					m_pSound.Play(SND_TANKEXPLSION, true);
 					
 					m_iScore += G_MACRO_ADD_SCORE;
 					(*_B).reset();
@@ -180,8 +180,8 @@ void GuridMain::ColCheck() {
 				if ((*_F)->m_bPlayer == false && (*_B)->m_bPlayer == true) {
 
 					//器藕 嘎绰 家府
-					m_pSound.Play(9, true);
-					//m_pSound.Play(12, true);
+					m_pSound.Play(SND_TANKSHELLHIT, true);
+					//m_pSound.Play(SND_TANKEXPLSION, true);
 
 					(*_B)->m_iHP -= G_MACRO_ENEMY_SHELL_DAMAGE;
 				}
@@ -370,12 +370,12 @@ bool GuridMain::SoundLoad()
 
 	int iIndex = 0;
 
-	iIndex = m_pSound.Load("data/sound/0_howto.wav");
-	iIndex = m_pSound.Load("data/sound/1_intro.wav");
-	iIndex = m_pSound.Load("data/sound/2_get_ready.wav");
-	iIndex = m_pSound.Load("data/sound/3_wave_clear.wav");
-	iIndex = m_pSound.Load("data/sound/4_wave_start.wav");
-	iIndex = m_pSound.Load("data/sound/5_game_over.wav");
+	iIndex = m_pSound.Load("data/sound/0_howto.wav");					//0.Hotwo
+	iIndex = m_pSound.Load("data/sound/1_intro.wav");					//1.intro.wav
+	iIndex = m_pSound.Load("data/sound/2_get_ready.wav");				//2.Get ready!
+	iIndex = m_pSound.Load("data/sound/3_wave_clear.wav");				//3.Wave Clear!
+	iIndex = m_pSound.Load("data/sound/4_wave_start.wav");				//4.Wave Start!
+	iIndex = m_pSound.Load("data/sound/5_game_over.wav");				//5.Game Over!
 	iIndex = m_pSound.Load("data/sound/tank_1_move.wav");				//1.攀农柳青家府
 	iIndex = m_pSound.Load("data/sound/tank_2_move_fast.wav");			//2.攀农弧府柳青家府
 	iIndex = m_pSound.Load("data/sound/tank_3_head_move.wav");			//3.攀农赣府雀傈家府

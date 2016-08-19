@@ -15,7 +15,7 @@ struct G_RAY
 class GuridMain : public GBASISLib_0
 {
 public:
-	KSound			m_pSound;				// 사운드(fmod)
+	GSound			m_pSound;				// 사운드(fmod)
 
 	//HP, 부스터, 총알 게이지-----------------------------------------------------------------------
 	GPlaneShape					m_pBar[3];

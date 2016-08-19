@@ -101,8 +101,8 @@
     <ClCompile Include="GShell.cpp" />
     <ClCompile Include="GShellManager.cpp" />
     <ClCompile Include="GSkyBox.cpp" />
+    <ClCompile Include="GSound.cpp" />
     <ClCompile Include="GuridMain.cpp" />
-    <ClCompile Include="KSound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GBoundingBoxOBB.hpp" />
@@ -112,8 +112,8 @@
     <ClInclude Include="GShell.h" />
     <ClInclude Include="GShellManager.h" />
     <ClInclude Include="GSkyBox.h" />
+    <ClInclude Include="GSound.h" />
     <ClInclude Include="GuridMain.h" />
-    <ClInclude Include="KSound.h" />
     <ClInclude Include="_StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
