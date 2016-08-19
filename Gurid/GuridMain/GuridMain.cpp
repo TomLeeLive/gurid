@@ -120,7 +120,8 @@ bool GuridMain::Init()
 
 
 	m_GameMenu.Init();
-
+	m_GameHowto.Init();
+	m_GameCredit.Init();
 
 
 
@@ -288,7 +289,8 @@ HRESULT GuridMain::CreateResource()
 
 
 	m_GameMenu.CreateResource();
-
+	m_GameHowto.CreateResource();
+	m_GameCredit.CreateResource();
 
 
 
@@ -312,8 +314,9 @@ HRESULT GuridMain::DeleteResource()
 	HRESULT hr = S_OK;
 	
 	
-	if (m_pImmediateContext) m_pImmediateContext->ClearState();
-	return S_OK;
+	m_GameMenu.DeleteResource();
+	m_GameHowto.DeleteResource();
+	m_GameCredit.DeleteResource();
 
 
 
@@ -327,6 +330,8 @@ HRESULT GuridMain::DeleteResource()
 bool GuridMain::Release()
 {
 	m_GameMenu.Release();
+	m_GameHowto.Release();
+	m_GameCredit.Release();
 
 
 
