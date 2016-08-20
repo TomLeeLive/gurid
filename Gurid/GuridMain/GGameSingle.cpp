@@ -208,6 +208,12 @@ bool	GGameSingle::Init() {
 }
 bool	GGameSingle::Release() {
 	m_CustomMap.Release();
+	m_pPlane.Release();
+	m_pDirectionLine.Release();
+	m_Font.Release();
+	for (int i = 0; i < 3; i++)
+		m_pBar[i].Release();
+
 	//SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
 	
