@@ -346,7 +346,7 @@ int GGameSingle::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 GGameSingle::GGameSingle()
 {
-	m_nWavePhase = WAVE_ST_NEWENEMY_ADD;
+	m_nWavePhase = WAVE_ST_NEWGAME;
 	m_nWaveBeforePhase = WAVE_ST_TO_MENU;
 
 	m_iScore = 0;
