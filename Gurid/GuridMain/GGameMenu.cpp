@@ -138,7 +138,7 @@ bool GGameMenu::Frame()
 	SoundPlay();
 	KeyCheck();
 
-	GControlUI* pSelect = SelectRect();
+	/*GControlUI* pSelect = SelectRect();
 
 	if (pSelect != NULL && m_pSelectPlane != pSelect)
 	{
@@ -183,7 +183,7 @@ bool GGameMenu::Frame()
 		}
 		m_pSelectPlane->Move(vPos.x, vPos.y, vPos.z);
 		m_pSelectPlane->Scale(vScale.x, vScale.y, vScale.z);
-	}
+	}*/
 
 	for (int iPlane = 0; iPlane < m_pUIList.size(); iPlane++)
 	{
