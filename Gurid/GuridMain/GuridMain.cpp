@@ -240,4 +240,4 @@ GuridMain::~GuridMain(void)
 {
 
 }
-GBASIS_RUN(Gurid v0.0.2);
+GBASIS_RUN(I KNOW THE TANK GAME YOU DID LAST SUMMER v0.0.3);
