@@ -17,16 +17,18 @@ GShellManager::~GShellManager()
 
 bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 
-	//ÁÖÀÎ°ø ÅÊÅ© ÃÑ¾Ë ¹ß»ç START
-	if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD )//&& car->m_bPlayer)
-	{
-		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
+	if (g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_READY && g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER) {
 
-			//ÃÑ¾Ë ¹ß»ç ¼Ò¸®
-			g_pMain->m_pSound.Play(SND_TANKSHELLFIRE, true);
+		//ÁÖÀÎ°ø ÅÊÅ© ÃÑ¾Ë ¹ß»ç START
+		if (I_Input.KeyCheck(DIK_SPACE) == KEY_HOLD )//&& car->m_bPlayer)
+		{
+			if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
 
-			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
-			car->m_fFireTime = timer->m_fDurationTime;
+				//ÃÑ¾Ë ¹ß»ç ¼Ò¸®
+				g_pMain->m_pSound.Play(SND_TANKSHELLFIRE, true);
+
+				m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
+				car->m_fFireTime = timer->m_fDurationTime;
 #ifdef _DEBUG
 			TCHAR buf[80];
 			wsprintf(buf, L"m_vecShells size:%d\n", m_vecShells.size());
@@ -37,19 +39,22 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 	//ÁÖÀÎ°ø ÅÊÅ© ÃÑ¾Ë ¹ß»ç END
 
 	//ÀûÅÊÅ© ÃÑ¾Ë ¹ß»ç START
-	if (car->m_bPlayer == false) {
-		if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
 
-			////ÃÑ¾Ë ¹ß»ç ¼Ò¸®
-			//g_pMain->m_pSound.Play(SND_TANKSHELLHIT, true);
 
-			m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
-			car->m_fFireTime = timer->m_fDurationTime;
+		if (car->m_bPlayer == false) {
+			if (timer->m_fDurationTime - car->m_fFireTime > car->m_fCoolTime) {
+
+				////ÃÑ¾Ë ¹ß»ç ¼Ò¸®
+				//g_pMain->m_pSound.Play(SND_TANKSHELLHIT, true);
+
+				m_vecShells.push_back(make_shared<GShell>(car, timer->m_fDurationTime, car->m_bPlayer));
+				car->m_fFireTime = timer->m_fDurationTime;
 #ifdef _DEBUG
-			TCHAR buf[80];
-			wsprintf(buf, L"m_vecShells size:%d\n", m_vecShells.size());
-			OutputDebugString(buf);
+				TCHAR buf[80];
+				wsprintf(buf, L"m_vecShells size:%d\n", m_vecShells.size());
+				OutputDebugString(buf);
 #endif
+			}
 		}
 	}
 	//ÀûÅÊÅ© ÃÑ¾Ë ¹ß»ç END
@@ -59,10 +64,16 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 	vector<shared_ptr<GShell>>::iterator _L = m_vecShells.end();
 	for (; _F != _L; ++_F)
 	{
+
 		//(*_F)->m_matWorld = m_pMainCamera->m_matWorld;
-		D3DXVECTOR3 temp = (*_F)->m_vPos;//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
-		temp = temp + (*_F)->m_fSpeed*timer->GetSPF()*((*_F)->m_vLook);
-		(*_F)->m_vPos = temp;
+		
+		if(g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER){
+			//ÃÑ¾Ë ÀÌµ¿
+			D3DXVECTOR3 temp = (*_F)->m_vPos;//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
+			temp = temp + (*_F)->m_fSpeed*timer->GetSPF()*((*_F)->m_vLook);
+			(*_F)->m_vPos = temp;
+		}
+
 
 		D3DXMATRIX temp_mat;
 
@@ -85,9 +96,11 @@ bool GShellManager::frame(GCar* car, GTimer* timer, GGuridCamera* camera) {
 	_L = m_vecShells.end();
 	for (; _F != _L; ++_F)
 	{
-		if (timer->m_fDurationTime - (*_F)->m_fFireTime > (*_F)->m_fEndTime) {
-			(*_F).reset();//delete (*_F);
-			*_F = 0;
+		if (g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER) {
+			if (timer->m_fDurationTime - (*_F)->m_fFireTime > (*_F)->m_fEndTime) {
+				(*_F).reset();//delete (*_F);
+				*_F = 0;
+			}
 		}
 	}
 
@@ -112,6 +125,9 @@ bool GShellManager::render() {
 	vector<shared_ptr<GShell>>::iterator _L = m_vecShells.end();
 	for (; _F != _L; ++_F)
 	{
+		//if (*_F == 0)
+		//	continue;
+
 		(*_F)->Render(g_pImmediateContext);
 		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
 	}

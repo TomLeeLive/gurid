@@ -226,6 +226,8 @@ bool		GGameSingle::Frame() {
 		 g_pMain->m_nGameBeforePhase = g_pMain->m_nGamePhase;
 	}
 
+	m_WaveManager.Frame();
+
 	//--------------------------------------------------------------------------------------
 	// 엔진에 있는 뷰 및 투영 행렬 갱신
 	//--------------------------------------------------------------------------------------
@@ -241,14 +243,13 @@ bool		GGameSingle::Frame() {
 
 	 ColCheck();
 
-	 m_WaveManager.Frame();
+
 
 	 m_fPlayTime = (int)g_fDurationTime;
 
 	return true;
 };
 bool		GGameSingle::Render() {
-
 
 	 m_pSkyBoxObj->SetMatrix(0,  m_pMainCamera->GetViewMatrix(),  m_pMainCamera->GetProjMatrix());
 	 m_pSkyBoxObj->Render(g_pMain->m_pImmediateContext,  m_pMainCamera);
@@ -257,6 +258,7 @@ bool		GGameSingle::Render() {
 	//DX::ApplyBS(m_pImmediateContext, DX::GDxState::g_pAlphaBlend);
 	 m_CustomMap.SetMatrix( m_pMainCamera->GetWorldMatrix(),  m_pMainCamera->GetViewMatrix(),  m_pMainCamera->GetProjMatrix());
 	 m_CustomMap.Render(g_pMain->m_pImmediateContext);
+
 
 	//탱크 렌더링
 	 m_TankManager.render( m_pMainCamera);
@@ -279,15 +281,15 @@ bool		GGameSingle::Render() {
 		int width = static_cast <int> (rtSize.width);
 		int height = static_cast <int> (rtSize.height);
 		 m_Font.Begin();
-		 m_Font.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		 m_Font.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		 m_Font.m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		RECT rc1 = { 0,0,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight / 2 };
+		RECT rc1 = { 30,0,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight / 2 };
 		 m_Font.DrawText(rc1,
 			pBuffer,
 			D2D1::ColorF(1, 0, 0, 1)
 			);
 
-		RECT rc2 = { 30,25,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+		RECT rc2 = { 30,225,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
 		_stprintf_s(pBuffer, _T("Score : %d"),  m_iScore);
 
 		 m_Font.DrawText(rc2,
@@ -295,7 +297,7 @@ bool		GGameSingle::Render() {
 			D2D1::ColorF(0, 1, 0, 1)
 			);
 
-		RECT rc3 = { 30,50,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+		RECT rc3 = { 30,250,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
 		_stprintf_s(pBuffer, _T("Wave : %d"), g_iWave);
 
 		 m_Font.DrawText(rc3,
@@ -303,7 +305,7 @@ bool		GGameSingle::Render() {
 			D2D1::ColorF(0, 0, 1, 1)
 			);
 
-		RECT rc4 = { 30,75,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+		RECT rc4 = { 30,275,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
 		_stprintf_s(pBuffer, _T("HP : %d"), g_iHP);
 
 		 m_Font.DrawText(rc4,
@@ -311,7 +313,7 @@ bool		GGameSingle::Render() {
 			D2D1::ColorF(1, 0, 1, 1)
 			);
 
-		RECT rc5 = { 30,100,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+		RECT rc5 = { 30,300,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
 		_stprintf_s(pBuffer, _T("Boost : %d"), g_iBoost);
 
 		 m_Font.DrawText(rc5,
@@ -319,16 +321,31 @@ bool		GGameSingle::Render() {
 			D2D1::ColorF(1, 1, 0, 1)
 			);
 
-		RECT rc6 = { 30,125,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+		RECT rc6 = { 30,325,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
 		_stprintf_s(pBuffer, _T("Cannon : %d"), g_iShell);
 
 		 m_Font.DrawText(rc6,
 			pBuffer,
 			D2D1::ColorF(0, 1, 1, 1)
 			);
+		 RECT rc7 = { 30,350,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+		 _stprintf_s(pBuffer, _T("EnemyTank : %d"), m_TankManager.m_vecCars.size()-1);
 
+		 m_Font.DrawText(rc7,
+			 pBuffer,
+			 D2D1::ColorF(0, 0, 0, 1)
+			 );
 
+		 m_Font.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		 if(m_nWavePhase == WAVE_ST_GAMEOVER){
+			 RECT rc8 = { -80,250,  g_pMain->m_iWindowWidth,  g_pMain->m_iWindowHeight };
+			 _stprintf_s(pBuffer, _T("Gave Over. Press \"Enter\" to Return to Menu"));
 
+			 m_Font.DrawText(rc8,
+				 pBuffer,
+				 D2D1::ColorF(0, 0, 0, 1)
+				 );
+		 }
 		 m_Font.End();
 	}
 	g_pMain->m_pSwapChain->Present(0, 0);

@@ -231,7 +231,7 @@ bool GuridMain::SoundLoad()
 GuridMain::GuridMain(void)
 {
 
-	m_nGamePhase = ST_SINGLEGAME;//ST_START;
+	m_nGamePhase = ST_START;//ST_START;
 	m_nGameBeforePhase = ST_END;
 
 }

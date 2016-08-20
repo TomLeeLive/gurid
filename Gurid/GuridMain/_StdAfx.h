@@ -15,8 +15,9 @@
 #define G_MACRO_CAR_MAX_SPEED 10.0f		//차 Max Speed
 #define G_MACRO_TIRES 6					//타이어 갯수
 #define G_MACRO_TANK_TIRES 6			//탱크 타이어 갯수
-#define G_MACRO_MAX_TANK 4				//최대 탱크 갯수 for Debug
+#define G_MACRO_MAX_TANK 2				//탱크 최소 갯수. 첫판 탱크 갯수= G_MACRO_MAX_TANK + Wave count
 #define G_MACRO_CANNON_LENGTH 5.0f		//탄환 발사시 포탑 앞에서 발사하도록 계산시 사용하는 길이
+#define G_MACRO_READY_WAIT_TIME 3.0f	//Ready시 대기 시간
 
 extern int g_iWave;   //Wave Count, 표시
 extern int g_iHP;	  //주인공 체력 표시
@@ -42,7 +43,7 @@ enum SNDRESOURCES {
 
 enum WAVE_STATE {
 	WAVE_ST_NEWGAME = 0,
-	WAVE_ST_NEWENEMY_ADD,
+	//WAVE_ST_NEWENEMY_ADD,
 	WAVE_ST_READY,
 	WAVE_ST_PLAY,
 	WAVE_ST_GAMEOVER,

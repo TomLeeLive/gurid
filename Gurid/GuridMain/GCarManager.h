@@ -11,6 +11,8 @@ public:
 	bool init();
 	bool frame(GTimer* timer, GGuridCamera* camera);
 	bool render(GGuridCamera* camera);
+
+	void GCarManager::NewCarPush();
 	GCarManager();
 	virtual ~GCarManager();
 };
