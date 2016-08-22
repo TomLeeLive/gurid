@@ -104,6 +104,8 @@
     <ClCompile Include="GGameSingle.cpp" />
     <ClCompile Include="GGuridCamera.cpp" />
     <ClCompile Include="GCar.cpp" />
+    <ClCompile Include="GImeUI.cpp" />
+    <ClCompile Include="GPlaneRect.cpp" />
     <ClCompile Include="GShell.cpp" />
     <ClCompile Include="GShellManager.cpp" />
     <ClCompile Include="GSkyBox.cpp" />
@@ -122,6 +124,8 @@
     <ClInclude Include="GGameSingle.h" />
     <ClInclude Include="GGuridCamera.h" />
     <ClInclude Include="GCar.h" />
+    <ClInclude Include="GImeUI.h" />
+    <ClInclude Include="GPlaneRect.h" />
     <ClInclude Include="GShell.h" />
     <ClInclude Include="GShellManager.h" />
     <ClInclude Include="GSkyBox.h" />

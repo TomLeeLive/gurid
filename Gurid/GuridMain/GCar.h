@@ -113,7 +113,20 @@ public:
 		D3DXMatrixIdentity(&m_matWorld_cannon);
 
 		if(m_bPlayer== false){
-			D3DXMatrixTranslation(&m_matWorld, rand()%400, rand() % 400, rand() % 400/*, 200.0f, 0.0f, 200.0f*/);
+			int iX = (rand() % 200) -100;
+			int iZ = (rand() % 200) -100;
+
+			if (iX >= 0)
+				iX+= 300;
+			if (iX < 0)
+				iX -= 300;
+
+			if (iZ >= 0)
+				iZ += 300;
+			if (iZ < 0)
+				iZ -= 300;
+
+			D3DXMatrixTranslation(&m_matWorld, float(iX), 0.0f, float(iZ));
 		}
 
 		if (type == TANK) {

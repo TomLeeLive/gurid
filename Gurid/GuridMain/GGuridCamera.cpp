@@ -14,22 +14,25 @@
 
 D3DXMATRIX GGuridCamera::Update(float fElapseTime)
 {
-	if (g_InputData.bWKey) 	MoveLook(fElapseTime * 2.0f * m_fSpeed);
-	if (g_InputData.bSKey)		MoveLook(-fElapseTime * 2.0f * m_fSpeed);
-	if (g_InputData.bDKey) {
+	if(g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER){
 
-		//m_fPrevRadius = m_fRadius;
-		//m_fRadius += fElapseTime * 2.0f * m_fRadius * 0.1f / 120.0f;
+		if (g_InputData.bWKey) 	MoveLook(fElapseTime * 2.0f * m_fSpeed);
+		if (g_InputData.bSKey)		MoveLook(-fElapseTime * 2.0f * m_fSpeed);
+		if (g_InputData.bDKey) {
 
-		//MoveSide(fElapseTime * 2.0f); 
+			//m_fPrevRadius = m_fRadius;
+			//m_fRadius += fElapseTime * 2.0f * m_fRadius * 0.1f / 120.0f;
 
-	}
-	if (g_InputData.bAKey) {
+			//MoveSide(fElapseTime * 2.0f); 
 
-		//m_fPrevRadius = m_fRadius;
-		//m_fRadius += (-fElapseTime * 2.0f) * m_fRadius * 0.1f / 120.0f;
-		//MoveSide(-fElapseTime * 2.0f);
+		}
+		if (g_InputData.bAKey) {
 
+			//m_fPrevRadius = m_fRadius;
+			//m_fRadius += (-fElapseTime * 2.0f) * m_fRadius * 0.1f / 120.0f;
+			//MoveSide(-fElapseTime * 2.0f);
+
+		}
 	}
 	//if( g_InputData.bQKey )		MoveUp(   fElapseTime * 2.0f);
 	//if( g_InputData.bEKey )		MoveUp(  -fElapseTime * 2.0f);

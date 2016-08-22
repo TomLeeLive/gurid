@@ -15,8 +15,9 @@
 #define G_MACRO_CAR_MAX_SPEED 10.0f		//차 Max Speed
 #define G_MACRO_TIRES 6					//타이어 갯수
 #define G_MACRO_TANK_TIRES 6			//탱크 타이어 갯수
-#define G_MACRO_MAX_TANK 4				//최대 탱크 갯수 for Debug
+#define G_MACRO_MAX_TANK 2				//탱크 최소 갯수. 첫판 탱크 갯수= G_MACRO_MAX_TANK + Wave count
 #define G_MACRO_CANNON_LENGTH 5.0f		//탄환 발사시 포탑 앞에서 발사하도록 계산시 사용하는 길이
+#define G_MACRO_READY_WAIT_TIME 3.0f	//Ready시 대기 시간
 
 extern int g_iWave;   //Wave Count, 표시
 extern int g_iHP;	  //주인공 체력 표시
@@ -24,7 +25,7 @@ extern int g_iBoost;  //주인공 부스트 표시
 extern int g_iShell;  //주인공 잔탄 표시
 
 enum SNDRESOURCES {
-	SND_HOTWO			= 0,	//0.Hotwo
+	SND_HOWTO			= 0,	//0.Hotwo
 	SND_INTRO			= 1,	//1.intro.wav
 	SND_GETREADY		= 2,	//2.Get ready!
 	SND_WAVECLEAR		= 3,	//3.Wave Clear!
@@ -41,7 +42,8 @@ enum SNDRESOURCES {
 };
 
 enum WAVE_STATE {
-	WAVE_ST_NEWENEMY_ADD = 0,
+	WAVE_ST_NEWGAME = 0,
+	//WAVE_ST_NEWENEMY_ADD,
 	WAVE_ST_READY,
 	WAVE_ST_PLAY,
 	WAVE_ST_GAMEOVER,
@@ -61,6 +63,12 @@ enum GAME_STATE {
 #include "GShape.h"
 #include "GBackViewCamera.h"
 
+
+#include "GPlaneRect.h"				//for UI
+#include "GImeUI.h"					//for UI
+#pragma comment( lib, "IMM32.lib" ) //for UI
+
+
 #include "GWaveManager.h"
 #include "GSound.h"
 #include "GBoundingBoxOBB.hpp"
@@ -72,12 +80,12 @@ enum GAME_STATE {
 #include "GSkyBox.h"
 
 #include "GGameEnd.h"
-#include "GGameSingle.h"
+
 #include "GGameMulti.h"
 #include "GGameMenu.h"
 #include "GGameHowto.h"
 #include "GGameCredit.h"
-
+#include "GGameSingle.h"
 #include "GuridMain.h"
 
 //#include "GSprite.h"

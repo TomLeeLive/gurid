@@ -64,60 +64,67 @@ bool GCar::frame_player(float fTime, GGuridCamera* mainCamera) {
 	m_matWorld_body._11 *= m_fBodyXScale;		// 차 몸체 X Scale.
 	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
 
-	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
-	{
-		if(mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED){ g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); } else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
+	if (g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER) {
 
-		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime*fSpeed));
-		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
-	}
-	else if (I_Input.KeyCheck(DIK_D) == KEY_HOLD)
-	{
-		if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); } else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
+		if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
+		{
+			if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); }
+			else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
 
-		D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime*fSpeed));
-		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
-	}
-	else if (I_Input.KeyCheck(DIK_W) == KEY_HOLD)
-	{
-		if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); } else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
-		//m_matWorld_body._41 += m_vLook.x* 20.0f*fTime;
-		//m_matWorld_body._43 += m_vLook.z* 20.0f*fTime;;
-		rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
-	}
-	else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
-	{
-		if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); } else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
-		rot_right += 100.0f*fTime;// m_Timer.GetSPF();
-		rot_left += 100.0f*fTime;// m_Timer.GetSPF();
-	}
-	else {
-		g_pMain->m_pSound.Stop(SMD_TANKFASTMOVE);
-		g_pMain->m_pSound.Stop(SND_TANKMOVE);
-	}
-	if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
-	{
-		g_pMain->m_pSound.Play(SND_TANKHEADROT, true, true);
-		rot_head += 100.0f*fTime;// m_Timer.GetSPF();
-	}
-	else if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
-	{
-		g_pMain->m_pSound.Play(SND_TANKHEADROT, true, true);
-		rot_head -= 100.0f*fTime;// m_Timer.GetSPF();
-	}
-	else {
-		g_pMain->m_pSound.Stop(SND_TANKHEADROT);
-	}
+			D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle -= 20.0f*fTime*fSpeed));
+			rot_right += 100.0f*fTime;// m_Timer.GetSPF();
+			rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
+		}
+		else if (I_Input.KeyCheck(DIK_D) == KEY_HOLD)
+		{
+			if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); }
+			else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
 
-	if (I_Input.KeyCheck(DIK_LSHIFT) == KEY_HOLD)
-	{
-		mainCamera->m_fSpeed = fSpeed = G_MACRO_CAR_MAX_SPEED;
-	}
-	else {
-		mainCamera->m_fSpeed = fSpeed = G_MACRO_CAR_SPEED;
+			D3DXMatrixRotationY(&m_matRotation, D3DXToRadian(angle += 20.0f*fTime*fSpeed));
+			rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
+			rot_left += 100.0f*fTime;// m_Timer.GetSPF();
+		}
+		else if (I_Input.KeyCheck(DIK_W) == KEY_HOLD)
+		{
+			if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); }
+			else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
+			//m_matWorld_body._41 += m_vLook.x* 20.0f*fTime;
+			//m_matWorld_body._43 += m_vLook.z* 20.0f*fTime;;
+			rot_right -= 100.0f*fTime;// m_Timer.GetSPF();
+			rot_left -= 100.0f*fTime;// m_Timer.GetSPF();
+		}
+		else if (I_Input.KeyCheck(DIK_S) == KEY_HOLD)
+		{
+			if (mainCamera->m_fSpeed == G_MACRO_CAR_MAX_SPEED) { g_pMain->m_pSound.Play(SMD_TANKFASTMOVE, true, true); }
+			else { g_pMain->m_pSound.Play(SND_TANKMOVE, true, true); }
+			rot_right += 100.0f*fTime;// m_Timer.GetSPF();
+			rot_left += 100.0f*fTime;// m_Timer.GetSPF();
+		}
+		else {
+			g_pMain->m_pSound.Stop(SMD_TANKFASTMOVE);
+			g_pMain->m_pSound.Stop(SND_TANKMOVE);
+		}
+		if (I_Input.KeyCheck(DIK_Q) == KEY_HOLD)
+		{
+			g_pMain->m_pSound.Play(SND_TANKHEADROT, true, true);
+			rot_head += 100.0f*fTime;// m_Timer.GetSPF();
+		}
+		else if (I_Input.KeyCheck(DIK_E) == KEY_HOLD)
+		{
+			g_pMain->m_pSound.Play(SND_TANKHEADROT, true, true);
+			rot_head -= 100.0f*fTime;// m_Timer.GetSPF();
+		}
+		else {
+			g_pMain->m_pSound.Stop(SND_TANKHEADROT);
+		}
+
+		if (I_Input.KeyCheck(DIK_LSHIFT) == KEY_HOLD)
+		{
+			mainCamera->m_fSpeed = fSpeed = G_MACRO_CAR_MAX_SPEED;
+		}
+		else {
+			mainCamera->m_fSpeed = fSpeed = G_MACRO_CAR_SPEED;
+		}
 	}
 
 	m_vLook.x = m_matRotation._31;
@@ -230,9 +237,10 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam,D3DXVECTOR3 vPlayerPos){
 	m_matWorld_body._33 *= m_fBodyZScale;		// 차 몸체 Z Scale
 
 	//바퀴 회전을 위해
-	rot_right += 100.0f*fTime;
-	rot_left += 100.0f*fTime;
-
+	if (g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_READY && g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER) {
+		rot_right += 100.0f*fTime;
+		rot_left += 100.0f*fTime;
+	}
 /*
 	if (I_Input.KeyCheck(DIK_A) == KEY_HOLD)
 	{
@@ -277,7 +285,6 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam,D3DXVECTOR3 vPlayerPos){
 	m_matWorld._42 = m_fHeight;//-0.5f;				// 차 전체 높이 조정
 
 
-
 	//플레이어 방향으로 회전을 하기 위해서..
 	D3DXVECTOR3 vPos = D3DXVECTOR3(m_matWorld._41, 0.0f, m_matWorld._43);
 	vLook_toPlayer = vPlayerPos - vPos;
@@ -293,10 +300,11 @@ bool GCar::frame_enemy(float fTime, GGuridCamera* cam,D3DXVECTOR3 vPlayerPos){
 
 
 	//이동
-	D3DXVECTOR3 temp = D3DXVECTOR3(m_matWorld._41, m_matWorld._42, m_matWorld._43);//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
-	temp = temp + m_fSpeed*fTime*vLook_toPlayer;
-	m_matWorld._41 = temp.x; m_matWorld._42 = temp.y; m_matWorld._43 = temp.z;
-
+	if (g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_READY && g_pMain->m_GameSingle.m_nWavePhase != WAVE_ST_GAMEOVER) {
+		D3DXVECTOR3 temp = D3DXVECTOR3(m_matWorld._41, m_matWorld._42, m_matWorld._43);//D3DXVECTOR3((*_F)->m_matWorld._41, (*_F)->m_matWorld._42, (*_F)->m_matWorld._43);
+		temp = temp + m_fSpeed*fTime*vLook_toPlayer;
+		m_matWorld._41 = temp.x; m_matWorld._42 = temp.y; m_matWorld._43 = temp.z;
+	}
 	//m_matWorld_body *= m_matRotation;
 	m_matWorld_body *= m_matWorld;
 

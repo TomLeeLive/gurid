@@ -16,7 +16,7 @@ T_STR CameraViewStyle[] =
 	_T("User g_matView"),
 };
 
-
+#define G_MACRO_TIRES 4
 
 enum cartypes {
 	SEDAN = 0,	//세단
@@ -73,12 +73,12 @@ public:
 
 bool GCar::init(ID3D11Device* pDevice) {
 
-	if (FAILED(m_pBody.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	if (FAILED(m_pBody.Create(pDevice, L"data/shader/Box.hlsl", L"_bak/checker_with_numbers.bmp")))
 	{
 		MessageBox(0, _T("m_pBox 실패"), _T("Fatal error"), MB_OK);
 		return 0;
 	}
-	if (FAILED(m_pHead.Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/checker_with_numbers.bmp")))
+	if (FAILED(m_pHead.Create(pDevice, L"data/shader/Box.hlsl", L"_bak/checker_with_numbers.bmp")))
 	{
 		MessageBox(0, _T("m_pBox2 실패"), _T("Fatal error"), MB_OK);
 		return 0;
@@ -86,7 +86,7 @@ bool GCar::init(ID3D11Device* pDevice) {
 
 
 	for (int i = 0; i < G_MACRO_TIRES; i++) {
-		if (FAILED(m_pTire[i].Create(pDevice, L"../../data/shader/Box.hlsl", L"../../data/tire21.jpg")))
+		if (FAILED(m_pTire[i].Create(pDevice, L"data/shader/Box.hlsl", L"_bak/tire21.jpg")))
 		{
 			MessageBox(0, _T("m_pTire1 실패"), _T("Fatal error"), MB_OK);
 			return 0;
@@ -154,7 +154,7 @@ bool GCar::release() {
 }
 
 
-class Sample : public GBASISLib_0
+class GuridMain : public GBASISLib_0
 {
 public:
 	GCar*						m_pCar[3];// 0: 승용차, 1 : 트럭, 2 : 지프차
@@ -198,6 +198,7 @@ public:
 	HRESULT		CreateResource();
 	HRESULT		DeleteResource();		
 public:
-	Sample(void);
-	~Sample(void);
+	GuridMain(void);
+	~GuridMain(void);
 };
+extern GuridMain* g_pMain;

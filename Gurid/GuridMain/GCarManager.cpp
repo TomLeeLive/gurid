@@ -1,15 +1,20 @@
 #include "_StdAfx.h"
 
 
-
-GCarManager::GCarManager()
-{
+void GCarManager::NewCarPush() {
 	srand(time(NULL));
-
-	m_vecCars.push_back(make_shared<GCar>(TANK, true));
-	for (int i = 0; i < G_MACRO_MAX_TANK-1; i++) {
+	for (int i = 0; i < G_MACRO_MAX_TANK + g_iWave; i++) {
 		m_vecCars.push_back(make_shared<GCar>(TANK));
 	}
+	this->init();
+
+}
+GCarManager::GCarManager()
+{
+	m_vecCars.push_back(make_shared<GCar>(TANK, true));
+	//
+	//NewCarPush();
+
 }
 
 bool GCarManager::init() {
@@ -41,7 +46,7 @@ bool GCarManager::frame(GTimer* timer, GGuridCamera* camera) {
 
 	for (; _F != _L; ++_F)
 	{
-		if(bNeedForPlayerStatus){
+		if((*_F)->m_bPlayer == true && bNeedForPlayerStatus){
 			vPlayerPos = D3DXVECTOR3((*_F)->m_matWorld_body._41, (*_F)->m_matWorld_body._42, (*_F)->m_matWorld_body._43);
 
 			
@@ -58,11 +63,18 @@ bool GCarManager::frame(GTimer* timer, GGuridCamera* camera) {
 
 }
 bool GCarManager::render(GGuridCamera* camera) {
+	if (m_vecCars.size() == 0)
+		return false;
 
 	vector<shared_ptr<GCar>>::iterator _F = m_vecCars.begin();
 	vector<shared_ptr<GCar>>::iterator _L = m_vecCars.end();
 	for (; _F != _L; ++_F)
 	{
+		/*if (*_F == 0){
+			(*_F).reset();
+			continue;
+		}*/
+
 		(*_F)->render(g_pImmediateContext, camera);
 		//printf("name : %s, num : %d \n", (*_F)->m_szStr, (*_F)->m_iNum);
 	}
