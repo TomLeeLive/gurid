@@ -79,6 +79,8 @@ enum GAME_STATE {
 #include "GGameCredit.h"
 
 #include "GuridMain.h"
+
+//#include "GSprite.h"
 #endif
 
 

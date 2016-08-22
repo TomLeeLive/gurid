@@ -191,7 +191,7 @@ public:
 	virtual HRESULT				LoadTextures(ID3D11Device* pDevice, const TCHAR* pLoadTextureString);
 	virtual HRESULT				CreateResource();
 	virtual HRESULT				DeleteResource();
-	virtual bool				Create(ID3D11Device* pDevice, const TCHAR* pLoadShaderFile, const TCHAR* pLoadTextureString = 0);
+	virtual 	bool				Create(ID3D11Device* pDevice, const TCHAR* pLoadShaderFile, const TCHAR* pLoadTextureString =0 );
 	virtual bool				Init();
 	virtual bool				Frame();
 	virtual bool				PreRender(ID3D11DeviceContext* pContext);
@@ -261,7 +261,6 @@ public:
 	GPlaneShape(void);
 	virtual ~GPlaneShape(void);
 };
-
 
 class GCylinder : public GShape
 {

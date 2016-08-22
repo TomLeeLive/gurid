@@ -2,6 +2,9 @@
 #include "GMap.h"
 #include "GDirectWrite.h"
 #include "GShape.h"
+#include "GSprite.h"
+#include "GSpriteMgr.h"
+#include "GModelViewCamera.h"
 //#define BOX_CNT 3
 
 
@@ -73,6 +76,27 @@ public:
 	float						m_fCameraPitch;
 	float						m_fCameraRoll;
 	float						m_fRadius;
+	//--------------------------------------------------------------------------------------
+	// 이펙트
+	//-------------------------------------------------------------------------------------
+	GPlaneShape             m_BigPlane;
+	//shared_ptr<GModelViewCamera > m_pMainCamera;
+	GSprite*				m_pSprite[2];
+	D3DXMATRIX				m_matPlaneWorld;
+	D3DXMATRIX				m_matWorld;
+	//--------------------------------------------------------------------------------------
+	// 뷰포트 설정
+	//--------------------------------------------------------------------------------------	
+	//GDxRT					m_ViewPort[4];
+	//HRESULT					ScreenViewPort(UINT iWidth, UINT iHeight);
+	//--------------------------------------------------------------------------------------
+	// 블랜드 상태 설정
+	//--------------------------------------------------------------------------------------
+	ComPtr<ID3D11BlendState> m_pBS[4];
+	HRESULT					SetBlendState();
+
+	//bool		RenderScene(GSprite* pPlane);
+
 public:
 	G_RAY		m_Ray;
 	G_BOX		m_Box[3];

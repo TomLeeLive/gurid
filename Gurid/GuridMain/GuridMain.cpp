@@ -103,6 +103,89 @@ bool GuridMain::Init()
 			return 0;
 		}
 	}
+
+#pragma region Effect
+	UINT iIndex;
+	
+	//--------------------------------------------------------------------------------------
+	// 텍스처 에니메이션
+	//--------------------------------------------------------------------------------------	
+	
+#ifdef _DEBUG
+	SAFE_NEW(m_pSprite[0], GSprite);
+	if (m_pSprite[0]->Create(GetDevice(),
+		L"data/shader/Plane.hlsl", 0) == false)
+	{
+		MessageBox(0, _T("m_pSprite->Create"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+#else
+	if (iIndex = I_Sprite.Add(GetDevice(), 0, L"data/shader/Plane.hlsl",
+		DX::GDxState::g_pBSMaxOneOne, true))
+		//DX::TDxState::g_pAlphaBlend, true);
+	{
+		MessageBox(0, _T("m_pSprite[0]->Create"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+	m_pSprite[0] = I_Sprite.GetPtr(iIndex);
+#endif
+	T_STR_VECTOR FileList;
+	for (int iTex = 0; iTex < 18; iTex++)
+	{
+		TCHAR pBuffer[50];
+		if (iTex < 10)
+			_stprintf_s(pBuffer, L"data/sou0%d.dds", iTex);
+		else
+			_stprintf_s(pBuffer, L"data/sou%d.dds", iTex);
+		FileList.push_back(pBuffer);
+	}
+	m_pSprite[0]->SetTextureArray(FileList);
+	m_pSprite[0]->SetRectAnimation(1.0f);
+
+	////--------------------------------------------------------------------------------------
+	//// UV 에니메이션
+	////--------------------------------------------------------------------------------------
+	SAFE_NEW(m_pSprite[0], GSprite);	//if (!m_pSprite[0]) m_pSprite[0] = new GSprite;
+	//SAFE_NEW(m_pSprite, GSprite);
+#ifdef _DEBUG
+	if (m_pSprite[0]->Create(GetDevice(), L"data/shader/Plane.hlsl", L"data/potatoo.dds") == false)
+	{
+		MessageBox(0, _T("m_pSprite->Create"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+#else
+	if (iIndex = I_Sprite.Add(GetDevice(), L"data/potatoo.dds", L"data/shader/Plane.hlsl",
+		DX::GDxState::g_pBSMaxOneOne, true))
+		//DX::TDxState::g_pAlphaBlend, true);
+	{
+		MessageBox(0, _T("m_pSprite[1]->Create"), _T("Fatal error"), MB_OK);
+		return 0;
+	}
+	m_pSprite[0] = I_Sprite.GetPtr(iIndex);
+#endif
+	m_pSprite[0]->SetRectAnimation(1.0f, 4, 128, 4, 128);
+
+	//--------------------------------------------------------------------------------------
+	// 월드  행렬
+	//--------------------------------------------------------------------------------------
+	D3DXMatrixIdentity(&m_matPlaneWorld);
+	//--------------------------------------------------------------------------------------
+	// 카메라  행렬 
+	//--------------------------------------------------------------------------------------	
+
+	//m_pMainCamera = make_shared<GGuridCamera>();
+	//m_pMainCamera->SetViewMatrix(D3DXVECTOR3(0.0f, 0.0f, -5.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+	//float fAspectRatio = m_iWindowWidth / (FLOAT)m_iWindowHeight;
+	m_pMainCamera->SetProjMatrix(D3DX_PI / 4, fAspectRatio, 0.1f, 500.0f);
+	m_pMainCamera->SetWindow(m_iWindowWidth, m_iWindowHeight);
+
+	if (FAILED(SetBlendState()))
+	{
+		return false;
+	}
+#pragma endregion
+
 	D3DXMatrixIdentity(&m_mPlaneWorld[0]);
 	D3DXMatrixIdentity(&m_mPlaneWorld[1]);
 	D3DXMatrixIdentity(&m_mPlaneWorld[2]);
@@ -110,11 +193,11 @@ bool GuridMain::Init()
 	HRESULT hr = GetSwapChain()->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)m_pBackBuffer.GetAddressOf());
 	m_Font.Set(g_hWnd, m_iWindowWidth, m_iWindowHeight, m_pBackBuffer.Get());
 
-
 	//사운드 로딩
 	hr = this->SoundLoad();
-
 	//m_pSound.Play(1, true);
+
+
 	return true;
 }
 bool GuridMain::Frame()
@@ -151,6 +234,7 @@ bool GuridMain::Frame()
 
 	return true;
 }
+
 void GuridMain::ShellManagerFrame(){
 	vector<shared_ptr<GCar>>::iterator _F = m_TankManager.m_vecCars.begin();
 	vector<shared_ptr<GCar>>::iterator _L = m_TankManager.m_vecCars.end();
@@ -161,6 +245,7 @@ void GuridMain::ShellManagerFrame(){
 
 	}
 }
+
 void GuridMain::ColCheck() {
 	vector<shared_ptr<GShell>>::iterator _F = m_ShellManager.m_vecShells.begin();
 	vector<shared_ptr<GShell>>::iterator _L = m_ShellManager.m_vecShells.end();
@@ -231,6 +316,7 @@ void GuridMain::ColCheck() {
 		}
 	}
 }
+
 bool GuridMain::Render()
 {
 	HRESULT hr;
@@ -265,9 +351,6 @@ bool GuridMain::Render()
 	return true;
 }
 
-//--------------------------------------------------------------------------------------
-// 
-//--------------------------------------------------------------------------------------
 HRESULT GuridMain::CreateResource()
 {
 	HRESULT hr;
@@ -283,9 +366,7 @@ HRESULT GuridMain::CreateResource()
 	}
 	return S_OK;
 }
-//--------------------------------------------------------------------------------------
-// 
-//--------------------------------------------------------------------------------------
+
 HRESULT GuridMain::DeleteResource()
 {
 	HRESULT hr = S_OK;
@@ -296,6 +377,7 @@ HRESULT GuridMain::DeleteResource()
 	if (m_pImmediateContext) m_pImmediateContext->ClearState();
 	return S_OK;
 }
+
 bool GuridMain::Release()
 {
 	m_pSound.Release();
@@ -303,13 +385,21 @@ bool GuridMain::Release()
 	m_CustomMap.Release();
 	//SAFE_DEL(m_pCamera);
 	SAFE_DEL(m_pMainCamera);
+
+	SAFE_DEL(m_pSprite[0]);
+	SAFE_DEL(m_pSprite[1]);
+	//SAFE_DEL(m_pSprite);
+	
+
 	return true;
 }
+
 bool GuridMain::DrawDebug()
 {
 
 	return GBASISLib_0::DrawDebug();
 }
+
 HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
 {
 	HRESULT hr = S_OK;
@@ -370,6 +460,70 @@ bool GuridMain::SoundLoad()
 	return hr;
 }
 
+HRESULT GuridMain::SetBlendState()
+{
+	HRESULT hr;
+	D3D11_BLEND_DESC			BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+	BlendState.RenderTarget[0].BlendEnable = TRUE;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_INV_SRC_COLOR;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	if (FAILED(hr = m_pd3dDevice->CreateBlendState(&BlendState, &m_pBS[0])))
+	{
+		H(hr);
+		return hr;
+	}
+
+	ID3D11BlendState*			m_pBlend1;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	if (FAILED(hr = m_pd3dDevice->CreateBlendState(&BlendState, &m_pBS[1])))
+	{
+		H(hr);
+		return hr;
+	}
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	if (FAILED(hr = m_pd3dDevice->CreateBlendState(&BlendState, &m_pBS[2])))
+	{
+		H(hr);
+		return hr;
+	}
+
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	if (FAILED(hr = m_pd3dDevice->CreateBlendState(&BlendState, &m_pBS[3])))
+	{
+		H(hr);
+		return hr;
+	}
+	return hr;
+}
+
+//HRESULT GuridMain::ScreenViewPort(UINT iWidth, UINT iHeight)
+//{
+//	HRESULT hr = S_OK;
+//
+//	UINT iRectWidth = iWidth / 2;
+//	UINT iRectHeight = iHeight / 2;
+//
+//	m_ViewPort.Set(GetDevice(), 0, 0, iRectWidth, iRectHeight, 0.0f, 1.0f);
+//	//m_ViewPort[1].Set(GetDevice(), iRectWidth, 0, iRectWidth, iRectHeight, 0.0f, 1.0f);
+//	//m_ViewPort[2].Set(GetDevice(), iRectWidth, iRectHeight, iRectWidth, iRectHeight, 0.0f, 1.0f);
+//	//m_ViewPort[3].Set(GetDevice(), 0, iRectHeight, iRectWidth, iRectHeight, 0.0f, 1.0f);
+//	return hr;
+//}
+
+
+
 GuridMain::GuridMain(void)
 {
 	m_nGamePhase = ST_SINGLEGAME;
@@ -392,10 +546,12 @@ GuridMain::GuridMain(void)
 	m_fRadius = 0.0f;
 
 	SAFE_ZERO(m_pMainCamera);
+
+	SAFE_ZERO(m_pSprite[0]);
+	SAFE_ZERO(m_pSprite[1]);
 }
 
 GuridMain::~GuridMain(void)
 {
-
 }
 GBASIS_RUN(Gurid v0.0.2);
