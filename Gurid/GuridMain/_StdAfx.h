@@ -11,8 +11,8 @@
 
 #define G_MACRO_ADD_SCORE 100			//적 폭파시 점수 값
 #define G_MACRO_ENEMY_SHELL_DAMAGE 10	//적 탄환 데미지 값
-#define G_MACRO_CAR_SPEED 3.0f			//차 Speed
-#define G_MACRO_CAR_MAX_SPEED 10.0f		//차 Max Speed
+#define G_MACRO_CAR_SPEED 10.0f			//차 Speed
+#define G_MACRO_CAR_MAX_SPEED 20.0f		//차 Max Speed
 #define G_MACRO_TIRES 6					//타이어 갯수
 #define G_MACRO_TANK_TIRES 6			//탱크 타이어 갯수
 #define G_MACRO_MAX_TANK 2				//탱크 최소 갯수. 첫판 탱크 갯수= G_MACRO_MAX_TANK + Wave count
