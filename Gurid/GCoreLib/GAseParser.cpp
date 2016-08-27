@@ -184,7 +184,7 @@ bool GAseParser::GetData(VOID* pData, INT DataType)
 	}
 	return false;
 }
-bool GAseParser::GeGVertexListFromString(TCHAR* strVertexList, DWORD dwNumVertex, vector<D3DXVECTOR3>& VertexList, TCHAR* strToken)
+bool GAseParser::GetVertexListFromString(TCHAR* strVertexList, DWORD dwNumVertex, vector<D3DXVECTOR3>& VertexList, TCHAR* strToken)
 {
 	if (dwNumVertex > 0 && GetData(strVertexList))
 	{
@@ -201,7 +201,7 @@ bool GAseParser::GeGVertexListFromString(TCHAR* strVertexList, DWORD dwNumVertex
 	}
 	return true;
 }
-bool GAseParser::GeGFaceListFromString(TCHAR* strFaceList, DWORD dwNumFace, GVertexList& VertexList, TCHAR* strToken)
+bool GAseParser::GetFaceListFromString(TCHAR* strFaceList, DWORD dwNumFace, GVertexList& VertexList, TCHAR* strToken)
 {
 	if (dwNumFace >0 && GetData(strFaceList))
 	{
@@ -433,7 +433,7 @@ void GAseParser::LoadMesh(GAseMesh* pObject)
 		GetData(_T("MESH_NUMFACES"), &pObject->m_PosVertexList.dwNumFace, INT_DATA);
 		pObject->m_iNumFace = pObject->m_PosVertexList.dwNumFace;
 
-		GeGVertexListFromString(_T("MESH_VERTEX_LIST"), pObject->m_PosVertexList.dwNumVertex, pObject->m_PosVertexList.pVertexList);
+		GetVertexListFromString(_T("MESH_VERTEX_LIST"), pObject->m_PosVertexList.dwNumVertex, pObject->m_PosVertexList.pVertexList);
 		GetPositionFaceListFromString(_T("MESH_FACE_LIST"), pObject->m_PosVertexList.dwNumFace, pObject->m_PosVertexList);
 	}
 	__int64 qwElapsedTimeA = stopwatch.Now();
@@ -441,18 +441,18 @@ void GAseParser::LoadMesh(GAseMesh* pObject)
 	GetData(_T("MESH_NUMTVERTEX"), &pObject->m_TexVertexList.dwNumVertex, INT_DATA);
 	if (pObject->m_TexVertexList.dwNumVertex > 0)
 	{
-		GeGVertexListFromString(_T("MESH_TVERTLIST"), pObject->m_TexVertexList.dwNumVertex, pObject->m_TexVertexList.pVertexList);
+		GetVertexListFromString(_T("MESH_TVERTLIST"), pObject->m_TexVertexList.dwNumVertex, pObject->m_TexVertexList.pVertexList);
 		GetData(_T("MESH_NUMTVFACES"), &pObject->m_TexVertexList.dwNumFace, INT_DATA);
-		GeGFaceListFromString(_T("MESH_GFaceList"), pObject->m_TexVertexList.dwNumFace, pObject->m_TexVertexList);
+		GetFaceListFromString(_T("MESH_TFACELIST"), pObject->m_TexVertexList.dwNumFace, pObject->m_TexVertexList);
 	}
 	__int64 qwElapsedTimeB = stopwatch.Now() - qwElapsedTimeA;
 	// Color Data
 	GetData(_T("MESH_NUMCVERTEX"), &pObject->m_ColVertexList.dwNumVertex, INT_DATA, false);
 	if (pObject->m_ColVertexList.dwNumVertex > 0)
 	{
-		GeGVertexListFromString(_T("MESH_CVERTLIST"), pObject->m_ColVertexList.dwNumVertex, pObject->m_ColVertexList.pVertexList);
+		GetVertexListFromString(_T("MESH_CVERTLIST"), pObject->m_ColVertexList.dwNumVertex, pObject->m_ColVertexList.pVertexList);
 		GetData(_T("MESH_NUMCVFACES"), &pObject->m_ColVertexList.dwNumFace, INT_DATA);
-		GeGFaceListFromString(_T("MESH_CFACELIST"), pObject->m_ColVertexList.dwNumFace, pObject->m_ColVertexList);
+		GetFaceListFromString(_T("MESH_CFACELIST"), pObject->m_ColVertexList.dwNumFace, pObject->m_ColVertexList);
 	}
 	__int64 qwElapsedTimeC = stopwatch.Now() - qwElapsedTimeA - qwElapsedTimeB;
 	// Normal Data
